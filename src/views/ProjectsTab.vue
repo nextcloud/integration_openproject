@@ -156,12 +156,13 @@ export default {
 		onSaved(data) {
 			this.workpackages.unshift(data)
 			this.$nextTick(() => {
-				const workpackage = document.getElementById('workpackage-' + data.id)
-				const topElementToScroll = this.$el.getElementsByClassName('existing-relations')[0]
+				const workpackage = this.$el.querySelector('#workpackage-' + data.id)
+				const topElementToScroll = this.$el.querySelector('.existing-relations')
 				workpackage.classList.add('workpackage-transition')
 				topElementToScroll.scrollIntoView({
 					behavior: 'smooth',
 				})
+
 				setTimeout(() => {
 					workpackage.classList.remove('workpackage-transition')
 				}, 3000)
