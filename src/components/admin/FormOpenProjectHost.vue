@@ -266,7 +266,7 @@ export default {
 					break
 				}
 				}
-				await this.$nextTick(() => {
+				this.$nextTick(() => {
 					this.$refs.urlInput?.focusInputField()
 				})
 				return false
