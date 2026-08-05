@@ -4,10 +4,11 @@
  * SPDX-License-Identifier: AGPL-3.0-or-later
  */
 
-import { createLocalVue, mount } from '@vue/test-utils'
-import FieldValue from '../../../../src/components/admin/FieldValue.vue'
+import { mount } from '@vue/test-utils'
+import { nextTick } from 'vue'
+import { describe, expect, it } from 'vitest'
 
-const localVue = createLocalVue()
+import FieldValue from '../../../../src/components/admin/FieldValue.vue'
 
 const selectors = {
 	inspectButton: '.eye-icon',
@@ -50,7 +51,7 @@ describe('FieldValue.vue', () => {
 						inspect: true,
 					})
 					await wrapper.find(selectors.inspectButton).trigger('click')
-					await localVue.nextTick()
+					await nextTick()
 					expect(wrapper.find(selectors.itemValue).element).toMatchSnapshot()
 					await wrapper.find(selectors.inspectOffButton).trigger('click')
 					expect(wrapper.find(selectors.itemValue).element).toMatchSnapshot()
@@ -63,11 +64,11 @@ describe('FieldValue.vue', () => {
 					})
 					const inspect = wrapper.find(selectors.inspectButton)
 					await inspect.trigger('click')
-					await localVue.nextTick()
+					await nextTick()
 					expect(wrapper.find(selectors.inspectOffButton).element).toMatchSnapshot()
 					const inspectOff = wrapper.find(selectors.inspectOffButton)
 					await inspectOff.trigger('click')
-					await localVue.nextTick()
+					await nextTick()
 					expect(wrapper.find(selectors.inspectButton).element).toMatchSnapshot()
 
 				})
@@ -82,14 +83,15 @@ describe('FieldValue.vue', () => {
 
 function getWrapper(props = {}) {
 	return mount(FieldValue, {
-		localVue,
-		propsData: {
+		props: {
 			title: 'Some Field Title',
 			value: 'Some Field Value',
 			...props,
 		},
-		mocks: {
-			t: (app, msg) => msg,
+		global: {
+			mocks: {
+				t: (app, msg) => msg,
+			},
 		},
 	})
 }

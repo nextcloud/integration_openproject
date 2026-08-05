@@ -5,9 +5,10 @@
  * SPDX-License-Identifier: AGPL-3.0-or-later
  */
 
-import { createLocalVue, shallowMount } from '@vue/test-utils'
+import { shallowMount } from '@vue/test-utils'
+import { describe, expect, it, beforeEach, afterEach, vi } from 'vitest'
+import flushPromises from 'flush-promises'
 import { showError, showSuccess } from '@nextcloud/dialogs'
-import flushPromises from 'flush-promises' // eslint-disable-line n/no-unpublished-import
 
 import { ADMIN_SETTINGS_FORM, AUTH_METHOD, F_MODES } from '../../../../src/utils.js'
 import { saveAdminConfig } from '../../../../src/api/settings.js'
@@ -15,36 +16,26 @@ import FormAuthMethod from '../../../../src/components/admin/FormAuthMethod.vue'
 import { messagesFmt, messages } from '../../../../src/constants/messages.js'
 import { appLinks } from '../../../../src/constants/links.js'
 
-// global mocks
-global.t = (app, text) => text
-global.OC = {
-	dialogs: {
-		confirmDestructive: jest.fn(),
-		YES_NO_BUTTONS: 70,
-	},
-}
 // module mocks
-jest.mock('@nextcloud/dialogs', () => ({
-	getLanguage: jest.fn(() => ''),
-	showError: jest.fn(),
-	showSuccess: jest.fn(),
+vi.mock(import('@nextcloud/dialogs'), () => ({
+	getLanguage: vi.fn(() => ''),
+	showError: vi.fn(),
+	showSuccess: vi.fn(),
 }))
-jest.mock('../../../../src/api/settings.js', () => ({
-	saveAdminConfig: jest.fn(() => ''),
+vi.mock(import('../../../../src/api/settings.js'), () => ({
+	saveAdminConfig: vi.fn(() => ''),
 }))
-
-const localVue = createLocalVue()
 
 const selectors = {
-	formheading: 'formheading-stub',
+	formheading: 'form-heading-stub',
 	formViewModeLabel: '.auth-method--label',
 	oauthRadioBox: '#oauth-auth-method',
 	ssoRadioBox: '#sso-auth-method',
 	saveFormButton: '[data-test-id="save-auth-method"]',
 	editFormButton: '[data-test-id="edit-auth-method"]',
 	cancelFormButton: '[data-test-id="cancel-auth-method-edit"]',
-	errorLabel: 'errorlabel-stub',
-	errorNote: 'errornote-stub',
+	errorLabel: 'error-label-stub',
+	errorNote: 'error-note-stub',
 }
 
 const defaultProps = {
@@ -59,10 +50,17 @@ const defaultProps = {
 	},
 }
 
+const app = {
+	userOidc: {
+		name: 'OpenID Connect user backend',
+		minimum_version: '1.0.0',
+	},
+}
+
 describe('Component: FormAuthMethod', () => {
-	const spyConfirmDialog = jest.spyOn(global.OC.dialogs, 'confirmDestructive')
+	const spyConfirmDialog = vi.spyOn(global.OC.dialogs, 'confirmDestructive')
 	afterEach(() => {
-		jest.clearAllMocks()
+		vi.clearAllMocks()
 	})
 
 	describe('initial incomplete form', () => {
@@ -73,7 +71,7 @@ describe('Component: FormAuthMethod', () => {
 
 		describe('server url not set', () => {
 			it('should show form heading with disabled status', async () => {
-				expect(wrapper.find(selectors.formheading).attributes().isdisabled).toBe('true')
+				expect(wrapper.findComponent(selectors.formheading).attributes().isdisabled).toBe('true')
 				expect(wrapper.find(selectors.oauthRadioBox).exists()).toBe(false)
 				expect(wrapper.find(selectors.ssoRadioBox).exists()).toBe(false)
 				expect(wrapper.find(selectors.saveFormButton).exists()).toBe(false)
@@ -93,7 +91,7 @@ describe('Component: FormAuthMethod', () => {
 				expect(wrapper.find(selectors.oauthRadioBox).exists()).toBe(true)
 				expect(wrapper.find(selectors.ssoRadioBox).exists()).toBe(true)
 				expect(wrapper.find(selectors.saveFormButton).exists()).toBe(true)
-				expect(wrapper.find(selectors.formheading).attributes().isdisabled).toBe(undefined)
+				expect(wrapper.findComponent(selectors.formheading).attributes().isdisabled).toBe('false')
 
 				expect(wrapper.find(selectors.formViewModeLabel).exists()).toBe(false)
 				expect(wrapper.find(selectors.editFormButton).exists()).toBe(false)
@@ -102,16 +100,17 @@ describe('Component: FormAuthMethod', () => {
 			})
 			it('should have enabled save button', async () => {
 				expect(wrapper.vm.formMode).toBe(F_MODES.EDIT)
-				expect(wrapper.find(selectors.oauthRadioBox).attributes().checked).toBe(AUTH_METHOD.OAUTH2)
-				expect(wrapper.find(selectors.saveFormButton).attributes().disabled).toBe(undefined)
+				console.log(wrapper.findComponent(selectors.oauthRadioBox).attributes())
+				expect(wrapper.findComponent(selectors.oauthRadioBox).attributes().modelvalue).toBe(AUTH_METHOD.OAUTH2)
+				expect(wrapper.findComponent(selectors.saveFormButton).attributes().disabled).toBe('false')
 			})
 			it('should save the setting on submit', async () => {
-				const saveFormButton = wrapper.find(selectors.saveFormButton)
-				expect(wrapper.vm.savedAuthMethod).toBe(null)
+				const saveFormButton = wrapper.findComponent(selectors.saveFormButton)
+				expect(wrapper.vm.savedAuthMethod).toBeNull()
 
 				wrapper.vm.selectedAuthMethod = AUTH_METHOD.OIDC
 				await flushPromises()
-				expect(wrapper.find(selectors.oauthRadioBox).attributes().checked).toBe(AUTH_METHOD.OIDC)
+				expect(wrapper.findComponent(selectors.oauthRadioBox).attributes().modelvalue).toBe(AUTH_METHOD.OIDC)
 
 				saveFormButton.vm.$emit('click')
 				await flushPromises()
@@ -130,7 +129,7 @@ describe('Component: FormAuthMethod', () => {
 				expect(wrapper.vm.loading).toBe(false)
 				expect(wrapper.vm.formMode).toBe(F_MODES.VIEW)
 				expect(wrapper.vm.savedAuthMethod).toBe(AUTH_METHOD.OIDC)
-				expect(wrapper.emitted().formcomplete.length).toBe(1)
+				expect(wrapper.emitted().formcomplete).toHaveLength(1)
 				expect(wrapper.emitted().formcomplete[0][0]).toBeInstanceOf(Function)
 
 				expect(wrapper.find(selectors.editFormButton).exists()).toBe(true)
@@ -143,12 +142,12 @@ describe('Component: FormAuthMethod', () => {
 			})
 			it('should show error on save failure', async () => {
 				saveAdminConfig.mockImplementation(() => Promise.reject(new Error('Failure')))
-				const saveFormButton = wrapper.find(selectors.saveFormButton)
-				expect(wrapper.vm.savedAuthMethod).toBe(null)
+				const saveFormButton = wrapper.findComponent(selectors.saveFormButton)
+				expect(wrapper.vm.savedAuthMethod).toBeNull()
 
 				wrapper.vm.selectedAuthMethod = AUTH_METHOD.OIDC
 				await flushPromises()
-				expect(wrapper.find(selectors.oauthRadioBox).attributes().checked).toBe(AUTH_METHOD.OIDC)
+				expect(wrapper.findComponent(selectors.oauthRadioBox).attributes().modelvalue).toBe(AUTH_METHOD.OIDC)
 
 				saveFormButton.vm.$emit('click')
 				await flushPromises()
@@ -166,7 +165,7 @@ describe('Component: FormAuthMethod', () => {
 				expect(showError).toHaveBeenCalledTimes(1)
 				expect(wrapper.vm.loading).toBe(false)
 				expect(wrapper.vm.formMode).toBe(F_MODES.EDIT)
-				expect(wrapper.vm.savedAuthMethod).toBe(null)
+				expect(wrapper.vm.savedAuthMethod).toBeNull()
 				expect(wrapper.emitted()).toEqual({})
 
 				expect(wrapper.find(selectors.oauthRadioBox).exists()).toBe(true)
@@ -198,13 +197,13 @@ describe('Component: FormAuthMethod', () => {
 					},
 				})
 
-				expect(wrapper.find(selectors.formheading).attributes().haserror).toBe(undefined)
+				expect(wrapper.findComponent(selectors.formheading).attributes().haserror).toBe('false')
 				expect(wrapper.find(selectors.errorNote).exists()).toBe(false)
 				expect(wrapper.find(selectors.oauthRadioBox).exists()).toBe(true)
 				expect(wrapper.find(selectors.ssoRadioBox).exists()).toBe(true)
-				expect(wrapper.find(selectors.ssoRadioBox).attributes().disabled).toBe('true')
+				expect(wrapper.findComponent(selectors.ssoRadioBox).attributes().disabled).toBe('true')
 				expect(wrapper.find(selectors.errorLabel).exists()).toBe(true)
-				expect(wrapper.find(selectors.errorLabel).attributes().disabled).toBe('true')
+				expect(wrapper.findComponent(selectors.errorLabel).attributes().disabled).toBe('true')
 
 				expect(wrapper.find(selectors.saveFormButton).exists()).toBe(true)
 				expect(wrapper.html()).toMatchSnapshot()
@@ -229,13 +228,13 @@ describe('Component: FormAuthMethod', () => {
 					},
 				})
 
-				expect(wrapper.find(selectors.formheading).attributes().haserror).toBe(undefined)
+				expect(wrapper.findComponent(selectors.formheading).attributes().haserror).toBe('false')
 				expect(wrapper.find(selectors.errorNote).exists()).toBe(false)
 				expect(wrapper.find(selectors.oauthRadioBox).exists()).toBe(true)
 				expect(wrapper.find(selectors.ssoRadioBox).exists()).toBe(true)
-				expect(wrapper.find(selectors.ssoRadioBox).attributes().disabled).toBe('true')
+				expect(wrapper.findComponent(selectors.ssoRadioBox).attributes().disabled).toBe('true')
 				expect(wrapper.find(selectors.errorLabel).exists()).toBe(true)
-				expect(wrapper.find(selectors.errorLabel).attributes().disabled).toBe('true')
+				expect(wrapper.findComponent(selectors.errorLabel).attributes().disabled).toBe('true')
 
 				expect(wrapper.find(selectors.saveFormButton).exists()).toBe(true)
 				expect(wrapper.html()).toMatchSnapshot()
@@ -251,6 +250,7 @@ describe('Component: FormAuthMethod', () => {
 			formState.serverHost.complete = true
 			wrapper = getWrapper({ props: { formState, authMethod: AUTH_METHOD.OIDC } })
 		})
+
 		it('should show set form label in view mode', () => {
 			expect(wrapper.find(selectors.formViewModeLabel).exists()).toBe(true)
 			expect(wrapper.find(selectors.editFormButton).exists()).toBe(true)
@@ -282,10 +282,10 @@ describe('Component: FormAuthMethod', () => {
 						},
 					},
 				})
-				expect(wrapper.find(selectors.formheading).attributes().haserror).toBe(undefined)
+				expect(wrapper.findComponent(selectors.formheading).attributes().haserror).toBe('false')
 				expect(wrapper.find(selectors.errorNote).exists()).toBe(false)
 				expect(wrapper.find(selectors.editFormButton).exists()).toBe(true)
-				expect(wrapper.find(selectors.editFormButton).attributes().disabled).toBe(undefined)
+				expect(wrapper.findComponent(selectors.editFormButton).attributes().disabled).toBe('false')
 				expect(wrapper.html()).toMatchSnapshot()
 			})
 			it('should show form errors if setup with oidc', async () => {
@@ -302,21 +302,21 @@ describe('Component: FormAuthMethod', () => {
 						},
 					},
 				})
-				expect(wrapper.find(selectors.formheading).attributes().haserror).toBe('true')
+				expect(wrapper.findComponent(selectors.formheading).attributes().haserror).toBe('true')
 				const errorNote = wrapper.find(selectors.errorNote)
 				expect(errorNote.exists()).toBe(true)
-				expect(errorNote.attributes().errortitle).toBe(messagesFmt.appNotEnabledOrUnsupported())
+				expect(errorNote.attributes().errortitle).toBe(messagesFmt.appNotEnabledOrUnsupported(app.userOidc.name, app.userOidc.minimum_version))
 				expect(errorNote.attributes().errorlink).toBe(appLinks.user_oidc.installLink)
 				expect(errorNote.attributes().errorlinklabel).toBe(messages.installLatestVersionNow)
 				expect(wrapper.find(selectors.editFormButton).exists()).toBe(true)
-				expect(wrapper.find(selectors.editFormButton).attributes().disabled).toBe(undefined)
+				expect(wrapper.findComponent(selectors.editFormButton).attributes().disabled).toBe('false')
 				expect(wrapper.html()).toMatchSnapshot()
 			})
 		})
 
 		describe('edit mode', () => {
 			beforeEach(async () => {
-				const editButton = wrapper.find(selectors.editFormButton)
+				const editButton = wrapper.findComponent(selectors.editFormButton)
 				editButton.vm.$emit('click')
 				await flushPromises()
 			})
@@ -325,7 +325,7 @@ describe('Component: FormAuthMethod', () => {
 				expect(wrapper.find(selectors.formViewModeLabel).exists()).toBe(false)
 				expect(wrapper.find(selectors.editFormButton).exists()).toBe(false)
 				expect(wrapper.vm.formMode).toBe(F_MODES.EDIT)
-				expect(wrapper.find(selectors.ssoRadioBox).attributes().checked).toBe(AUTH_METHOD.OIDC)
+				expect(wrapper.findComponent(selectors.ssoRadioBox).attributes().modelvalue).toBe(AUTH_METHOD.OIDC)
 
 				expect(wrapper.find(selectors.oauthRadioBox).exists()).toBe(true)
 				expect(wrapper.find(selectors.ssoRadioBox).exists()).toBe(true)
@@ -334,24 +334,24 @@ describe('Component: FormAuthMethod', () => {
 				expect(wrapper.html()).toMatchSnapshot()
 			})
 			it('should have disabled save button and enabled cancel button', async () => {
-				expect(wrapper.find(selectors.saveFormButton).attributes().disabled).toBe('true')
-				expect(wrapper.find(selectors.cancelFormButton).attributes().disabled).toBe(undefined)
+				expect(wrapper.findComponent(selectors.saveFormButton).attributes().disabled).toBe('true')
+				expect(wrapper.findComponent(selectors.cancelFormButton).attributes().disabled).toBe('false')
 			})
 			it('should disable save on same option', async () => {
 				// change to OAUTH2
 				wrapper.vm.selectedAuthMethod = AUTH_METHOD.OAUTH2
 				await flushPromises()
-				expect(wrapper.find(selectors.saveFormButton).attributes().disabled).toBe(undefined)
-				expect(wrapper.find(selectors.cancelFormButton).attributes().disabled).toBe(undefined)
+				expect(wrapper.findComponent(selectors.saveFormButton).attributes().disabled).toBe('false')
+				expect(wrapper.findComponent(selectors.cancelFormButton).attributes().disabled).toBe('false')
 
 				// change back to OIDC
 				wrapper.vm.selectedAuthMethod = AUTH_METHOD.OIDC
 				await flushPromises()
-				expect(wrapper.find(selectors.saveFormButton).attributes().disabled).toBe('true')
-				expect(wrapper.find(selectors.cancelFormButton).attributes().disabled).toBe(undefined)
+				expect(wrapper.findComponent(selectors.saveFormButton).attributes().disabled).toBe('true')
+				expect(wrapper.findComponent(selectors.cancelFormButton).attributes().disabled).toBe('false')
 			})
 			it('should show form in view mode on cancel', async () => {
-				const cancelButton = wrapper.find(selectors.cancelFormButton)
+				const cancelButton = wrapper.findComponent(selectors.cancelFormButton)
 				expect(wrapper.vm.formMode).toBe(F_MODES.EDIT)
 
 				// change to OIDC
@@ -359,8 +359,8 @@ describe('Component: FormAuthMethod', () => {
 				await flushPromises()
 
 				// save button should be enabled
-				expect(wrapper.find(selectors.saveFormButton).attributes().disabled).toBe(undefined)
-				expect(wrapper.find(selectors.cancelFormButton).attributes().disabled).toBe(undefined)
+				expect(wrapper.findComponent(selectors.saveFormButton).attributes().disabled).toBe('false')
+				expect(wrapper.findComponent(selectors.cancelFormButton).attributes().disabled).toBe('false')
 
 				await cancelButton.vm.$emit('click')
 				await flushPromises()
@@ -377,7 +377,7 @@ describe('Component: FormAuthMethod', () => {
 				await flushPromises()
 				expect(wrapper.vm.savedAuthMethod).toBe(AUTH_METHOD.OIDC)
 
-				const saveFormButton = wrapper.find(selectors.saveFormButton)
+				const saveFormButton = wrapper.findComponent(selectors.saveFormButton)
 				saveFormButton.vm.$emit('click')
 				await flushPromises()
 
@@ -397,22 +397,22 @@ describe('Component: FormAuthMethod', () => {
 						},
 					})
 
-					expect(wrapper.find(selectors.formheading).attributes().haserror).toBe('true')
+					expect(wrapper.findComponent(selectors.formheading).attributes().haserror).toBe('true')
 					expect(wrapper.find(selectors.oauthRadioBox).exists()).toBe(true)
 					expect(wrapper.find(selectors.ssoRadioBox).exists()).toBe(true)
-					expect(wrapper.find(selectors.ssoRadioBox).attributes().disabled).toBe('true')
-					expect(wrapper.find(selectors.oauthRadioBox).attributes().checked).toBe(AUTH_METHOD.OIDC)
+					expect(wrapper.findComponent(selectors.ssoRadioBox).attributes().disabled).toBe('true')
+					expect(wrapper.findComponent(selectors.oauthRadioBox).attributes().modelvalue).toBe(AUTH_METHOD.OIDC)
 					expect(wrapper.find(selectors.errorLabel).exists()).toBe(true)
-					expect(wrapper.find(selectors.errorLabel).attributes().disabled).toBe(undefined)
-					const errorNote = wrapper.find(selectors.errorNote)
+					expect(wrapper.findComponent(selectors.errorLabel).attributes().disabled).toBe('false')
+					const errorNote = wrapper.findComponent(selectors.errorNote)
 					expect(errorNote.exists()).toBe(true)
-					expect(errorNote.attributes().errortitle).toBe(messagesFmt.appNotEnabledOrUnsupported())
+					expect(errorNote.attributes().errortitle).toBe(messagesFmt.appNotEnabledOrUnsupported(app.userOidc.name, app.userOidc.minimum_version))
 					expect(errorNote.attributes().errorlink).toBe(appLinks.user_oidc.installLink)
 					expect(errorNote.attributes().errorlinklabel).toBe(messages.installLatestVersionNow)
 
 					expect(wrapper.find(selectors.saveFormButton).exists()).toBe(true)
-					expect(wrapper.find(selectors.saveFormButton).attributes().disabled).toBe('true')
-					expect(wrapper.find(selectors.cancelFormButton).attributes().disabled).toBe(undefined)
+					expect(wrapper.findComponent(selectors.saveFormButton).attributes().disabled).toBe('true')
+					expect(wrapper.findComponent(selectors.cancelFormButton).attributes().disabled).toBe('false')
 					expect(wrapper.html()).toMatchSnapshot()
 				})
 				it('should show disabled error message and disabled sso button when oauth2 is selected', async () => {
@@ -429,22 +429,22 @@ describe('Component: FormAuthMethod', () => {
 							},
 						},
 					})
-					const editButton = wrapper.find(selectors.editFormButton)
+					const editButton = wrapper.findComponent(selectors.editFormButton)
 					editButton.vm.$emit('click')
 					await flushPromises()
 
-					expect(wrapper.find(selectors.formheading).attributes().haserror).toBe(undefined)
+					expect(wrapper.findComponent(selectors.formheading).attributes().haserror).toBe('false')
 					expect(wrapper.find(selectors.oauthRadioBox).exists()).toBe(true)
 					expect(wrapper.find(selectors.ssoRadioBox).exists()).toBe(true)
-					expect(wrapper.find(selectors.ssoRadioBox).attributes().disabled).toBe('true')
-					expect(wrapper.find(selectors.oauthRadioBox).attributes().checked).toBe(AUTH_METHOD.OAUTH2)
+					expect(wrapper.findComponent(selectors.ssoRadioBox).attributes().disabled).toBe('true')
+					expect(wrapper.findComponent(selectors.oauthRadioBox).attributes().modelvalue).toBe(AUTH_METHOD.OAUTH2)
 					expect(wrapper.find(selectors.errorLabel).exists()).toBe(true)
-					expect(wrapper.find(selectors.errorLabel).attributes().disabled).toBe('true')
+					expect(wrapper.findComponent(selectors.errorLabel).attributes().disabled).toBe('true')
 					expect(wrapper.find(selectors.errorNote).exists()).toBe(false)
 
 					expect(wrapper.find(selectors.saveFormButton).exists()).toBe(true)
-					expect(wrapper.find(selectors.saveFormButton).attributes().disabled).toBe('true')
-					expect(wrapper.find(selectors.cancelFormButton).attributes().disabled).toBe(undefined)
+					expect(wrapper.findComponent(selectors.saveFormButton).attributes().disabled).toBe('true')
+					expect(wrapper.findComponent(selectors.cancelFormButton).attributes().disabled).toBe('false')
 					expect(wrapper.html()).toMatchSnapshot()
 				})
 			})
@@ -462,22 +462,22 @@ describe('Component: FormAuthMethod', () => {
 						},
 					})
 
-					expect(wrapper.find(selectors.formheading).attributes().haserror).toBe('true')
+					expect(wrapper.findComponent(selectors.formheading).attributes().haserror).toBe('true')
 					expect(wrapper.find(selectors.oauthRadioBox).exists()).toBe(true)
 					expect(wrapper.find(selectors.ssoRadioBox).exists()).toBe(true)
-					expect(wrapper.find(selectors.ssoRadioBox).attributes().disabled).toBe('true')
-					expect(wrapper.find(selectors.oauthRadioBox).attributes().checked).toBe(AUTH_METHOD.OIDC)
+					expect(wrapper.findComponent(selectors.ssoRadioBox).attributes().disabled).toBe('true')
+					expect(wrapper.findComponent(selectors.oauthRadioBox).attributes().modelvalue).toBe(AUTH_METHOD.OIDC)
 					expect(wrapper.find(selectors.errorLabel).exists()).toBe(true)
-					expect(wrapper.find(selectors.errorLabel).attributes().disabled).toBe(undefined)
-					const errorNote = wrapper.find(selectors.errorNote)
+					expect(wrapper.findComponent(selectors.errorLabel).attributes().disabled).toBe('false')
+					const errorNote = wrapper.findComponent(selectors.errorNote)
 					expect(errorNote.exists()).toBe(true)
-					expect(errorNote.attributes().errortitle).toBe(messagesFmt.appNotEnabledOrUnsupported())
+					expect(errorNote.attributes().errortitle).toBe(messagesFmt.appNotEnabledOrUnsupported(app.userOidc.name, app.userOidc.minimum_version))
 					expect(errorNote.attributes().errorlink).toBe(appLinks.user_oidc.installLink)
 					expect(errorNote.attributes().errorlinklabel).toBe(messages.installLatestVersionNow)
 
 					expect(wrapper.find(selectors.saveFormButton).exists()).toBe(true)
-					expect(wrapper.find(selectors.saveFormButton).attributes().disabled).toBe('true')
-					expect(wrapper.find(selectors.cancelFormButton).attributes().disabled).toBe(undefined)
+					expect(wrapper.findComponent(selectors.saveFormButton).attributes().disabled).toBe('true')
+					expect(wrapper.findComponent(selectors.cancelFormButton).attributes().disabled).toBe('false')
 					expect(wrapper.html()).toMatchSnapshot()
 				})
 				it('should show disabled error message and disabled sso button when oauth2 is selected', async () => {
@@ -494,22 +494,22 @@ describe('Component: FormAuthMethod', () => {
 							},
 						},
 					})
-					const editButton = wrapper.find(selectors.editFormButton)
+					const editButton = wrapper.findComponent(selectors.editFormButton)
 					editButton.vm.$emit('click')
 					await flushPromises()
 
-					expect(wrapper.find(selectors.formheading).attributes().haserror).toBe(undefined)
+					expect(wrapper.findComponent(selectors.formheading).attributes().haserror).toBe('false')
 					expect(wrapper.find(selectors.oauthRadioBox).exists()).toBe(true)
 					expect(wrapper.find(selectors.ssoRadioBox).exists()).toBe(true)
-					expect(wrapper.find(selectors.ssoRadioBox).attributes().disabled).toBe('true')
-					expect(wrapper.find(selectors.oauthRadioBox).attributes().checked).toBe(AUTH_METHOD.OAUTH2)
+					expect(wrapper.findComponent(selectors.ssoRadioBox).attributes().disabled).toBe('true')
+					expect(wrapper.findComponent(selectors.oauthRadioBox).attributes().modelvalue).toBe(AUTH_METHOD.OAUTH2)
 					expect(wrapper.find(selectors.errorLabel).exists()).toBe(true)
-					expect(wrapper.find(selectors.errorLabel).attributes().disabled).toBe('true')
+					expect(wrapper.findComponent(selectors.errorLabel).attributes().disabled).toBe('true')
 					expect(wrapper.find(selectors.errorNote).exists()).toBe(false)
 
 					expect(wrapper.find(selectors.saveFormButton).exists()).toBe(true)
-					expect(wrapper.find(selectors.saveFormButton).attributes().disabled).toBe('true')
-					expect(wrapper.find(selectors.cancelFormButton).attributes().disabled).toBe(undefined)
+					expect(wrapper.findComponent(selectors.saveFormButton).attributes().disabled).toBe('true')
+					expect(wrapper.findComponent(selectors.cancelFormButton).attributes().disabled).toBe('false')
 					expect(wrapper.html()).toMatchSnapshot()
 				})
 			})
@@ -519,11 +519,12 @@ describe('Component: FormAuthMethod', () => {
 
 function getWrapper({ data = {}, props = {} } = {}) {
 	return shallowMount(FormAuthMethod, {
-		localVue,
-		mocks: {
-			t: (app, msg) => msg,
+		global: {
+			mocks: {
+				t: (app, msg) => msg,
+			},
 		},
-		propsData: { ...defaultProps, ...props },
+		props: { ...defaultProps, ...props },
 		data() {
 			return data
 		},

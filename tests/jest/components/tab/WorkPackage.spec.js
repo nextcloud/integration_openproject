@@ -5,7 +5,7 @@
  */
 
 import { shallowMount } from '@vue/test-utils'
-import { describe, expect, it, beforeEach, vi } from 'vitest'
+import { describe, expect, it, beforeEach } from 'vitest'
 
 import WorkPackage from '../../../../src/components/tab/WorkPackage.vue'
 import workPackagesSearchResponse from '../../fixtures/workPackagesSearchResponse.json'
