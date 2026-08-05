@@ -6,6 +6,7 @@
  */
 
 import { mount } from '@vue/test-utils'
+import { nextTick } from 'vue'
 import { describe, expect, it, beforeEach, afterEach, vi } from 'vitest'
 import flushPromises from 'flush-promises'
 import util from 'util'
@@ -30,7 +31,7 @@ vi.mock(import('@nextcloud/dialogs'), () => ({
 	showSuccess: vi.fn(),
 }))
 vi.mock(import('@nextcloud/initial-state'), async (importOriginal) => {
-	const originalModule = await importOriginal
+	const originalModule = await importOriginal()
 	return {
 		__esModule: true,
 		...originalModule,
@@ -234,7 +235,7 @@ describe('CreateWorkPackageModal.vue', () => {
 
 				// Trigger blur event (user moves to another field)
 				await inputField.trigger('blur')
-				await wrapper.vm.$nextTick()
+				await nextTick()
 				expect(inputField.element.value).toBe('')
 			})
 
@@ -304,19 +305,19 @@ describe('CreateWorkPackageModal.vue', () => {
 			const inputField = wrapper.find(projectInputField)
 			await inputField.setValue('Scrum')
 			await wrapper.find(projectOptionsSelector).trigger('click')
-			await wrapper.vm.$nextTick()
-			await wrapper.vm.$nextTick()
+			await nextTick()
+			await nextTick()
 			expect(axiosSpy).toHaveBeenCalledWith(util.format(workPackageFormUrl, 2), formValidationBody)
 			expect(assigneeAxiosSpy).toHaveBeenCalledWith(util.format(availableAssigneesUrl, 2))
-			await wrapper.vm.$nextTick()
+			await nextTick()
 			await wrapper.find(typeInputFieldSelector).setValue(' ')
-			await wrapper.vm.$nextTick()
+			await nextTick()
 			toMatchSerializedSnapshot(wrapper.find(typeSelectSelector).html())
 			await wrapper.find(statusInputFieldSelector).setValue(' ')
-			await wrapper.vm.$nextTick()
+			await nextTick()
 			toMatchSerializedSnapshot(wrapper.find(statusSelectSelector).html())
 			await wrapper.find(assigneeInputFieldSelector).setValue(' ')
-			await wrapper.vm.$nextTick()
+			await nextTick()
 			toMatchSerializedSnapshot(wrapper.find(assigneesSelectSelector).html())
 			axiosSpy.mockRestore()
 			assigneeAxiosSpy.mockRestore()
@@ -448,7 +449,7 @@ describe('CreateWorkPackageModal.vue', () => {
 			})
 			await wrapper.find(typeInputFieldSelector).setValue('Milest')
 			await wrapper.find(typeOptionsSelector).trigger('click')
-			await wrapper.vm.$nextTick()
+			await nextTick()
 			expect(axiosSpy).toHaveBeenCalledWith(util.format(workPackageFormUrl, 2), formValidationBody)
 			// one thing to note is the statues in snapshot should not match the statuses defined in variable availableStatusBefore
 			await wrapper.find(statusInputFieldSelector).setValue(' ')
@@ -522,7 +523,7 @@ describe('CreateWorkPackageModal.vue', () => {
 				subject: expectedErrorDetails.subject,
 			})
 			await wrapper.find(createWorkpackageButtonSelector).trigger('click')
-			await wrapper.vm.$nextTick()
+			await nextTick()
 			expect(axiosSpy).toHaveBeenCalledWith(createWorkPackageUrl, createWorkpackageBody)
 			const error = wrapper.find(validationErrorSelector)
 			expect(error.isVisible()).toBe(true)
@@ -564,7 +565,7 @@ describe('CreateWorkPackageModal.vue', () => {
 				.mockImplementationOnce(() => sendOCSResponse("{\"_type\":\"Error\",\"errorIdentifier\":\"urn:openproject-org:api:v3:errors:MultipleErrors\",\"message\":\"Multiple field constraints have been violated.\",\"_embedded\":{\"errors\":[{\"_type\":\"Error\",\"errorIdentifier\":\"urn:openproject-org:api:v3:errors:PropertyConstraintViolation\",\"message\":\"Subject can't be blank.\",\"_embedded\":{\"details\":{\"attribute\":\"subject\"}}},{\"_type\":\"Error\",\"errorIdentifier\":\"urn:openproject-org:api:v3:errors:PropertyConstraintViolation\",\"message\":\"Project can't be blank.\",\"_embedded\":{\"details\":{\"attribute\":\"project\"}}}]}}", 422))
 			wrapper = mountWrapper()
 			await wrapper.find(createWorkpackageButtonSelector).trigger('click')
-			await wrapper.vm.$nextTick()
+			await nextTick()
 			expect(axiosSpy).toHaveBeenCalledWith(createWorkPackageUrl, createWorkpackageBody)
 			const projectError = wrapper.find(validationErrorProjectSelector)
 			expect(projectError.isVisible()).toBe(true)
@@ -672,7 +673,7 @@ describe('CreateWorkPackageModal.vue', () => {
 			wrapper.vm.validateWorkPackageForm(2, false, true)
 			expect(axiosSpyWorkPackageValidationForm).toHaveBeenCalledTimes(1)
 			expect(assigneeAxiosSpy).toHaveBeenCalledTimes(1)
-			await wrapper.vm.$nextTick()
+			await nextTick()
 			expect(wrapper.vm.description.raw).toBe('Default New task template')
 		})
 
@@ -705,7 +706,7 @@ describe('CreateWorkPackageModal.vue', () => {
 			wrapper.vm.validateWorkPackageForm(2, true, true)
 			expect(axiosSpyWorkPackageValidationForm).toHaveBeenCalledTimes(1)
 			expect(assigneeAxiosSpy).toHaveBeenCalledTimes(1)
-			await wrapper.vm.$nextTick()
+			await nextTick()
 			expect(wrapper.vm.type.label).toBe('')
 		})
 
@@ -745,7 +746,7 @@ describe('CreateWorkPackageModal.vue', () => {
 			wrapper.vm.validateWorkPackageForm(4, false, true)
 			expect(axiosSpyWorkPackageValidationForm).toHaveBeenCalledTimes(1)
 			expect(assigneeAxiosSpy).toHaveBeenCalledTimes(1)
-			await wrapper.vm.$nextTick()
+			await nextTick()
 			expect(wrapper.vm.status.label).toBe('')
 		})
 
@@ -848,7 +849,7 @@ describe('CreateWorkPackageModal.vue', () => {
 		})
 
 		await wrapper.find(createWorkpackageButtonSelector).trigger('click')
-		await wrapper.vm.$nextTick()
+		await nextTick()
 		expect(axiosSpy).toHaveBeenCalledWith(createWorkPackageUrl, createWorkPackageBody)
 		expect(wrapper.emitted('create-work-package')).toEqual([
 			[
@@ -922,7 +923,7 @@ describe('CreateWorkPackageModal.vue', () => {
 		})
 		await wrapper.find(typeInputFieldSelector).setValue('Required')
 		await wrapper.find(typeOptionsSelector).trigger('click')
-		await wrapper.vm.$nextTick()
+		await nextTick()
 		expect(axiosSpy).toHaveBeenCalledWith(util.format(workPackageFormUrl, 2), bodyFormValidation)
 		const typeError = wrapper.find(validationErrorTypeSelector)
 		expect(typeError.isVisible()).toBe(true)
@@ -979,8 +980,8 @@ describe('CreateWorkPackageModal.vue', () => {
 			openProjectUrl: 'https://openproject.example.com',
 		})
 		await wrapper.find(createWorkpackageButtonSelector).trigger('click')
-		await wrapper.vm.$nextTick()
-		await wrapper.vm.$nextTick()
+		await nextTick()
+		await nextTick()
 		const error = wrapper.find(validationErrorSelector)
 		expect(error.isVisible()).toBe(true)
 		expect(error.text()).toBe('Status is not set to one of the allowed values.')
@@ -1001,7 +1002,7 @@ describe('CreateWorkPackageModal.vue', () => {
 
 		const removeProjectButton = wrapper.find(projectClearButtonSelector)
 		await removeProjectButton.trigger('click')
-		await wrapper.vm.$nextTick()
+		await nextTick()
 
 		expect(wrapper.vm.project.label).toBeNull()
 	})

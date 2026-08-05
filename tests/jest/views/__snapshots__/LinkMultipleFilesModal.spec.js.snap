@@ -1,136 +1,123 @@
-// Jest Snapshot v1, https://goo.gl/fbAQLP
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
 
-exports[`LinkMultipleFilesModal.vue fetch workpackages multiple files selected sets the "error" state if the admin config is not okay 1`] = `
+exports[`LinkMultipleFilesModal.vue > fetch workpackages > multiple files selected > sets the "error" state if the admin config is not okay 1`] = `
 <div
   class="multiple-link-modal-container"
+  data-v-e8917462=""
 >
-  <ncmodal-stub
+  <nc-modal-stub
     additionaltrapelements=""
-    canclose="true"
-    closebuttoncontained="true"
-    closeonclickoutside="true"
+    can-close="true"
+    closebuttonoutside="false"
+    closeonclickoutside="false"
     container="body"
-    enableswipe="true"
+    dark="false"
+    data-v-e8917462=""
+    disableswipe="false"
+    enableslideshow="false"
+    hasnext="false"
+    hasprevious="false"
     inlineactions="0"
     labelid=""
+    lightbackdrop="false"
     name=""
+    noclose="false"
+    outtransition="false"
+    show="true"
     size="normal"
     slideshowdelay="5000"
+    slideshowpaused="false"
+    spreadnavigation="false"
   >
     <div
       class="multiple-link-modal-content"
+      data-v-e8917462=""
     >
       <div
         class="multiple-link-modal-inside-content"
+        data-v-e8917462=""
       >
-        <h2>
-          
-					Link to work package
-				
+        <h2
+          data-v-e8917462=""
+        >
+          Link to work package
         </h2>
-         
-        <!---->
-         
-        <emptycontent-stub
+        <!--v-if-->
+        <empty-content-stub
           authmethod="[object Object]"
+          dashboard="false"
+          data-v-e8917462=""
           errormessage=""
           fileinfo="[object Object]"
           id="openproject-empty-content"
+          isadminconfigok="false"
           ismultipleworkpackagelinking="true"
+          issmartpicker="false"
           state="error"
         />
       </div>
     </div>
-  </ncmodal-stub>
+  </nc-modal-stub>
 </div>
 `;
 
-exports[`LinkMultipleFilesModal.vue fetch workpackages single file selected sets the "error" state if the admin config is not okay 1`] = `
+exports[`LinkMultipleFilesModal.vue > fetch workpackages > single file selected > sets the "error" state if the admin config is not okay 1`] = `
 <div
   class="multiple-link-modal-container"
+  data-v-e8917462=""
 >
-  <ncmodal-stub
+  <nc-modal-stub
     additionaltrapelements=""
-    canclose="true"
-    closebuttoncontained="true"
-    closeonclickoutside="true"
+    can-close="true"
+    closebuttonoutside="false"
+    closeonclickoutside="false"
     container="body"
-    enableswipe="true"
+    dark="false"
+    data-v-e8917462=""
+    disableswipe="false"
+    enableslideshow="false"
+    hasnext="false"
+    hasprevious="false"
     inlineactions="0"
     labelid=""
+    lightbackdrop="false"
     name=""
+    noclose="false"
+    outtransition="false"
+    show="true"
     size="normal"
     slideshowdelay="5000"
+    slideshowpaused="false"
+    spreadnavigation="false"
   >
     <div
       class="multiple-link-modal-content"
+      data-v-e8917462=""
     >
       <div
         class="multiple-link-modal-inside-content"
+        data-v-e8917462=""
       >
-        <h2>
-          
-					Link to work package
-				
+        <h2
+          data-v-e8917462=""
+        >
+          Link to work package
         </h2>
-         
-        <!---->
-         
-        <emptycontent-stub
+        <!--v-if-->
+        <empty-content-stub
           authmethod="[object Object]"
+          dashboard="false"
+          data-v-e8917462=""
           errormessage=""
           fileinfo="[object Object]"
           id="openproject-empty-content"
+          isadminconfigok="false"
           ismultipleworkpackagelinking="true"
+          issmartpicker="false"
           state="error"
         />
       </div>
     </div>
-  </ncmodal-stub>
-</div>
-`;
-
-exports[`LinkMultipleFilesModal.vue fetch workpackages single file selected sets the "error" state if the admin config is not okay 2`] = `
-<div
-  class="multiple-link-modal-container"
->
-  <ncmodal-stub
-    additionaltrapelements=""
-    canclose="true"
-    closebuttoncontained="true"
-    closeonclickoutside="true"
-    container="body"
-    enableswipe="true"
-    inlineactions="0"
-    labelid=""
-    name=""
-    size="normal"
-    slideshowdelay="5000"
-  >
-    <div
-      class="multiple-link-modal-content"
-    >
-      <div
-        class="multiple-link-modal-inside-content"
-      >
-        <h2>
-          
-					Link to work package
-				
-        </h2>
-         
-        <!---->
-         
-        <emptycontent-stub
-          authmethod="[object Object]"
-          errormessage=""
-          fileinfo="[object Object]"
-          id="openproject-empty-content"
-          ismultipleworkpackagelinking="true"
-          state="error"
-        />
-      </div>
-    </div>
-  </ncmodal-stub>
+  </nc-modal-stub>
 </div>
 `;

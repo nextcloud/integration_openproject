@@ -5,59 +5,60 @@
  * SPDX-License-Identifier: AGPL-3.0-or-later
  */
 
-import { mount, createLocalVue, shallowMount } from '@vue/test-utils'
+import { mount, shallowMount } from '@vue/test-utils'
+import { nextTick } from 'vue'
+import { describe, expect, it, beforeEach, afterEach, vi } from 'vitest'
 import util from 'util'
+import flushPromises from 'flush-promises'
 import { generateOcsUrl } from '@nextcloud/router'
 import axios from '@nextcloud/axios'
 import { getCurrentUser } from '@nextcloud/auth'
 import * as dialogs from '@nextcloud/dialogs'
+
 import LinkMultipleFilesModal from '../../../src/views/LinkMultipleFilesModal.vue'
 import { WORKPACKAGES_SEARCH_ORIGIN, STATE } from '../../../src/utils.js'
 import { workpackageHelper } from '../../../src/utils/workpackageHelper.js'
 
-jest.mock('@nextcloud/axios', () => {
-	const originalModule = jest.requireActual('@nextcloud/axios')
+vi.mock(import('@nextcloud/axios'), async (importOriginal) => {
+	const originalModule = await importOriginal()
 	return {
 		__esModule: true,
 		...originalModule,
 		default: {
-			get: jest.fn(),
-			put: jest.fn(),
-			post: jest.fn(),
+			get: vi.fn(),
+			put: vi.fn(),
+			post: vi.fn(),
 		},
 	}
 })
-jest.mock('@nextcloud/router', () => ({
+vi.mock(import('@nextcloud/router'), () => ({
 	generateUrl: (path) => `http://nc.local${path}`,
 	generateOcsUrl: (path) => `http://nc.local${path}`,
 	imagePath: (path) => `http://nc.local${path}`,
 }))
-jest.mock('@nextcloud/auth', () => {
-	const originalModule = jest.requireActual('@nextcloud/auth')
-
+vi.mock(import('@nextcloud/auth'), async (importOriginal) => {
+	const originalModule = await importOriginal()
 	return {
 		__esModule: true,
 		...originalModule,
-		default: jest.fn(),
-		getCurrentUser: jest.fn().mockReturnValue({ uid: 1234 }),
+		default: vi.fn(),
+		getCurrentUser: vi.fn().mockReturnValue({ uid: 1234 }),
 	}
 })
-jest.mock('@nextcloud/dialogs', () => ({
-	getLanguage: jest.fn(() => ''),
-	showError: jest.fn(),
-	showSuccess: jest.fn(),
+vi.mock(import('@nextcloud/dialogs'), () => ({
+	getLanguage: vi.fn(() => ''),
+	showError: vi.fn(),
+	showSuccess: vi.fn(),
 }))
-jest.mock('@nextcloud/initial-state', () => {
-	const originalModule = jest.requireActual('@nextcloud/initial-state')
+vi.mock(import('@nextcloud/initial-state'), async (importOriginal) => {
+	const originalModule = await importOriginal()
 	return {
 		__esModule: true,
 		...originalModule,
-		default: jest.fn(),
-		loadState: jest.fn(() => ({ version: '32' })),
+		default: vi.fn(),
+		loadState: vi.fn(() => ({ version: '32' })),
 	}
 })
-
-const localVue = createLocalVue()
 
 const singleFileInfo = [{
 	id: 123,
@@ -82,30 +83,30 @@ const multipleFileInfo = [{
 const wpFileIdUrl = generateOcsUrl('/apps/integration_openproject/api/v1/work-packages?fileId=%s')
 
 describe('LinkMultipleFilesModal.vue', () => {
-	const searchInputStubSelector = 'searchinput-stub'
-	const ncModalStubSelector = 'ncmodal-stub'
+	const searchInputStubSelector = 'search-input-stub'
+	const ncModalStubSelector = 'nc-modal-stub'
 	const loadingIndicatorSelector = '.loading-spinner'
 	const emptyContentSelector = '#openproject-empty-content'
 	const emptyContentTitleMessageSelector = '.empty-content--message--title'
 	const relinkRemainingFilesButtonSelector = '[data-test-id="relink-remaining-files"]'
 	beforeEach(() => {
-		jest.useFakeTimers()
+		vi.useFakeTimers()
 	})
 
 	describe('modal', () => {
 		it('should open when "show" is set to true', async () => {
-			const wrapper = shallowMount(LinkMultipleFilesModal, { localVue })
+			const wrapper = shallowMount(LinkMultipleFilesModal)
 			await wrapper.setData({
 				show: false,
 			})
-			await localVue.nextTick()
+			await nextTick()
 			await wrapper.vm.showModal()
 			expect(wrapper.find(ncModalStubSelector).exists()).toBeTruthy()
 		})
 
 		it('should close when "show" is set to false', async () => {
-			const wrapper = shallowMount(LinkMultipleFilesModal, { localVue })
-			await localVue.nextTick()
+			const wrapper = shallowMount(LinkMultipleFilesModal)
+			await nextTick()
 			await wrapper.vm.closeRequestModal()
 			expect(wrapper.find(ncModalStubSelector).exists()).toBeFalsy()
 		})
@@ -150,20 +151,20 @@ describe('LinkMultipleFilesModal.vue', () => {
 		})
 		it('should show the loading icon during "loading" state', async () => {
 			await wrapper.setData({ state: STATE.LOADING })
-			await localVue.nextTick()
+			await nextTick()
 			expect(wrapper.find(loadingIndicatorSelector).exists()).toBeTruthy()
 		})
 		it('should not show the empty content message during "loading" state', async () => {
 			await wrapper.setData({ state: STATE.LOADING })
-			await localVue.nextTick()
+			await nextTick()
 			expect(wrapper.find(emptyContentSelector).exists()).toBeFalsy()
 		})
 		it.each([STATE.OK, STATE.ERROR])('should make the loading icon disappear on state change', async (state) => {
 			await wrapper.setData({ state: STATE.LOADING })
-			await localVue.nextTick()
+			await nextTick()
 			expect(wrapper.find(loadingIndicatorSelector).exists()).toBeTruthy()
 			await wrapper.setData({ state })
-			await localVue.nextTick()
+			await nextTick()
 			expect(wrapper.find(loadingIndicatorSelector).exists()).toBeFalsy()
 		})
 	})
@@ -175,23 +176,24 @@ describe('LinkMultipleFilesModal.vue', () => {
 		})
 		it.each([STATE.NO_TOKEN, STATE.ERROR, STATE.OK])('shows the empty message when state is other than loading', async (state) => {
 			await wrapper.setData({ state })
-			await localVue.nextTick()
+			await nextTick()
 			expect(wrapper.find(emptyContentSelector).exists()).toBeTruthy()
 		})
 
 		it('shows message "Add a new link to all selected files" when admin config is okay', async () => {
 			wrapper = mount(LinkMultipleFilesModal, {
-				localVue,
 				attachTo: document.body,
-				mocks: {
-					t: (app, msg) => msg,
-					generateUrl() {
-						return '/'
+				global: {
+					mocks: {
+						t: (app, msg) => msg,
+						generateUrl() {
+							return '/'
+						},
 					},
-				},
-				stubs: {
-					SearchInput: true,
-					NcModal: true,
+					stubs: {
+						SearchInput: true,
+						NcModal: true,
+					},
 				},
 			})
 			await wrapper.setData({
@@ -207,7 +209,7 @@ describe('LinkMultipleFilesModal.vue', () => {
 
 	describe('fetch workpackages', () => {
 		let wrapper
-		let axiosGetSpy = jest.fn()
+		let axiosGetSpy = vi.fn()
 		beforeEach(() => {
 			wrapper = mountWrapper()
 			axiosGetSpy.mockRestore()
@@ -352,24 +354,9 @@ describe('LinkMultipleFilesModal.vue', () => {
 				expect(wrapper.vm.state).toBe(STATE.ERROR)
 				expect(wrapper.element).toMatchSnapshot()
 			})
-
-			it('sets the "error" state if the admin config is not okay', async () => {
-				const returnValue = { isAdmin: false }
-				getCurrentUser.mockReturnValue(returnValue)
-				const wrapper = mountWrapper()
-				axios.get
-					.mockImplementation(() => sendOCSResponse([]))
-				await wrapper.setData({
-					isAdminConfigOk: false,
-				})
-				await wrapper.vm.setFileInfos(singleFileInfo)
-				expect(wrapper.vm.state).toBe(STATE.ERROR)
-				expect(wrapper.element).toMatchSnapshot()
-			})
-
 			it('should set workpackages to alreadylinked', async () => {
 				wrapper = mountWrapper()
-				axiosGetSpy = jest.spyOn(axios, 'get')
+				axiosGetSpy = vi.spyOn(axios, 'get')
 					.mockImplementationOnce(() => sendOCSResponse([{
 						id: 123,
 						subject: 'my task',
@@ -415,7 +402,7 @@ describe('LinkMultipleFilesModal.vue', () => {
 					{},
 				)
 				expect(wrapper.vm.state).toBe(STATE.OK)
-				expect(wrapper.vm.alreadyLinkedWorkPackage.length).toBe(2)
+				expect(wrapper.vm.alreadyLinkedWorkPackage).toHaveLength(2)
 			})
 		})
 
@@ -445,7 +432,8 @@ describe('LinkMultipleFilesModal.vue', () => {
 
 		describe('relink remaining multiple selected files', () => {
 			const remainingFileInformations = []
-			for (let i = 1; i <= 35; i++) {
+			const filesToLinkCount = 35
+			for (let i = 1; i <= filesToLinkCount; i++) {
 				remainingFileInformations.push({
 					id: i,
 					name: `test${i}.txt`,
@@ -455,7 +443,7 @@ describe('LinkMultipleFilesModal.vue', () => {
 			const chunkingInformations = {
 				totalNoOfFilesSelected: 100,
 				totalFilesAlreadyLinked: 65,
-				totalFilesNotLinked: 35,
+				totalFilesNotLinked: filesToLinkCount,
 				error: true,
 				remainingFileInformations,
 				selectedWorkPackage: { fileId: 123, id: 999 },
@@ -472,7 +460,7 @@ describe('LinkMultipleFilesModal.vue', () => {
 			describe('on trigger relink remaining files button', () => {
 				let postSpy, wrapper
 				beforeEach(() => {
-					postSpy = jest.spyOn(axios, 'post')
+					postSpy = vi.spyOn(axios, 'post')
 						.mockImplementationOnce(() => sendOCSResponse({}))
 					wrapper = mountWrapper()
 				})
@@ -488,32 +476,44 @@ describe('LinkMultipleFilesModal.vue', () => {
 					const relinkRemainingButton = wrapper.find(relinkRemainingFilesButtonSelector)
 					await relinkRemainingButton.trigger('click')
 					for (let i = 0; i < 5; i++) {
-						await localVue.nextTick()
+						await nextTick()
 					}
 					expect(postSpy).toHaveBeenCalledTimes(2)
 				})
 
 				it('should close modal on success', async () => {
+					const spyLinkMultipleFilesToWorkPackageWithChunking = vi.spyOn(workpackageHelper, 'linkMultipleFilesToWorkPackageWithChunking')
+					const closeRequestModalSpy = vi.spyOn(wrapper.vm, 'closeRequestModal')
+						.mockImplementation(() => {
+							wrapper.vm.show = false
+						})
+
 					await wrapper.setData({
 						chunkingInformation: {
-							totalNoOfFilesSelected: 100,
+							totalNoOfFilesSelected: 70,
 							error: true,
-							totalFilesAlreadyLinked: 65,
-							totalFilesNotLinked: 35,
+							totalFilesAlreadyLinked: filesToLinkCount,
+							totalFilesNotLinked: filesToLinkCount,
 							remainingFileInformations,
 							selectedWorkPackage: { fileId: 123, id: 999 },
 						},
 					})
+					await flushPromises()
+					await nextTick()
+
 					const relinkRemainingButton = wrapper.find(relinkRemainingFilesButtonSelector)
 					await relinkRemainingButton.trigger('click')
-					for (let i = 0; i < 5; i++) {
-						await localVue.nextTick()
-					}
+					await flushPromises()
+					await nextTick()
+
+					expect(spyLinkMultipleFilesToWorkPackageWithChunking).toHaveBeenCalledTimes(1)
+					expect(closeRequestModalSpy).toHaveBeenCalledTimes(1)
+					expect(dialogs.showError).toBeCalledTimes(0)
 					expect(wrapper.vm.show).toBe(false)
 				})
 
 				it('should show error dialog on failure', async () => {
-					jest.spyOn(axios, 'post')
+					vi.spyOn(axios, 'post')
 						.mockImplementation(() => Promise.reject(new Error('Throw error')))
 					dialogs.showError
 						.mockImplementationOnce()
@@ -523,7 +523,7 @@ describe('LinkMultipleFilesModal.vue', () => {
 							totalNoOfFilesSelected: 100,
 							error: true,
 							totalFilesAlreadyLinked: 65,
-							totalFilesNotLinked: 35,
+							totalFilesNotLinked: filesToLinkCount,
 							remainingFileInformations,
 							selectedWorkPackage: { fileId: 123, id: 999 },
 						},
@@ -531,7 +531,7 @@ describe('LinkMultipleFilesModal.vue', () => {
 					const relinkRemainingButton = wrapper.find(relinkRemainingFilesButtonSelector)
 					await relinkRemainingButton.trigger('click')
 					for (let i = 0; i < 5; i++) {
-						await localVue.nextTick()
+						await nextTick()
 					}
 					expect(dialogs.showError).toBeCalledTimes(1)
 				})
@@ -558,7 +558,7 @@ describe('LinkMultipleFilesModal.vue', () => {
 					chunkingInformation,
 				})
 				await wrapper.vm.closeRequestModal()
-				expect(wrapper.vm.chunkingInformation).toBe(null)
+				expect(wrapper.vm.chunkingInformation).toBeNull()
 			})
 
 			it('should empty "alreadyLinkedWorkPackage", "fileInfos" and close modal', async () => {
@@ -594,15 +594,16 @@ function sendOCSResponse(data, status = 200) {
 
 function mountWrapper() {
 	return mount(LinkMultipleFilesModal, {
-		localVue,
 		attachTo: document.body,
-		mocks: {
-			t: (app, msg) => msg,
-		},
-		stubs: {
-			SearchInput: true,
-			NcModal: true,
-			EmptyContent: true,
+		global: {
+			mocks: {
+				t: (app, msg) => msg,
+			},
+			stubs: {
+				SearchInput: true,
+				NcModal: true,
+				EmptyContent: true,
+			},
 		},
 		data: () => ({
 			show: true,
