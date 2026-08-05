@@ -289,7 +289,7 @@ export default {
 				try {
 					if (this.isStateLoading) {
 						if (this.isSmartPicker) {
-						   workPackage = await workpackageHelper.getAdditionalMetaData(workPackage)
+							workPackage = await workpackageHelper.getAdditionalMetaData(workPackage)
 							this.searchResults.push(workPackage)
 						} else {
 							workPackage.fileId = fileId
