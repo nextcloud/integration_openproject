@@ -1,17 +1,33 @@
-// Jest Snapshot v1, https://goo.gl/fbAQLP
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
 
-exports[`OAuthConnectButton.vue when the admin config is not okay should show message for admin user 1`] = `
+exports[`OAuthConnectButton.vue > when the admin config is not okay > should show message for admin user 1`] = `
 <div
-  class="oauth-connect--message"
+  data-v-app=""
 >
-  Some OpenProject Integration application settings are not working. Configure the OpenProject Integration in: {htmlLink}
+  
+  <div
+    class="oauth-connect--message"
+    data-v-82450aba=""
+  >
+    Some OpenProject Integration application settings are not working. Configure the OpenProject Integration in: {htmlLink}
+  </div>
+  <!-- eslint-disable-line vue/no-v-html -->
+  
 </div>
 `;
 
-exports[`OAuthConnectButton.vue when the admin config is not okay should show message for normal user 1`] = `
+exports[`OAuthConnectButton.vue > when the admin config is not okay > should show message for normal user 1`] = `
 <div
-  class="oauth-connect--message"
+  data-v-app=""
 >
-  Some OpenProject Integration application settings are not working. Please contact your Nextcloud administrator.
+  
+  <div
+    class="oauth-connect--message"
+    data-v-82450aba=""
+  >
+    Some OpenProject Integration application settings are not working. Please contact your Nextcloud administrator.
+  </div>
+  <!-- eslint-disable-line vue/no-v-html -->
+  
 </div>
 `;

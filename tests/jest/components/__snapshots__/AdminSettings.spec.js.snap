@@ -1,69 +1,78 @@
-// Jest Snapshot v1, https://goo.gl/fbAQLP
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
 
-exports[`AdminSettings.vue default user configurations form should be visible when the integration is complete 1`] = `
+exports[`AdminSettings.vue > default user configurations form > should be visible when the integration is complete 1`] = `
 <div
   class="default-prefs"
+  data-v-e8c7e823=""
 >
-  <h2>
+  <h2
+    data-v-e8c7e823=""
+  >
     Default user settings
   </h2>
-   
-  <p>
-    
-			A new user will receive these defaults and they will be applied to the integration app till the user changes them.
-		
+  <p
+    data-v-e8c7e823=""
+  >
+    A new user will receive these defaults and they will be applied to the integration app till the user changes them.
   </p>
-   
-  <br />
-   
+  <br
+    data-v-e8c7e823=""
+  />
   <div
     class="form-check-input"
+    data-v-c5be97c2=""
+    data-v-e8c7e823=""
   >
     <input
       class="checkbox"
+      data-v-c5be97c2=""
       id="default-prefs--link"
       type="checkbox"
       value="false"
     />
-     
     <label
+      data-v-c5be97c2=""
       for="default-prefs--link"
     >
-      
-		Enable navigation link
-	
+      Enable navigation link
     </label>
-     
+    
     <p
       class="user-setting-description"
+      data-v-e8c7e823=""
     >
       Displays a link to your OpenProject instance in the Nextcloud header.
     </p>
+    <!-- eslint-disable-line vue/no-v-html -->
+    
   </div>
-   
   <div
     class="form-check-input"
+    data-v-c5be97c2=""
+    data-v-e8c7e823=""
   >
     <input
       class="checkbox"
+      data-v-c5be97c2=""
       id="default-prefs--u-search"
       type="checkbox"
       value="false"
     />
-     
     <label
+      data-v-c5be97c2=""
       for="default-prefs--u-search"
     >
-      
-		Enable unified search for tickets
-	
+      Enable unified search for tickets
     </label>
-     
+    
     <p
       class="user-setting-description"
+      data-v-e8c7e823=""
     >
       Allows you to search OpenProject work packages via the universal search bar in Nextcloud.
     </p>
+    <!-- eslint-disable-line vue/no-v-html -->
+    
   </div>
 </div>
 `;

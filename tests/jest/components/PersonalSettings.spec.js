@@ -6,21 +6,23 @@
  * SPDX-License-Identifier: AGPL-3.0-or-later
  */
 
-import { shallowMount, createLocalVue, mount } from '@vue/test-utils'
-import PersonalSettings from '../../../src/components/PersonalSettings.vue'
+import { shallowMount, mount } from '@vue/test-utils'
+import { describe, expect, it, beforeEach, afterEach, vi } from 'vitest'
+import flushPromises from 'flush-promises'
 import * as dialogs from '@nextcloud/dialogs'
 import axios from '@nextcloud/axios'
+import { generateUrl } from '@nextcloud/router'
+
+import PersonalSettings from '../../../src/components/PersonalSettings.vue'
 import { AUTH_METHOD } from '../../../src/utils.js'
 
-const localVue = createLocalVue()
-
-jest.mock('@nextcloud/initial-state', () => {
-	const originalModule = jest.requireActual('@nextcloud/initial-state')
+vi.mock(import('@nextcloud/initial-state'), async (importOriginal) => {
+	const originalModule = await importOriginal()
 	return {
 		__esModule: true,
 		...originalModule,
-		default: jest.fn(),
-		loadState: jest.fn(() => {
+		default: vi.fn(),
+		loadState: vi.fn(() => {
 			return {
 				openproject_instance_url: null,
 				oauth_client_id: null,
@@ -30,15 +32,19 @@ jest.mock('@nextcloud/initial-state', () => {
 		}),
 	}
 })
-
-jest.mock('@nextcloud/dialogs', () => ({
-	getLanguage: jest.fn(() => ''),
-	showError: jest.fn(),
-	showSuccess: jest.fn(),
+vi.mock(import('@nextcloud/router'), () => ({
+	generateUrl: (path) => `http://localhost${path}`,
+	generateOcsUrl: (path) => `http://localhost${path}`,
+	imagePath: (path) => `http://localhost${path}`,
+}))
+vi.mock(import('@nextcloud/dialogs'), () => ({
+	getLanguage: vi.fn(() => ''),
+	showError: vi.fn(),
+	showSuccess: vi.fn(),
 }))
 
 describe('PersonalSettings.vue', () => {
-	const oAuthButtonSelector = 'oauthconnectbutton-stub'
+	const oAuthButtonSelector = 'o-auth-connect-button-stub'
 	const oAuthDisconnectButtonSelector = '.openproject-prefs--disconnect'
 	const connectedInfoSelector = '.openproject-prefs--connected'
 	const connectedAsLabelSelector = `${connectedInfoSelector} label`
@@ -46,16 +52,14 @@ describe('PersonalSettings.vue', () => {
 	const personalEnableNavigationSelector = '#openproject-prefs--link'
 	const personalEnableSearchSelector = '#openproject-prefs--u-search'
 	const userGuideIntegrationDocumentationLinkSelector = '.settings--documentation-info'
-	const errorLabelSelector = 'errorlabel-stub'
+	const errorLabelSelector = 'error-label-stub'
 	let wrapper
 
 	beforeEach(() => {
 		wrapper = shallowMount(PersonalSettings, {
-			localVue,
-			mocks: {
-				t: (app, msg) => msg,
-				generateUrl() {
-					return '/'
+			global: {
+				mocks: {
+					t: (app, msg) => msg,
 				},
 			},
 		})
@@ -99,6 +103,7 @@ describe('PersonalSettings.vue', () => {
 					})
 				})
 				it('oAuth connect button is displayed', () => {
+					console.log(wrapper.html())
 					expect(wrapper.find(oAuthButtonSelector).exists()).toBeTruthy()
 					expect(wrapper.find(errorLabelSelector).exists()).toBeFalsy()
 				})
@@ -140,7 +145,7 @@ describe('PersonalSettings.vue', () => {
 			})
 			it('should set proper props to the oauth connect component', () => {
 				expect(wrapper.find(oAuthButtonSelector).exists()).toBeTruthy()
-				expect(wrapper.find(oAuthButtonSelector).props()).toMatchObject({
+				expect(wrapper.findComponent(oAuthButtonSelector).props()).toMatchObject({
 					isAdminConfigOk: false,
 				})
 				expect(wrapper.find(errorLabelSelector).exists()).toBeFalsy()
@@ -302,7 +307,7 @@ describe('PersonalSettings.vue', () => {
 		let saveDefaultsSpy, showSuccessSpy
 		beforeEach(() => {
 			showSuccessSpy = dialogs.showSuccess.mockImplementationOnce()
-			saveDefaultsSpy = jest.spyOn(axios, 'put').mockImplementationOnce(() => Promise.resolve({ data: [] }))
+			saveDefaultsSpy = vi.spyOn(axios, 'put').mockImplementationOnce(() => Promise.resolve({ data: [] }))
 		})
 
 		afterEach(() => {
@@ -416,12 +421,10 @@ describe('PersonalSettings.vue', () => {
 
 function getMountedWrapper(data = {}) {
 	return mount(PersonalSettings, {
-		localVue,
 		attachTo: document.body,
-		mocks: {
-			t: (app, msg) => msg,
-			generateUrl() {
-				return '/'
+		global: {
+			mocks: {
+				t: (app, msg) => msg,
 			},
 		},
 		data() {

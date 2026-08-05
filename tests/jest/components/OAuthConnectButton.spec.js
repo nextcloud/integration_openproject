@@ -6,43 +6,50 @@
  * SPDX-License-Identifier: AGPL-3.0-or-later
  */
 
-import { mount, createLocalVue } from '@vue/test-utils'
-
+import { mount } from '@vue/test-utils'
+import { describe, expect, it, beforeEach, afterEach, vi } from 'vitest'
+import { nextTick } from 'vue'
+import flushPromises from 'flush-promises'
 import axios from '@nextcloud/axios'
 import * as dialogs from '@nextcloud/dialogs'
 import { getCurrentUser } from '@nextcloud/auth'
+import { generateUrl } from '@nextcloud/router'
+
 import OAuthConnectButton from '../../../src/components/OAuthConnectButton.vue'
 
 // mocks
-jest.mock('@nextcloud/axios', () => {
-	const originalModule = jest.requireActual('@nextcloud/axios')
+vi.mock(import('@nextcloud/axios'), async (importOriginal) => {
+	const originalModule = await importOriginal()
 	return {
 		__esModule: true,
 		...originalModule,
 		default: {
-			get: jest.fn(),
-			put: jest.fn(),
+			get: vi.fn(),
+			put: vi.fn(),
 		},
 	}
 })
-jest.mock('@nextcloud/auth', () => {
-	const originalModule = jest.requireActual('@nextcloud/auth')
-
+vi.mock(import('@nextcloud/auth'), async (importOriginal) => {
+	const originalModule = await importOriginal()
 	return {
 		__esModule: true,
 		...originalModule,
-		default: jest.fn(),
-		getCurrentUser: jest.fn().mockReturnValue({ uid: 1234 }),
+		default: vi.fn(),
+		getCurrentUser: vi.fn().mockReturnValue({ uid: 1234 }),
 	}
 })
-jest.mock('@nextcloud/dialogs', () => ({
-	getLanguage: jest.fn(() => ''),
-	showError: jest.fn(),
-	showSuccess: jest.fn(),
+vi.mock(import('@nextcloud/dialogs'), () => ({
+	getLanguage: vi.fn(() => ''),
+	showError: vi.fn(),
+	showSuccess: vi.fn(),
+}))
+vi.mock(import('@nextcloud/router'), () => ({
+	generateUrl: (path) => `http://localhost${path}`,
+	generateOcsUrl: (path) => `http://localhost${path}`,
+	imagePath: (path) => `http://localhost${path}`,
 }))
 
 const realLocation = global.window.location
-const localVue = createLocalVue()
 
 describe('OAuthConnectButton.vue', () => {
 	let wrapper
@@ -51,7 +58,7 @@ describe('OAuthConnectButton.vue', () => {
 			writable: true,
 			value: realLocation,
 		})
-		jest.clearAllMocks()
+		vi.clearAllMocks()
 	})
 	describe('when the admin config is not okay', () => {
 		it('should show message for normal user', async () => {
@@ -71,21 +78,17 @@ describe('OAuthConnectButton.vue', () => {
 	describe('when the admin config is ok', () => {
 		beforeEach(() => {
 			delete global.window.location
-			global.window.location = { replace: jest.fn(), pathname: '/index.php/apps/files/' }
+			global.window.location = { replace: vi.fn(), pathname: '/index.php/apps/files/' }
 			wrapper = getWrapper()
 		})
 		describe('on successful retrieving of the OP OAuth URI', () => {
 			beforeEach(() => {
-				axios.get.mockImplementationOnce(() =>
-					Promise.resolve({ data: 'http://openproject/oauth' }),
-				)
-				axios.put.mockImplementationOnce(() =>
-					Promise.resolve({}),
-				)
+				axios.get.mockImplementationOnce(() => Promise.resolve({ data: 'http://openproject/oauth' }))
+				axios.put.mockImplementationOnce(() => Promise.resolve({}))
 			})
 			it('saves the state to user config', async () => {
 				wrapper.find('button').trigger('click')
-				await localVue.nextTick()
+				await nextTick()
 				expect(axios.put).toHaveBeenCalledWith(
 					'http://localhost/apps/integration_openproject/config',
 					{
@@ -97,7 +100,8 @@ describe('OAuthConnectButton.vue', () => {
 			})
 			it('redirects to the openproject oauth uri', async () => {
 				wrapper.find('button').trigger('click')
-				await localVue.nextTick()
+				await flushPromises()
+				await nextTick()
 				expect(window.location.replace).toHaveBeenCalledWith(
 					'http://openproject/oauth',
 				)
@@ -112,7 +116,8 @@ describe('OAuthConnectButton.vue', () => {
 			it('shows an error', async () => {
 				dialogs.showError.mockImplementationOnce()
 				wrapper.find('button').trigger('click')
-				await localVue.nextTick()
+				await flushPromises()
+				await nextTick()
 				expect(dialogs.showError).toHaveBeenCalledWith(
 					'Failed to redirect to OpenProject: some issue',
 				)
@@ -124,14 +129,12 @@ describe('OAuthConnectButton.vue', () => {
 
 function getWrapper(props = {}) {
 	return mount(OAuthConnectButton, {
-		localVue,
-		mocks: {
-			t: (app, msg) => msg,
-			generateUrl() {
-				return '/'
+		global: {
+			mocks: {
+				t: (app, msg) => msg,
 			},
 		},
-		propsData: {
+		props: {
 			isAdminConfigOk: true,
 			...props,
 		},

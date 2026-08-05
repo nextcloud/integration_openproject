@@ -8,35 +8,42 @@
 
 import axios from '@nextcloud/axios'
 import * as dialogs from '@nextcloud/dialogs'
-import { createLocalVue, shallowMount, mount } from '@vue/test-utils'
-import AdminSettings from '../../../src/components/AdminSettings.vue'
-import { AUTH_METHOD } from '../../../src/utils.js'
+import { shallowMount, mount } from '@vue/test-utils'
+import { describe, expect, it, beforeEach, afterEach, vi } from 'vitest'
+import { nextTick } from 'vue'
 
-jest.mock('@nextcloud/axios', () => {
-	const originalModule = jest.requireActual('@nextcloud/axios')
+import AdminSettings from '../../../src/components/AdminSettings.vue'
+import { AUTH_METHOD, ADMIN_SETTINGS_FORM } from '../../../src/utils.js'
+
+vi.mock(import('@nextcloud/axios'), async (importOriginal) => {
+	const originalModule = await importOriginal()
 	return {
 		__esModule: true,
 		...originalModule,
 		default: {
-			get: jest.fn(),
-			put: jest.fn(),
-			post: jest.fn(),
+			get: vi.fn(),
+			put: vi.fn(),
+			post: vi.fn(),
 		},
 	}
 })
-jest.mock('@nextcloud/dialogs', () => ({
-	getLanguage: jest.fn(() => ''),
-	showError: jest.fn(),
-	showSuccess: jest.fn(),
+vi.mock(import('@nextcloud/dialogs'), () => ({
+	getLanguage: vi.fn(() => ''),
+	showError: vi.fn(),
+	showSuccess: vi.fn(),
 }))
-
-jest.mock('@nextcloud/initial-state', () => {
-	const originalModule = jest.requireActual('@nextcloud/initial-state')
+vi.mock(import('@nextcloud/router'), () => ({
+	generateUrl: (path) => `http://localhost${path}`,
+	generateOcsUrl: (path) => `http://localhost${path}`,
+	imagePath: (path) => `http://localhost${path}`,
+}))
+vi.mock(import('@nextcloud/initial-state'), async (importOriginal) => {
+	const originalModule = await importOriginal()
 	return {
 		__esModule: true,
 		...originalModule,
-		default: jest.fn(),
-		loadState: jest.fn(() => {
+		default: vi.fn(),
+		loadState: vi.fn(() => {
 			return {
 				openproject_instance_url: null,
 				oauth_client_id: null,
@@ -47,18 +54,7 @@ jest.mock('@nextcloud/initial-state', () => {
 	}
 })
 
-const localVue = createLocalVue()
-
-global.OC = {
-	dialogs: {
-		confirmDestructive: jest.fn(),
-		YES_NO_BUTTONS: 70,
-	},
-}
-
-global.t = (app, text) => text
-
-const writeText = jest.fn()
+const writeText = vi.fn()
 
 Object.assign(global.navigator, {
 	clipboard: {
@@ -116,23 +112,20 @@ const appState = {
 	},
 }
 
+const commonState = {
+	form: structuredClone(ADMIN_SETTINGS_FORM),
+}
+commonState.form.serverHost.complete = true
+commonState.form.authenticationMethod.value = AUTH_METHOD.OAUTH2
+commonState.form.authenticationMethod.complete = true
+commonState.form.openprojectOauth.complete = true
+commonState.form.nextcloudOauth.complete = true
+commonState.form.projectFolder.complete = true
+
 describe('AdminSettings.vue', () => {
 	afterEach(() => {
-		jest.restoreAllMocks()
+		vi.restoreAllMocks()
 	})
-
-	const commonState = {
-		form: {
-			serverHost: { complete: true },
-			authenticationMethod: {
-				value: AUTH_METHOD.OAUTH2,
-				complete: true,
-			},
-			openprojectOauth: { complete: true },
-			nextcloudOauth: { complete: true },
-			projectFolder: { complete: true },
-		},
-	}
 
 	describe('reset button', () => {
 		it.each([
@@ -190,7 +183,7 @@ describe('AdminSettings.vue', () => {
 				state: value,
 			})
 			const resetButton = wrapper.find(selectors.resetAllAppSettingsButton)
-			expect(resetButton.attributes('disabled')).toBe(undefined)
+			expect(resetButton.attributes('disabled')).toBe('false')
 		})
 		it('should be disabled when no Open Project setting is set', async () => {
 			const wrapper = getWrapper({
@@ -212,7 +205,7 @@ describe('AdminSettings.vue', () => {
 
 			const { location } = window
 			delete window.location
-			window.location = { reload: jest.fn() }
+			window.location = { reload: vi.fn() }
 			beforeEach(() => {
 				wrapper = getMountedWrapper({
 					state: {
@@ -235,11 +228,11 @@ describe('AdminSettings.vue', () => {
 						},
 					},
 				})
-				confirmSpy = jest.spyOn(global.OC.dialogs, 'confirmDestructive')
+				confirmSpy = vi.spyOn(global.OC.dialogs, 'confirmDestructive')
 			})
 
 			afterEach(() => {
-				jest.clearAllMocks()
+				vi.clearAllMocks()
 			})
 
 			it('should trigger confirm dialog on click', async () => {
@@ -265,7 +258,7 @@ describe('AdminSettings.vue', () => {
 				)
 			})
 			it('should reset all settings on confirm when project folder is not setup', async () => {
-				const saveOPOptionsSpy = jest.spyOn(axios, 'put')
+				const saveOPOptionsSpy = vi.spyOn(axios, 'put')
 					.mockImplementationOnce(() => Promise.resolve({ data: true }))
 				await wrapper.vm.confirmResetIntegrationSetup()
 
@@ -292,7 +285,7 @@ describe('AdminSettings.vue', () => {
 			})
 			it('should reload the window at the end', async () => {
 				await wrapper.vm.confirmResetIntegrationSetup()
-				await wrapper.vm.$nextTick()
+				await nextTick()
 				expect(window.location.reload).toBeCalledTimes(1)
 				window.location = location
 			})
@@ -330,7 +323,7 @@ describe('AdminSettings.vue', () => {
 		})
 		it('should show success message and update the default config on success', async () => {
 			dialogs.showSuccess.mockImplementationOnce()
-			const saveDefaultsSpy = jest.spyOn(axios, 'put')
+			const saveDefaultsSpy = vi.spyOn(axios, 'put')
 				.mockImplementationOnce(() => Promise.resolve({ data: true }))
 
 			const wrapper = getMountedWrapper({
@@ -408,7 +401,7 @@ describe('AdminSettings.vue', () => {
 			})
 			const $defaultEnableNavigation = wrapper.find(selectors.defaultEnableNavigation)
 			await $defaultEnableNavigation.trigger('click')
-			await localVue.nextTick()
+			await nextTick()
 
 			expect(dialogs.showError).toBeCalledTimes(1)
 			expect(dialogs.showError).toBeCalledWith('Failed to save default user configuration: Some message')
@@ -417,7 +410,7 @@ describe('AdminSettings.vue', () => {
 	})
 
 	describe('terms of service', () => {
-		const termsOfServiceComponentStub = 'termsofserviceunsigned-stub'
+		const termsOfServiceComponentStub = 'terms-of-service-unsigned-stub'
 		const termsOfServiceComponentStubAttribute = 'isalltermsofservicesignedforuseropenproject'
 		it('should show modal when terms of services are not signed', () => {
 			const wrapper = getWrapper({
@@ -434,7 +427,7 @@ describe('AdminSettings.vue', () => {
 					all_terms_of_services_signed: false,
 				},
 			})
-			expect(wrapper.find(termsOfServiceComponentStub).attributes(termsOfServiceComponentStubAttribute)).toBeFalsy()
+			expect(wrapper.findComponent(termsOfServiceComponentStub).attributes(termsOfServiceComponentStubAttribute)).toBe('false')
 		})
 	})
 
@@ -464,12 +457,10 @@ describe('AdminSettings.vue', () => {
 
 function getWrapper(data = {}) {
 	return shallowMount(AdminSettings, {
-		localVue,
 		attachTo: document.body,
-		mocks: {
-			t: (app, msg) => msg,
-			generateUrl() {
-				return '/'
+		global: {
+			mocks: {
+				t: (app, msg) => msg,
 			},
 		},
 		data() {
@@ -486,12 +477,10 @@ function getWrapper(data = {}) {
 
 function getMountedWrapper(data = {}) {
 	return mount(AdminSettings, {
-		localVue,
 		attachTo: document.body,
-		mocks: {
-			t: (app, msg) => msg,
-			generateUrl() {
-				return '/'
+		global: {
+			mocks: {
+				t: (app, msg) => msg,
 			},
 		},
 		data() {
