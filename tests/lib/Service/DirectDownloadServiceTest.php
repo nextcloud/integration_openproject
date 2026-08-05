@@ -8,16 +8,11 @@
 
 namespace OCA\OpenProject\Service;
 
+use OC\User\Session;
 use OCA\DAV\Controller\DirectController;
-use OCA\DAV\Db\DirectMapper;
 use OCA\OpenProject\AppInfo\Application;
-use OCP\AppFramework\Utility\ITimeFactory;
-use OCP\EventDispatcher\IEventDispatcher;
 use OCP\Files\IRootFolder;
-use OCP\IRequest;
-use OCP\IURLGenerator;
 use OCP\IUserManager;
-use OCP\Security\ISecureRandom;
 use PHPUnit\Framework\TestCase;
 
 class DirectDownloadServiceTest extends TestCase {
@@ -54,31 +49,27 @@ class DirectDownloadServiceTest extends TestCase {
 		$app = new Application();
 		$c = $app->getContainer();
 
-		/** @var DirectDownloadService directDownloadService */
+		$userManager = $c->get(IUserManager::class);
+		$user = $userManager->get(self::USER_ID);
+		$userSession = $c->get(Session::class);
+		$userSession->setUser($user);
+
+		/** @var DirectDownloadService $directDownloadService */
 		$directDownloadService = $c->get(DirectDownloadService::class);
 		$this->directDownloadService = $directDownloadService;
 
 		/** @var IRootFolder $root */
 		$root = $c->get(IRootFolder::class);
 		$this->userFolder = $root->getUserFolder(self::USER_ID);
-		$this->directController = new DirectController(
-			'dav',
-			$c->get(IRequest::class),
-			$root,
-			self::USER_ID,
-			$c->get(DirectMapper::class),
-			$c->get(ISecureRandom::class),
-			$c->get(ITimeFactory::class),
-			$c->get(IURLGenerator::class),
-			$c->get(IEventDispatcher::class)
-		);
+
+		$this->directController = $c->get(DirectController::class);
 	}
 
 	public static function tearDownAfterClass(): void {
 		$app = new Application();
 		$c = $app->getContainer();
 		$userManager = $c->get(IUserManager::class);
-		$user = $userManager->get('test');
+		$user = $userManager->get(self::USER_ID);
 		$user->delete();
 	}
 
