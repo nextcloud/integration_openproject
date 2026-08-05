@@ -1,36 +1,28 @@
-// Jest Snapshot v1, https://goo.gl/fbAQLP
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
 
-exports[`SearchInput.vue state messages any: should display the correct state message 1`] = `
+exports[`SearchInput.vue > state messages > any: should display the correct state message 1`] = `
+<div
+  class="stateMsg text-center"
+/>
+`;
+
+exports[`SearchInput.vue > state messages > error: should display the correct state message 1`] = `
 <div
   class="stateMsg text-center"
 >
-  
-		
-	
+  Error connecting to OpenProject
 </div>
 `;
 
-exports[`SearchInput.vue state messages error: should display the correct state message 1`] = `
+exports[`SearchInput.vue > state messages > no-token: should display the correct state message 1`] = `
 <div
   class="stateMsg text-center"
 >
-  
-		Error connecting to OpenProject
-	
+  No OpenProject account connected
 </div>
 `;
 
-exports[`SearchInput.vue state messages no-token: should display the correct state message 1`] = `
-<div
-  class="stateMsg text-center"
->
-  
-		No OpenProject account connected
-	
-</div>
-`;
-
-exports[`SearchInput.vue work packages select search list should display correct options list of search results 1`] = `
+exports[`SearchInput.vue > work packages select > search list > should display correct options list of search results 1`] = `
 {
   "isLinkPreviews": false,
   "isSmartPicker": false,
@@ -41,6 +33,7 @@ exports[`SearchInput.vue work packages select search list should display correct
     "picture": "/server/index.php/apps/integration_openproject/avatar?userId=1&userName=System",
     "project": "test",
     "projectId": "15",
+    "ref_for": true,
     "statusCol": "blue",
     "statusTitle": "in-progress",
     "subject": "Organize work-packages",
@@ -50,9 +43,9 @@ exports[`SearchInput.vue work packages select search list should display correct
 }
 `;
 
-exports[`SearchInput.vue work packages select search list should not be displayed if the search results is empty 1`] = `"<ul id="__ID__" role="listbox" aria-label="Options" style="display: none; visibility: hidden;"></ul>"`;
+exports[`SearchInput.vue > work packages select > search list > should not be displayed if the search results is empty 1`] = `"<ul id="__ID__" role="listbox" aria-label="Options" style="display: none; visibility: hidden;"></ul>"`;
 
-exports[`SearchInput.vue work packages select search list should only use the options from the latest search response 1`] = `
+exports[`SearchInput.vue > work packages select > search list > should only use the options from the latest search response 1`] = `
 {
   "isLinkPreviews": false,
   "isSmartPicker": false,
@@ -61,9 +54,10 @@ exports[`SearchInput.vue work packages select search list should only use the op
     "displayId": "1",
     "fileId": 111,
     "id": 1,
-    "picture": "http://localhost/apps/integration_openproject/api/v1/avatar?userId=&userName=some%20assignee",
+    "picture": "http://localhost:3000//ocs/v2.php/apps/integration_openproject/api/v1/avatar?userId=&userName=some%20assignee",
     "project": "some project",
     "projectId": "",
+    "ref_for": true,
     "statusCol": "",
     "statusTitle": "some status",
     "subject": "some subject",

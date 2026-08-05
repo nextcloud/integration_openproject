@@ -7,7 +7,7 @@
  */
 
 import { shallowMount, mount } from '@vue/test-utils'
-import { describe, expect, it, beforeEach, afterEach, vi } from 'vitest'
+import { describe, expect, it, beforeEach, vi } from 'vitest'
 import util from 'util'
 import flushPromises from 'flush-promises'
 import axios from '@nextcloud/axios'

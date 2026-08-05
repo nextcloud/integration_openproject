@@ -6,21 +6,22 @@
  * SPDX-License-Identifier: AGPL-3.0-or-later
  */
 
-import { shallowMount, createLocalVue } from '@vue/test-utils'
+import { shallowMount } from '@vue/test-utils'
+import { describe, expect, it, vi } from 'vitest'
+
 import EmptyContent from '../../../../src/components/tab/EmptyContent.vue'
 import { AUTH_METHOD, STATE } from '../../../../src/utils.js'
-const localVue = createLocalVue()
 
-jest.mock('@nextcloud/dialogs', () => ({
-	getLanguage: jest.fn(() => ''),
-	showError: jest.fn(),
-	showSuccess: jest.fn(),
+vi.mock(import('@nextcloud/dialogs'), () => ({
+	getLanguage: vi.fn(() => ''),
+	showError: vi.fn(),
+	showSuccess: vi.fn(),
 }))
 
 describe('EmptyContent.vue', () => {
 	let wrapper
 	const emptyContentMessageSelector = '.empty-content--message'
-	const connectButtonSelector = 'oauthconnectbutton-stub'
+	const connectButtonSelector = 'o-auth-connect-button-stub'
 
 	describe('connect button', () => {
 		it.each([{
@@ -61,11 +62,12 @@ describe('EmptyContent.vue', () => {
 
 function getWrapper(propsData = {}) {
 	return shallowMount(EmptyContent, {
-		localVue,
-		mocks: {
-			t: (msg) => msg,
+		global: {
+			mocks: {
+				t: (msg) => msg,
+			},
 		},
-		propsData: {
+		props: {
 			state: 'ok',
 			isAdminConfigOk: true,
 			authMethod: AUTH_METHOD.OAUTH2,

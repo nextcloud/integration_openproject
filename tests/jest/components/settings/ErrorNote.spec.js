@@ -4,6 +4,7 @@
  */
 
 import { shallowMount } from '@vue/test-utils'
+import { describe, expect, it} from 'vitest'
 
 import ErrorNote from '../../../../src/components/settings/ErrorNote.vue'
 
@@ -30,8 +31,8 @@ describe('Component: ErrorNote', () => {
 	})
 })
 
-function getWrapper(propsData = {}) {
+function getWrapper(props = {}) {
 	return shallowMount(ErrorNote, {
-		propsData,
+		props,
 	})
 }

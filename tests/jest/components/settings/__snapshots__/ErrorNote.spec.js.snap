@@ -1,10 +1,9 @@
-// Jest Snapshot v1, https://goo.gl/fbAQLP
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
 
-exports[`Component: ErrorNote should show all provided props 1`] = `
-<ncnotecard-stub
+exports[`Component: ErrorNote > should show all provided props 1`] = `
+<nc-note-card-stub
   class="note-card"
-  heading=""
-  text=""
+  showalert="false"
   type="error"
 >
   <p
@@ -14,7 +13,6 @@ exports[`Component: ErrorNote should show all provided props 1`] = `
       Test error
     </b>
   </p>
-   
   <p
     class="note-card--error-description"
   >
@@ -30,14 +28,13 @@ exports[`Component: ErrorNote should show all provided props 1`] = `
       Test link
     </a>
   </p>
-</ncnotecard-stub>
+</nc-note-card-stub>
 `;
 
-exports[`Component: ErrorNote should show error title 1`] = `
-<ncnotecard-stub
+exports[`Component: ErrorNote > should show error title 1`] = `
+<nc-note-card-stub
   class="note-card"
-  heading=""
-  text=""
+  showalert="false"
   type="error"
 >
   <p
@@ -47,21 +44,19 @@ exports[`Component: ErrorNote should show error title 1`] = `
       Test error
     </b>
   </p>
-   
   <p
     class="note-card--error-description"
   >
-    <!---->
-    <!---->
+    <!--v-if-->
+    <!--v-if-->
   </p>
-</ncnotecard-stub>
+</nc-note-card-stub>
 `;
 
-exports[`Component: ErrorNote should show error title and error message 1`] = `
-<ncnotecard-stub
+exports[`Component: ErrorNote > should show error title and error message 1`] = `
+<nc-note-card-stub
   class="note-card"
-  heading=""
-  text=""
+  showalert="false"
   type="error"
 >
   <p
@@ -71,14 +66,13 @@ exports[`Component: ErrorNote should show error title and error message 1`] = `
       Test error
     </b>
   </p>
-   
   <p
     class="note-card--error-description"
   >
     <span>
       Test error message. 
     </span>
-    <!---->
+    <!--v-if-->
   </p>
-</ncnotecard-stub>
+</nc-note-card-stub>
 `;

@@ -6,8 +6,11 @@
  * SPDX-License-Identifier: AGPL-3.0-or-later
  */
 
+import { mount } from '@vue/test-utils'
+import { describe, expect, it, beforeEach, afterEach, vi } from 'vitest'
+import { nextTick } from 'vue'
+import flushPromises from 'flush-promises'
 import axios from '@nextcloud/axios'
-import { createLocalVue, mount } from '@vue/test-utils'
 import { generateOcsUrl } from '@nextcloud/router'
 import * as dialogs from '@nextcloud/dialogs'
 
@@ -20,36 +23,36 @@ import { STATE, WORKPACKAGES_SEARCH_ORIGIN } from '../../../../src/utils.js'
 import { workpackageHelper } from '../../../../src/utils/workpackageHelper.js'
 import { toMatchSerializedSnapshot } from '../../utils.js'
 
-jest.mock('@nextcloud/axios', () => {
-	const originalModule = jest.requireActual('@nextcloud/axios')
+vi.mock(import('@nextcloud/axios'), async (importOriginal) => {
+	const originalModule = await importOriginal()
 	return {
 		__esModule: true,
 		...originalModule,
 		default: {
-			get: jest.fn(),
-			put: jest.fn(),
-			post: jest.fn(),
+			get: vi.fn(),
+			put: vi.fn(),
+			post: vi.fn(),
 		},
 	}
 })
-jest.mock('@nextcloud/dialogs', () => ({
-	getLanguage: jest.fn(() => ''),
-	showError: jest.fn(),
-	showSuccess: jest.fn(),
+vi.mock(import('@nextcloud/dialogs'), () => ({
+	getLanguage: vi.fn(() => ''),
+	showError: vi.fn(),
+	showSuccess: vi.fn(),
 }))
-jest.mock('lodash/debounce', () =>
-	jest.fn(fn => {
-		fn.cancel = jest.fn()
+vi.mock(import('lodash/debounce'), () => ({
+	default: (fn) => {
+		fn.cancel = vi.fn()
 		return fn
-	}),
-)
-jest.mock('@nextcloud/initial-state', () => {
-	const originalModule = jest.requireActual('@nextcloud/initial-state')
+	},
+}))
+vi.mock(import('@nextcloud/initial-state'), async (importOriginal) => {
+	const originalModule = await importOriginal()
 	return {
 		__esModule: true,
 		...originalModule,
-		default: jest.fn(),
-		loadState: jest.fn(() => {
+		default: vi.fn(),
+		loadState: vi.fn(() => {
 			return {
 				openproject_instance_url: null,
 				version: '32',
@@ -58,9 +61,6 @@ jest.mock('@nextcloud/initial-state', () => {
 	}
 })
 
-global.t = (app, text) => text
-
-const localVue = createLocalVue()
 const simpleWorkPackageSearchResponse = [{
 	id: 1,
 	subject: 'some subject',
@@ -93,7 +93,7 @@ describe('SearchInput.vue', () => {
 
 	const stateSelector = '.stateMsg'
 	const workpackagesListSelector = '[role="listbox"]'
-	const workPackageStubSelector = 'workpackage-stub'
+	const workPackageStubSelector = 'work-package-stub'
 	const inputSelector = '.searchInput input'
 	const assigneeSelector = '.filterAssignee'
 	const loadingIconSelector = '.vs__spinner'
@@ -104,14 +104,14 @@ describe('SearchInput.vue', () => {
 	const noOptionTextSelector = '[role="listbox"] .vs__no-options'
 
 	afterEach(() => {
-		wrapper.unmount()
-		jest.clearAllMocks()
-		jest.restoreAllMocks()
+		wrapper?.unmount()
+		vi.clearAllMocks()
+		vi.restoreAllMocks()
 	})
 
 	describe('state messages', () => {
 		it.each([STATE.NO_TOKEN, STATE.ERROR, 'any'])('%s: should display the correct state message', async (state) => {
-			wrapper = mountSearchInput()
+			wrapper = getMountedWrapper()
 			await wrapper.setData({ state })
 			expect(wrapper.find(stateSelector).element).toMatchSnapshot()
 		})
@@ -120,9 +120,9 @@ describe('SearchInput.vue', () => {
 	describe('work packages select', () => {
 		describe('search input', () => {
 			it('should reset the state if search value length becomes lesser than search char limit', async () => {
-				const axiosSpy = jest.spyOn(axios, 'get')
+				const axiosSpy = vi.spyOn(axios, 'get')
 					.mockImplementationOnce(() => sendOCSResponse([]))
-				wrapper = mountSearchInput()
+				wrapper = getMountedWrapper()
 				const inputField = wrapper.find(inputSelector)
 				await wrapper.setData({
 					searchResults: [{
@@ -156,9 +156,9 @@ describe('SearchInput.vue', () => {
 				search,
 				expectedCallCount,
 			}) => {
-				const axiosSpy = jest.spyOn(axios, 'get')
+				const axiosSpy = vi.spyOn(axios, 'get')
 					.mockImplementationOnce(() => sendOCSResponse([]))
-				wrapper = mountSearchInput()
+				wrapper = getMountedWrapper()
 				await wrapper.setProps({
 					searchOrigin: WORKPACKAGES_SEARCH_ORIGIN.PROJECT_TAB,
 				})
@@ -168,9 +168,9 @@ describe('SearchInput.vue', () => {
 				axiosSpy.mockRestore()
 			})
 			it('should include the search text in the search payload', async () => {
-				const axiosSpy = jest.spyOn(axios, 'get')
+				const axiosSpy = vi.spyOn(axios, 'get')
 					.mockImplementationOnce(() => sendOCSResponse([]))
-				wrapper = mountSearchInput()
+				wrapper = getMountedWrapper()
 				await wrapper.setProps({
 					searchOrigin: WORKPACKAGES_SEARCH_ORIGIN.PROJECT_TAB,
 				})
@@ -190,17 +190,17 @@ describe('SearchInput.vue', () => {
 				axiosSpy.mockRestore()
 			})
 			it('should log an error on invalid payload', async () => {
-				const axiosSpy = jest.spyOn(axios, 'get')
+				const axiosSpy = vi.spyOn(axios, 'get')
 					.mockImplementationOnce(() => sendOCSResponse([{ id: 123 }]))
-				const consoleMock = jest.spyOn(console, 'error')
+				const consoleMock = vi.spyOn(console, 'error')
 					.mockImplementationOnce(() => {})
-				wrapper = mountSearchInput()
+				wrapper = getMountedWrapper()
 				await wrapper.setProps({
 					searchOrigin: WORKPACKAGES_SEARCH_ORIGIN.PROJECT_TAB,
 				})
 				const inputField = wrapper.find(inputSelector)
 				await inputField.setValue('orga')
-				await localVue.nextTick()
+				await nextTick()
 				expect(consoleMock).toHaveBeenCalledWith('could not process work package data')
 				consoleMock.mockRestore()
 				axiosSpy.mockRestore()
@@ -209,7 +209,7 @@ describe('SearchInput.vue', () => {
 
 		describe('search list', () => {
 			beforeEach(async () => {
-				wrapper = mountSearchInput()
+				wrapper = getMountedWrapper()
 				await wrapper.setProps({
 					searchOrigin: WORKPACKAGES_SEARCH_ORIGIN.PROJECT_TAB,
 				})
@@ -222,9 +222,9 @@ describe('SearchInput.vue', () => {
 				toMatchSerializedSnapshot(ncSelectContent.html())
 			})
 			it('should display correct options list of search results', async () => {
-				jest.spyOn(axios, 'get')
+				vi.spyOn(axios, 'get')
 					.mockImplementationOnce(() => sendOCSResponse([]))
-				wrapper = mountSearchInput({ id: 1234, name: 'file.txt' })
+				wrapper = getMountedWrapper({ id: 1234, name: 'file.txt' })
 				await wrapper.setProps({
 					searchOrigin: WORKPACKAGES_SEARCH_ORIGIN.PROJECT_TAB,
 				})
@@ -235,10 +235,10 @@ describe('SearchInput.vue', () => {
 				})
 				const ncSelectContent = wrapper.find(workpackagesListSelector)
 				expect(ncSelectContent.exists()).toBeTruthy()
-				const workPackages = ncSelectContent.findAll(workPackageStubSelector)
+				const workPackages = ncSelectContent.findAllComponents(workPackageStubSelector)
 				expect(workPackages).toHaveLength(workPackagesSearchResponse.length)
 				for (let i = 0; i < workPackagesSearchResponse.length; i++) {
-					expect(workPackages.at(i).props()).toMatchSnapshot()
+					expect(workPackages[i].props()).toMatchSnapshot()
 				}
 			})
 			it('should not display the "avatar" and "name" if the "assignee" is not present in a work package', async () => {
@@ -249,9 +249,9 @@ describe('SearchInput.vue', () => {
 				expect(assignee.exists()).toBeFalsy()
 			})
 			it('should only use the options from the latest search response', async () => {
-				jest.spyOn(axios, 'get')
+				vi.spyOn(axios, 'get')
 					.mockImplementationOnce(() => sendOCSResponse([]))
-				wrapper = mountSearchInput({ id: 111, name: 'file.txt' })
+				wrapper = getMountedWrapper({ id: 111, name: 'file.txt' })
 				await wrapper.setProps({
 					searchOrigin: WORKPACKAGES_SEARCH_ORIGIN.PROJECT_TAB,
 				})
@@ -260,23 +260,23 @@ describe('SearchInput.vue', () => {
 				await wrapper.setData({
 					searchResults: workPackageObjectsInSearchResults,
 				})
-				expect(wrapper.findAll(workPackageStubSelector).length).toBe(3)
-				const axiosSpy = jest.spyOn(axios, 'get')
+				expect(wrapper.findAll(workPackageStubSelector)).toHaveLength(3)
+				const axiosSpy = vi.spyOn(axios, 'get')
 					.mockImplementationOnce(() => sendOCSResponse(simpleWorkPackageSearchResponse))
 					.mockImplementation(() => sendOCSResponse([]))
 				await inputField.setValue('orga')
 				for (let i = 0; i <= 10; i++) {
-					await wrapper.vm.$nextTick()
+					await nextTick()
 				}
-				const workPackages = wrapper.findAll(workPackageStubSelector)
-				expect(workPackages.length).toBe(simpleWorkPackageSearchResponse.length)
+				const workPackages = wrapper.findAllComponents(workPackageStubSelector)
+				expect(workPackages).toHaveLength(simpleWorkPackageSearchResponse.length)
 				for (let i = 0; i < workPackages.length; i++) {
-					expect(workPackages.at(i).props()).toMatchSnapshot()
+					expect(workPackages[i].props()).toMatchSnapshot()
 				}
 				axiosSpy.mockRestore()
 			})
 			it('should not display work packages that are already linked', async () => {
-				wrapper = mountSearchInput({ id: 111 },
+				wrapper = getMountedWrapper({ id: 111 },
 					[
 						{
 							fileId: 111,
@@ -292,7 +292,7 @@ describe('SearchInput.vue', () => {
 				await wrapper.setProps({
 					searchOrigin: WORKPACKAGES_SEARCH_ORIGIN.PROJECT_TAB,
 				})
-				const axiosSpy = jest.spyOn(axios, 'get')
+				const axiosSpy = vi.spyOn(axios, 'get')
 					.mockImplementationOnce(() => sendOCSResponse(workPackageObjectsInSearchResults))
 					// any other requests e.g. for types and statuses
 					.mockImplementation(() => sendOCSResponse([]))
@@ -300,7 +300,7 @@ describe('SearchInput.vue', () => {
 				const inputField = wrapper.find(inputSelector)
 				await inputField.setValue('anything longer than 3 char')
 				for (let i = 0; i < 9; i++) {
-					await localVue.nextTick()
+					await nextTick()
 				}
 
 				// id no 13 is already in workpackages and also in the response
@@ -336,7 +336,7 @@ describe('SearchInput.vue', () => {
 
 			it('should not display work packages that are already in the search results', async () => {
 				// this case can happen if multiple search are running in parallel and returning its results
-				const axiosSpy = jest.spyOn(axios, 'get')
+				const axiosSpy = vi.spyOn(axios, 'get')
 					.mockImplementationOnce(() => sendOCSResponse(workPackageSearchReqResponse))
 					.mockImplementation(() => sendOCSResponse([]))
 				await wrapper.setData({
@@ -352,7 +352,7 @@ describe('SearchInput.vue', () => {
 				const inputField = wrapper.find(inputSelector)
 				await inputField.setValue('anything longer than 3 char')
 				for (let i = 0; i < 8; i++) {
-					await localVue.nextTick()
+					await nextTick()
 				}
 
 				expect(wrapper.vm.searchResults).toMatchObject(
@@ -389,37 +389,36 @@ describe('SearchInput.vue', () => {
 				axiosSpy.mockRestore()
 			})
 			it.each(
-				[STATE.NO_TOKEN, STATE.ERROR, STATE.OK],
+				[
+					STATE.NO_TOKEN,
+					STATE.ERROR,
+					STATE.OK,
+				],
 			)(
 				'should only add work packages to the list in loading state',
 				async (state) => {
-					wrapper = mountSearchInput({})
-					const axiosSpy = jest.spyOn(axios, 'get')
-						.mockImplementationOnce(() => sendOCSResponse(workPackageSearchReqResponse))
-					// any other requests e.g. for types and statuses
-						.mockImplementation(() => sendOCSResponse([]))
-
-					const inputField = wrapper.find(inputSelector)
-					await inputField.setValue('anything longer than 3 char')
+					const spyGetAdditionalMetaData = vi.spyOn(workpackageHelper, 'getAdditionalMetaData')
+					wrapper = getMountedWrapper()
 					await wrapper.setData({ state })
-					for (let i = 0; i < 9; i++) {
-						await localVue.nextTick()
-					}
+					await flushPromises()
+					await nextTick()
 
+					await wrapper.vm.processWorkPackages(workPackageSearchReqResponse)
+
+					expect(spyGetAdditionalMetaData).toHaveBeenCalledTimes(0)
 					expect(wrapper.vm.searchResults).toMatchObject([])
-					axiosSpy.mockRestore()
 				})
 		})
 
 		describe('loading icon', () => {
 			it('should be displayed when the wrapper is in "loading" state', async () => {
-				wrapper = mountSearchInput()
+				wrapper = getMountedWrapper()
 				const loadingIcon = wrapper.find(loadingIconSelector)
 				expect(loadingIcon.attributes().style).toBe('display: none;')
 				await wrapper.setData({
 					state: STATE.LOADING,
 				})
-				await localVue.nextTick()
+				await nextTick()
 				expect(wrapper.find(loadingIconSelector).exists()).toBeFalsy()
 			})
 		})
@@ -427,9 +426,9 @@ describe('SearchInput.vue', () => {
 		describe('click on a workpackage option', () => {
 			let axiosGetSpy
 			beforeEach(async () => {
-				axiosGetSpy = jest.spyOn(axios, 'get')
+				axiosGetSpy = vi.spyOn(axios, 'get')
 					.mockImplementationOnce(() => sendOCSResponse([]))
-				wrapper = mountSearchInput({ id: 111, name: 'file.txt' })
+				wrapper = getMountedWrapper({ id: 111, name: 'file.txt' })
 				await wrapper.setProps({
 					searchOrigin: WORKPACKAGES_SEARCH_ORIGIN.PROJECT_TAB,
 				})
@@ -453,7 +452,7 @@ describe('SearchInput.vue', () => {
 				expect(savedEvent[0]).toEqual([{ fileId: 111, id: 999 }])
 			})
 			it('should send a request to link file to workpackage', async () => {
-				const postSpy = jest.spyOn(axios, 'post')
+				const postSpy = vi.spyOn(axios, 'post')
 					.mockImplementationOnce(() => sendOCSResponse({}))
 				const ncSelectItem = wrapper.find(firstWorkPackageSelector)
 				await ncSelectItem.trigger('click')
@@ -477,10 +476,10 @@ describe('SearchInput.vue', () => {
 			})
 			it('should reset the state of the search input', async () => {
 				const ncSelectItem = wrapper.find(firstWorkPackageSelector)
-				expect(wrapper.vm.searchResults.length).toBe(1)
+				expect(wrapper.vm.searchResults).toHaveLength(1)
 				expect(wrapper.find('input').element.value).toBe('orga')
 				await ncSelectItem.trigger('click')
-				expect(wrapper.vm.searchResults.length).toBe(0)
+				expect(wrapper.vm.searchResults).toHaveLength(0)
 				expect(wrapper.find('input').element.value).toBe('')
 
 			})
@@ -488,10 +487,10 @@ describe('SearchInput.vue', () => {
 				const err = new Error()
 				err.response = { status: 422 }
 				axios.post.mockRejectedValueOnce(err)
-				const showErrorSpy = jest.spyOn(dialogs, 'showError')
+				const showErrorSpy = vi.spyOn(dialogs, 'showError')
 				const ncSelectItem = wrapper.find(firstWorkPackageSelector)
 				await ncSelectItem.trigger('click')
-				await localVue.nextTick()
+				await nextTick()
 				expect(showErrorSpy).toBeCalledTimes(1)
 				showErrorSpy.mockRestore()
 			})
@@ -499,7 +498,7 @@ describe('SearchInput.vue', () => {
 
 		describe('fileInfo prop', () => {
 			it('should reset the input state when the prop is changed', async () => {
-				wrapper = mountSearchInput({ id: 111, name: 'file.txt' }, [], {
+				wrapper = getMountedWrapper({ id: 111, name: 'file.txt' }, [], {
 					searchResults: [{
 						id: 999,
 					}],
@@ -520,9 +519,9 @@ describe('SearchInput.vue', () => {
 	describe('search with smartpicker', () => {
 		let axiosGetSpy
 		beforeEach(async () => {
-			axiosGetSpy = jest.spyOn(axios, 'get')
+			axiosGetSpy = vi.spyOn(axios, 'get')
 				.mockImplementationOnce(() => sendOCSResponse([]))
-			wrapper = mountSearchInput()
+			wrapper = getMountedWrapper()
 			const inputField = wrapper.find(inputSelector)
 			await inputField.setValue('orga')
 			await wrapper.setData({
@@ -532,11 +531,11 @@ describe('SearchInput.vue', () => {
 				}],
 				openprojectUrl: 'https://openproject.com',
 			})
-			await localVue.nextTick()
+			await nextTick()
 			await wrapper.setProps({
 				isSmartPicker: true,
 			})
-			await localVue.nextTick()
+			await nextTick()
 		})
 		afterEach(() => {
 			axiosGetSpy.mockRestore()
@@ -550,7 +549,7 @@ describe('SearchInput.vue', () => {
 		})
 
 		it('should not send a request to link file to workpackage', async () => {
-			const postSpy = jest.spyOn(axios, 'post')
+			const postSpy = vi.spyOn(axios, 'post')
 				.mockImplementationOnce(() => sendOCSResponse({}))
 			const ncSelectItem = wrapper.find(firstWorkPackageSelector)
 			await ncSelectItem.trigger('click')
@@ -590,15 +589,15 @@ describe('SearchInput.vue', () => {
 				},
 			],
 		])('%s', async (name, expectedDetails) => {
-			wrapper = mountSearchInput(singleFileInfo)
+			wrapper = getMountedWrapper(singleFileInfo)
 			await wrapper.setProps({
 				searchOrigin: WORKPACKAGES_SEARCH_ORIGIN.PROJECT_TAB,
 			})
-			jest.spyOn(axios, 'get')
+			vi.spyOn(axios, 'get')
 				.mockImplementationOnce(() => sendOCSResponse([]))
 			const inputField = wrapper.find(inputSelector)
 			await inputField.setValue(expectedDetails.searchQuery)
-			await localVue.nextTick()
+			await nextTick()
 			const noOptionText = wrapper.find(noOptionTextSelector)
 			expect(noOptionText.isVisible()).toBe(true)
 			expect(noOptionText.text()).toBe(expectedDetails.expectedNoOptionText)
@@ -608,9 +607,9 @@ describe('SearchInput.vue', () => {
 			describe('select a work package for linking', () => {
 				let axiosGetSpy
 				beforeEach(async () => {
-					axiosGetSpy = jest.spyOn(axios, 'get')
+					axiosGetSpy = vi.spyOn(axios, 'get')
 						.mockImplementationOnce(() => sendOCSResponse([]))
-					wrapper = mountSearchInput(singleFileInfo)
+					wrapper = getMountedWrapper(singleFileInfo)
 					await wrapper.setProps({
 						searchOrigin: WORKPACKAGES_SEARCH_ORIGIN.LINK_MULTIPLE_FILES_MODAL,
 					})
@@ -627,7 +626,7 @@ describe('SearchInput.vue', () => {
 					axiosGetSpy.mockRestore()
 				})
 				it('should send a request to link file to workpackage', async () => {
-					const postSpy = jest.spyOn(axios, 'post')
+					const postSpy = vi.spyOn(axios, 'post')
 						.mockImplementationOnce(() => sendOCSResponse({}))
 					const ncSelectItem = wrapper.find(firstWorkPackageSelector)
 					await ncSelectItem.trigger('click')
@@ -649,16 +648,16 @@ describe('SearchInput.vue', () => {
 					const err = new Error()
 					err.response = { status: 422 }
 					axios.post.mockRejectedValueOnce(err)
-					const showErrorSpy = jest.spyOn(dialogs, 'showError')
+					const showErrorSpy = vi.spyOn(dialogs, 'showError')
 					const ncSelectItem = wrapper.find(firstWorkPackageSelector)
 					await ncSelectItem.trigger('click')
-					await localVue.nextTick()
+					await nextTick()
 					expect(showErrorSpy).toBeCalledTimes(1)
 					showErrorSpy.mockRestore()
 				})
 
 				it('should not display work packages that are already linked', async () => {
-					const axiosSpy = jest.spyOn(axios, 'get')
+					const axiosSpy = vi.spyOn(axios, 'get')
 						.mockImplementationOnce(() => sendOCSResponse(workPackageSearchReqResponse))
 						.mockImplementation(() => sendOCSResponse([]))
 					await wrapper.setProps({
@@ -672,7 +671,7 @@ describe('SearchInput.vue', () => {
 					const inputField = wrapper.find(inputSelector)
 					await inputField.setValue('anything longer than 3 char')
 					for (let i = 0; i < 8; i++) {
-						await localVue.nextTick()
+						await nextTick()
 					}
 					expect(wrapper.vm.searchResults).toMatchObject(
 						[
@@ -710,9 +709,9 @@ describe('SearchInput.vue', () => {
 					describe('select a work package for linking', () => {
 						let axiosGetSpy
 						beforeEach(async () => {
-							axiosGetSpy = jest.spyOn(axios, 'get')
+							axiosGetSpy = vi.spyOn(axios, 'get')
 								.mockImplementationOnce(() => sendOCSResponse([]))
-							wrapper = mountSearchInput(multipleFileInfos)
+							wrapper = getMountedWrapper(multipleFileInfos)
 							await wrapper.setProps({
 								searchOrigin: WORKPACKAGES_SEARCH_ORIGIN.LINK_MULTIPLE_FILES_MODAL,
 							})
@@ -729,7 +728,7 @@ describe('SearchInput.vue', () => {
 							axiosGetSpy.mockRestore()
 						})
 						it('should send a request to link file to workpackage', async () => {
-							const postSpy = jest.spyOn(axios, 'post')
+							const postSpy = vi.spyOn(axios, 'post')
 								.mockImplementationOnce(() => sendOCSResponse({}))
 							const ncSelectItem = wrapper.find(firstWorkPackageSelector)
 							await ncSelectItem.trigger('click')
@@ -751,16 +750,16 @@ describe('SearchInput.vue', () => {
 							const err = new Error()
 							err.response = { status: 422 }
 							axios.post.mockRejectedValueOnce(err)
-							const showErrorSpy = jest.spyOn(dialogs, 'showError')
+							const showErrorSpy = vi.spyOn(dialogs, 'showError')
 							const ncSelectItem = wrapper.find(firstWorkPackageSelector)
 							await ncSelectItem.trigger('click')
-							await localVue.nextTick()
+							await nextTick()
 							expect(showErrorSpy).toBeCalledTimes(1)
 							showErrorSpy.mockRestore()
 						})
 
 						it('should display work packages that are already linked', async () => {
-							const axiosSpy = jest.spyOn(axios, 'get')
+							const axiosSpy = vi.spyOn(axios, 'get')
 								.mockImplementationOnce(() => sendOCSResponse(workPackageSearchReqResponse))
 								.mockImplementation(() => sendOCSResponse([]))
 							await wrapper.setProps({
@@ -771,7 +770,7 @@ describe('SearchInput.vue', () => {
 							const inputField = wrapper.find(inputSelector)
 							await inputField.setValue('anything longer than 3 char')
 							for (let i = 0; i < 8; i++) {
-								await localVue.nextTick()
+								await nextTick()
 							}
 							expect(wrapper.vm.searchResults).toMatchObject(
 								[
@@ -832,9 +831,9 @@ describe('SearchInput.vue', () => {
 					describe('select a work package for linking', () => {
 						let axiosGetSpy
 						beforeEach(async () => {
-							axiosGetSpy = jest.spyOn(axios, 'get')
+							axiosGetSpy = vi.spyOn(axios, 'get')
 								.mockImplementationOnce(() => sendOCSResponse([]))
-							wrapper = mountSearchInput(multipleFilesForChunking)
+							wrapper = getMountedWrapper(multipleFilesForChunking)
 							await wrapper.setProps({
 								searchOrigin: WORKPACKAGES_SEARCH_ORIGIN.LINK_MULTIPLE_FILES_MODAL,
 							})
@@ -852,42 +851,39 @@ describe('SearchInput.vue', () => {
 							axios.post.mockRestore()
 						})
 						it('should send request 3 times to link chunked file to workpackage', async () => {
-							const postSpy = jest.spyOn(axios, 'post')
+							const postSpy = vi.spyOn(axios, 'post')
 								.mockImplementationOnce(() => sendOCSResponse({}))
 							const ncSelectItem = wrapper.find(firstWorkPackageSelector)
 							await ncSelectItem.trigger('click')
 							for (let i = 0; i < 5; i++) {
-								await localVue.nextTick()
+								await nextTick()
 							}
 							expect(postSpy).toHaveBeenCalledTimes(3)
 						})
 
-						it('should emit event "get-chunked-informations" for 3 times', async () => {
-							jest.spyOn(axios, 'post')
+						it('should emit event "set-chunked-informations" for 3 times', async () => {
+							vi.spyOn(axios, 'post')
 								.mockImplementationOnce(() => sendOCSResponse({}))
-							const spyOnEmit = jest.spyOn(wrapper.vm, '$emit')
 							const ncSelectItem = wrapper.find(firstWorkPackageSelector)
 							await ncSelectItem.trigger('click')
-							for (let i = 0; i < 5; i++) {
-								await localVue.nextTick()
-							}
-							expect(spyOnEmit).toHaveBeenCalledTimes(3)
+							await flushPromises()
+							await nextTick()
+
+							expect(wrapper.emitted()['set-chunked-informations']).toHaveLength(3)
 						})
 
 						it('should link all the files with chunks upon success', async () => {
-							let emittedData
-							jest.spyOn(axios, 'post')
+							vi.spyOn(axios, 'post')
 								.mockImplementationOnce(() => sendOCSResponse({}))
-							const spyOnEmit = jest.spyOn(wrapper.vm, '$emit').mockImplementation((event, data) => {
-								emittedData = data
-							})
 							const ncSelectItem = wrapper.find(firstWorkPackageSelector)
 							await ncSelectItem.trigger('click')
-							for (let i = 0; i < 5; i++) {
-								await localVue.nextTick()
-							}
-							expect(spyOnEmit).toHaveBeenCalledTimes(3)
+							await flushPromises()
+							await nextTick()
+
+							const eventEmitted = wrapper.emitted()['set-chunked-informations']
+							expect(eventEmitted).toHaveLength(3)
 							// here when the linking files with chunking is successful "totalFilesAlreadyLinked" and the total no of files selected must be equal
+							const emittedData = eventEmitted.pop().pop()
 							expect(emittedData.totalFilesAlreadyLinked).toBe(multipleFilesForChunking.length)
 						})
 
@@ -914,57 +910,40 @@ describe('SearchInput.vue', () => {
 								},
 							],
 						])('%s when request fails', async (name, expectedData) => {
-							/*
-							Here the emmited chunking information data will be as
-							emittedData = {
-							 	totalNoOfFilesSelected: number,
-							 	totalFilesAlreadyLinked: number,
-							 	totalFilesNotLinked: number,
-							 	error: bool,
-							 	remainingFileInformations: Array,
-							 	selectedWorkPackage: Object
-							 }
-							*/
-							let emittedData
 							// rejects the 3rd request
-							jest.spyOn(axios, 'post')
+							vi.spyOn(axios, 'post')
 								.mockImplementationOnce(() => sendOCSResponse({}))
 								.mockImplementationOnce(() => sendOCSResponse({}))
 								.mockImplementation(() => Promise.reject(
-									new Error('Throw eror'),
+									new Error('Throw error'),
 								))
-							jest.spyOn(wrapper.vm, '$emit').mockImplementation((event, data) => {
-								emittedData = data
-							})
 							const ncSelectItem = wrapper.find(firstWorkPackageSelector)
 							await ncSelectItem.trigger('click')
-							for (let i = 0; i < 5; i++) {
-								await localVue.nextTick()
-							}
+							await flushPromises()
+							await nextTick()
+
+							const emittedData = wrapper.emitted()['set-chunked-informations'].pop().pop()
 							const expectedKey = expectedData.key
 							expect(emittedData[expectedKey]).toBe(expectedData.value)
 						})
 
 						it('should set length of remaining files to 15', async () => {
-							let emittedData
 							// rejects the 3rd request
-							jest.spyOn(axios, 'post')
+							vi.spyOn(axios, 'post')
 								.mockImplementationOnce(() => sendOCSResponse({}))
 								.mockImplementationOnce(() => sendOCSResponse({}))
 								.mockImplementation(() => Promise.reject(new Error('Throw eror')))
-							jest.spyOn(wrapper.vm, '$emit').mockImplementation((event, data) => {
-								emittedData = data
-							})
 							const ncSelectItem = wrapper.find(firstWorkPackageSelector)
 							await ncSelectItem.trigger('click')
-							for (let i = 0; i < 5; i++) {
-								await localVue.nextTick()
-							}
-							expect(emittedData.remainingFileInformations.length).toBe(15)
+							await flushPromises()
+							await nextTick()
+
+							const emittedData = wrapper.emitted()['set-chunked-informations'].pop().pop()
+							expect(emittedData.remainingFileInformations).toHaveLength(15)
 						})
 
 						it('should retry once if a request to link fails', async () => {
-							const postSpy = jest.spyOn(axios, 'post')
+							const postSpy = vi.spyOn(axios, 'post')
 								.mockImplementationOnce(() => {
 									throw new Error('Throw error to retry once')
 								})
@@ -972,19 +951,19 @@ describe('SearchInput.vue', () => {
 							const ncSelectItem = wrapper.find(firstWorkPackageSelector)
 							await ncSelectItem.trigger('click')
 							for (let i = 0; i < 5; i++) {
-								await localVue.nextTick()
+								await nextTick()
 							}
 							// here 'makeRequestToLinkFilesToWorkPackage' is called 4 times since the chunk is [20,20,15] 3 times and 1 is added for retry since it fails for the first time
 							expect(postSpy).toHaveBeenCalledTimes(4)
 						})
 
 						it('should not retry again if the retry it self fails', async () => {
-							const postSpy = jest.spyOn(axios, 'post')
+							const postSpy = vi.spyOn(axios, 'post')
 								.mockImplementation(() => Promise.reject(new Error('Throw eror')))
 							const ncSelectItem = wrapper.find(firstWorkPackageSelector)
 							await ncSelectItem.trigger('click')
 							for (let i = 0; i < 5; i++) {
-								await localVue.nextTick()
+								await nextTick()
 							}
 							// here the post is called 2 times (1 extra for retry)
 							expect(postSpy).toHaveBeenCalledTimes(2)
@@ -997,7 +976,7 @@ describe('SearchInput.vue', () => {
 	})
 
 	describe('create work package button at the footer of the NcSelect', () => {
-		const wrapper = mountSearchInput()
+		const wrapper = getMountedWrapper()
 		it('should open create work package modal when clicked', async () => {
 			await wrapper.setData({
 				isSmartPicker: false,
@@ -1010,11 +989,11 @@ describe('SearchInput.vue', () => {
 	})
 
 	describe('create work package option at the footer of the NcSelect option list', () => {
-		wrapper = mountSearchInput()
+		wrapper = getMountedWrapper()
 		it('should open create work package modal when clicked', async () => {
-			jest.spyOn(axios, 'get')
+			vi.spyOn(axios, 'get')
 				.mockImplementationOnce(() => sendOCSResponse([]))
-			wrapper = mountSearchInput({ id: 1234, name: 'file.txt' })
+			wrapper = getMountedWrapper({ id: 1234, name: 'file.txt' })
 			await wrapper.setProps({
 				searchOrigin: WORKPACKAGES_SEARCH_ORIGIN.PROJECT_TAB,
 			})
@@ -1025,7 +1004,7 @@ describe('SearchInput.vue', () => {
 				isSmartPicker: false,
 				state: STATE.OK,
 			})
-			await localVue.nextTick()
+			await nextTick()
 			const optionList = wrapper.find(createWorkPackageNcSelectOptionListSelector)
 			await optionList.trigger('click')
 			expect(wrapper.find(createWorkpackageModalSelector).isVisible()).toBeTruthy()
@@ -1034,8 +1013,8 @@ describe('SearchInput.vue', () => {
 
 	describe('create work packages event handling', () => {
 		beforeEach(async () => {
-			wrapper = mountSearchInput()
-			jest.clearAllMocks()
+			wrapper = getMountedWrapper()
+			vi.clearAllMocks()
 			dialogs.showSuccess.mockReset()
 			dialogs.showError.mockReset()
 		})
@@ -1053,16 +1032,16 @@ describe('SearchInput.vue', () => {
 		})
 
 		it('should show a success message and link work package to a file if work package creation process is successful', async () => {
-			jest.spyOn(axios, 'post')
+			vi.spyOn(axios, 'post')
 				.mockImplementation(() => sendOCSResponse({}))
-			jest.spyOn(axios, 'get')
+			vi.spyOn(axios, 'get')
 				.mockImplementationOnce(() => sendOCSResponse([{
 					fileId: 1234,
 					id: 1,
 					subject: 'Organize open source conference',
 				}]))
 			// mock this method because we don't really care about this for this test
-			jest.spyOn(workpackageHelper, 'getAdditionalMetaData')
+			vi.spyOn(workpackageHelper, 'getAdditionalMetaData')
 				.mockImplementationOnce(() => Promise.resolve(workPackagesSearchResponse))
 
 			dialogs.showSuccess
@@ -1076,14 +1055,17 @@ describe('SearchInput.vue', () => {
 			await wrapper.setData({
 				searchResults: workPackagesSearchResponse,
 				newWorkpackageCreated: true,
+			})
+			await wrapper.setProps({
 				searchOrigin: WORKPACKAGES_SEARCH_ORIGIN.PROJECT_TAB,
 				fileInfo: { id: 1234, name: 'file.txt' },
 			})
-			await wrapper.vm.$nextTick()
+			await nextTick()
+
 			wrapper.vm.onCreateWorkPackageEvent(workpackageCreationEventData)
-			for (let i = 0; i < 5; i++) {
-				await wrapper.vm.$nextTick()
-			}
+			await flushPromises()
+			await nextTick()
+
 			expect(dialogs.showSuccess).toBeCalledTimes(2)
 			expect(dialogs.showSuccess).toBeCalledWith('Work package created successfully.')
 			expect(dialogs.showSuccess).toBeCalledWith('Link to work package created successfully!')
@@ -1098,21 +1080,22 @@ function sendOCSResponse(data, status = 200) {
 	})
 }
 
-function mountSearchInput(fileInfo = {}, linkedWorkPackages = [], data = {}) {
+function getMountedWrapper(fileInfo = {}, linkedWorkPackages = [], data = {}) {
 	return mount(SearchInput, {
-		localVue,
-		mocks: {
-			t: (msg) => msg,
+		global: {
+			mocks: {
+				t: (msg) => msg,
+			},
+			stubs: {
+				NcAvatar: true,
+				WorkPackage: true,
+				CreateWorkPackageModal: true,
+			},
 		},
 		data: () => ({
 			...data,
 		}),
-		stubs: {
-			NcAvatar: true,
-			WorkPackage: true,
-			CreateWorkPackageModal: true,
-		},
-		propsData: {
+		props: {
 			fileInfo,
 			linkedWorkPackages,
 		},

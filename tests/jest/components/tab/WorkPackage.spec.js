@@ -4,12 +4,11 @@
  * SPDX-License-Identifier: AGPL-3.0-or-later
  */
 
-import { createLocalVue, shallowMount } from '@vue/test-utils'
+import { shallowMount } from '@vue/test-utils'
+import { describe, expect, it, beforeEach, vi } from 'vitest'
 
 import WorkPackage from '../../../../src/components/tab/WorkPackage.vue'
 import workPackagesSearchResponse from '../../fixtures/workPackagesSearchResponse.json'
-
-const localVue = createLocalVue()
 
 const selectors = {
 	wpItemSelector: '.workpackage',
@@ -23,8 +22,7 @@ describe('WorkPackage.vue', () => {
 		wp.displayId = `${wp.id}`
 		beforeEach(() => {
 			wrapper = shallowMount(WorkPackage, {
-				localVue,
-				propsData: {
+				props: {
 					workpackage: wp,
 				},
 			})
@@ -54,8 +52,7 @@ describe('WorkPackage.vue', () => {
 
 		beforeEach(() => {
 			wrapper = shallowMount(WorkPackage, {
-				localVue,
-				propsData: {
+				props: {
 					workpackage: wp,
 				},
 			})

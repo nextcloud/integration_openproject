@@ -13,6 +13,8 @@ export default defineConfig({
     setupFiles: ['tests/jest/setup.js'],
     globals: true,
     environment: 'jsdom',
+    // clearMocks: true,
+    // restoreMocks: true,
     server: {
       deps: {
         inline: ['@nextcloud/vue'],
