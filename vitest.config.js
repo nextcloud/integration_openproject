@@ -9,8 +9,8 @@ import { defineConfig } from 'vitest/config'
 export default defineConfig({
   plugins: [vue()],
   test: {
-    include: ['tests/jest/**/*.spec.js'],
-    setupFiles: ['tests/jest/setup.js'],
+    include: ['tests/js/**/*.spec.js'],
+    setupFiles: ['tests/js/setup.js'],
     globals: true,
     environment: 'jsdom',
     clearMocks: true,

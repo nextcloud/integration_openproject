@@ -3,6 +3,8 @@
  * SPDX-License-Identifier: AGPL-3.0-or-later
  */
 
+import { expect } from 'vitest'
+
 export function toMatchSerializedSnapshot(element) {
 	element = element
 		.replace(/ id="[^"]+"/g, ' id="__ID__"')

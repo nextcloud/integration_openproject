@@ -13,8 +13,8 @@
     "lint:fix": "eslint \"{src,tests}/**/*.{js,vue}\" --fix",
     "stylelint": "stylelint css src",
     "stylelint:fix": "stylelint css src --fix",
-    "test:unit": "jest --silent",
-    "test:unit:watch": "jest --watch --no-coverage"
+    "test:unit": "vitest run --coverage",
+    "test:unit:watch": "vitest"
   },
   "repository": {
     "type": "git",
@@ -58,6 +58,7 @@
     "@nextcloud/stylelint-config": "^3.2.2",
     "@nextcloud/webpack-vue-config": "^7.0.2",
     "@vitejs/plugin-vue": "^6.0.8",
+    "@vitest/coverage-v8": "^4.1.10",
     "@vue/test-utils": "^2.4.11",
     "eslint-webpack-plugin": "^6.0.0",
     "flush-promises": "^1.0.2",
