@@ -97,7 +97,6 @@ describe('Component: FormAuthMethod', () => {
 			})
 			it('should have enabled save button', async () => {
 				expect(wrapper.vm.formMode).toBe(F_MODES.EDIT)
-				console.log(wrapper.findComponent(selectors.oauthRadioBox).attributes())
 				expect(wrapper.findComponent(selectors.oauthRadioBox).attributes().modelvalue).toBe(AUTH_METHOD.OAUTH2)
 				expect(wrapper.findComponent(selectors.saveFormButton).attributes().disabled).toBe('false')
 			})

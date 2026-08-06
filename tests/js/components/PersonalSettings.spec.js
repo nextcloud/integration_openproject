@@ -103,7 +103,6 @@ describe('PersonalSettings.vue', () => {
 					})
 				})
 				it('oAuth connect button is displayed', () => {
-					console.log(wrapper.html())
 					expect(wrapper.find(oAuthButtonSelector).exists()).toBeTruthy()
 					expect(wrapper.find(errorLabelSelector).exists()).toBeFalsy()
 				})

@@ -78,7 +78,6 @@ describe('Dashboard.vue', () => {
 					...commonState,
 				})
 				await flushPromises()
-				console.log(wrapper.html())
 
 				expect(wrapper.vm.state).toBe(STATE.ERROR)
 				expect(wrapper.vm.OIDCMethodHasError).toBe(false)

@@ -20,5 +20,12 @@ export default defineConfig({
         inline: ['@nextcloud/vue'],
       },
     },
+    coverage: {
+      provider: 'v8',
+      include: ['src/'],
+      exclude: ['src/{api,constants}/', 'src/utils.js'],
+      reporter: ['text', 'lcov'],
+      reportsDirectory: './coverage/js',
+    },
   },
 })
