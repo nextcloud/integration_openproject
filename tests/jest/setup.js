@@ -24,7 +24,7 @@ global.OC = {
 
 globalThis.appName = appName
 globalThis.appVersion = '0.0.0'
-// globalThis.structuredClone = v => JSON.parse(JSON.stringify(v))
+globalThis.structuredClone = v => JSON.parse(JSON.stringify(v))
 
 globalThis.t = (_app, text) => text
 globalThis.getLanguage = vi.fn(() => '')

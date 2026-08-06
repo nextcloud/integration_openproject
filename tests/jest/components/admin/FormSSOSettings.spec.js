@@ -5,7 +5,9 @@
  * SPDX-License-Identifier: AGPL-3.0-or-later
  */
 
-import { createLocalVue, shallowMount } from '@vue/test-utils'
+import { shallowMount } from '@vue/test-utils'
+import { describe, expect, it, beforeEach, afterEach, vi } from 'vitest'
+import { nextTick } from 'vue'
 import { showError, showSuccess } from '@nextcloud/dialogs'
 
 import { toMatchSerializedSnapshot } from '../../utils.js'
@@ -15,39 +17,29 @@ import FormSSOSettings from '../../../../src/components/admin/FormSSOSettings.vu
 import { messagesFmt, messages } from '../../../../src/constants/messages.js'
 import { appLinks } from '../../../../src/constants/links.js'
 
-// global mocks
-global.t = (app, text) => text
-global.OC = {
-	dialogs: {
-		confirmDestructive: jest.fn(),
-		YES_NO_BUTTONS: 70,
-	},
-}
 // module mocks
-jest.mock('@nextcloud/dialogs', () => ({
-	getLanguage: jest.fn(() => ''),
-	showError: jest.fn(),
-	showSuccess: jest.fn(),
+vi.mock(import('@nextcloud/dialogs'), () => ({
+	getLanguage: vi.fn(() => ''),
+	showError: vi.fn(),
+	showSuccess: vi.fn(),
 }))
-jest.mock('../../../../src/api/settings.js', () => ({
-	saveAdminConfig: jest.fn(() => ''),
+vi.mock(import('../../../../src/api/settings.js'), () => ({
+	saveAdminConfig: vi.fn(() => ''),
 }))
-
-const localVue = createLocalVue()
 
 const selectors = {
-	formHeading: 'formheading-stub',
-	providerSelect: '.sso-provider ncselect-stub',
-	clientIdInput: '.sso-client-id textinput-stub',
-	ssoNextcloudRadioBox: `nccheckboxradioswitch-stub[value="${SSO_PROVIDER_TYPE.nextcloudHub}"]`,
-	ssoExternalRadioBox: `nccheckboxradioswitch-stub[value="${SSO_PROVIDER_TYPE.external}"]`,
-	tokenExchangeSwitch: '.sso-token-exchange nccheckboxradioswitch-stub',
+	formHeading: 'form-heading-stub',
+	providerSelect: '.sso-provider nc-select-stub',
+	clientIdInput: '.sso-client-id text-input-stub',
+	ssoNextcloudRadioBox: `nc-checkbox-radio-switch-stub[value="${SSO_PROVIDER_TYPE.nextcloudHub}"]`,
+	ssoExternalRadioBox: `nc-checkbox-radio-switch-stub[value="${SSO_PROVIDER_TYPE.external}"]`,
+	tokenExchangeSwitch: '.sso-token-exchange nc-checkbox-radio-switch-stub',
 	saveFormButton: '[data-test-id="save-sso-settings"]',
 	editFormButton: '[data-test-id="edit-sso-settings"]',
 	cancelFormButton: '[data-test-id="cancel-sso-settings-edit"]',
-	errorLabel: 'errorlabel-stub',
-	errorNote: 'errornote-stub',
-	fieldValue: 'fieldvalue-stub',
+	errorLabel: 'error-label-stub',
+	errorNote: 'error-note-stub',
+	fieldValue: 'field-value-stub',
 }
 
 const appsState = {
@@ -82,7 +74,7 @@ const defaultProps = {
 
 describe('Component: FormSSOSettings', () => {
 	afterEach(() => {
-		jest.clearAllMocks()
+		vi.clearAllMocks()
 	})
 
 	describe('new form: edit mode', () => {
@@ -99,8 +91,8 @@ describe('Component: FormSSOSettings', () => {
 				wrapper = getWrapper({ props })
 				const formHeading = wrapper.find(selectors.formHeading)
 				expect(formHeading.attributes().isdisabled).toBe('true')
-				expect(formHeading.attributes().haserror).toBe(undefined)
-				expect(formHeading.attributes().iscomplete).toBe(undefined)
+				expect(formHeading.attributes().haserror).toBe('false')
+				expect(formHeading.attributes().iscomplete).toBe('false')
 				expect(wrapper.find(selectors.errorNote).exists()).toBe(false)
 				expect(wrapper.find(selectors.ssoNextcloudRadioBox).exists()).toBe(false)
 				expect(wrapper.find(selectors.ssoExternalRadioBox).exists()).toBe(false)
@@ -115,17 +107,17 @@ describe('Component: FormSSOSettings', () => {
 
 			it('should show form fields without errors', () => {
 				expect(wrapper.vm.formMode).toBe(F_MODES.NEW)
-				expect(wrapper.find(selectors.formHeading).attributes().haserror).toBe(undefined)
-				expect(wrapper.find(selectors.formHeading).attributes().disabled).toBe(undefined)
-				expect(wrapper.find(selectors.formHeading).attributes().iscomplete).toBe(undefined)
+				expect(wrapper.find(selectors.formHeading).attributes().haserror).toBe('false')
+				expect(wrapper.find(selectors.formHeading).attributes().isdisabled).toBe('false')
+				expect(wrapper.find(selectors.formHeading).attributes().iscomplete).toBe('false')
 				expect(wrapper.find(selectors.errorNote).exists()).toBe(false)
 
 				expect(wrapper.find(selectors.ssoExternalRadioBox).exists()).toBe(true)
 				expect(wrapper.find(selectors.ssoExternalRadioBox).attributes().value).toBe(SSO_PROVIDER_TYPE.external)
-				expect(wrapper.find(selectors.ssoExternalRadioBox).attributes().checked).toBe(SSO_PROVIDER_TYPE.nextcloudHub)
+				expect(wrapper.find(selectors.ssoExternalRadioBox).attributes().modelvalue).toBe(SSO_PROVIDER_TYPE.nextcloudHub)
 				expect(wrapper.find(selectors.ssoNextcloudRadioBox).exists()).toBe(true)
 				expect(wrapper.find(selectors.ssoNextcloudRadioBox).attributes().value).toBe(SSO_PROVIDER_TYPE.nextcloudHub)
-				expect(wrapper.find(selectors.ssoNextcloudRadioBox).attributes().checked).toBe(SSO_PROVIDER_TYPE.nextcloudHub)
+				expect(wrapper.find(selectors.ssoNextcloudRadioBox).attributes().modelvalue).toBe(SSO_PROVIDER_TYPE.nextcloudHub)
 
 				expect(wrapper.find(selectors.clientIdInput).exists()).toBe(true)
 				expect(wrapper.find(selectors.providerSelect).exists()).toBe(false)
@@ -152,39 +144,39 @@ describe('Component: FormSSOSettings', () => {
 				expect(wrapper.vm.formMode).toBe(F_MODES.NEW)
 				expect(wrapper.find(selectors.saveFormButton).attributes().disabled).toBe('true')
 
-				const clientIdInput = wrapper.find(selectors.clientIdInput)
-				await clientIdInput.vm.$emit('input', 'op-client-id')
-				await localVue.nextTick()
+				const clientIdInput = wrapper.findComponent(selectors.clientIdInput)
+				await clientIdInput.vm.$emit('update:modelValue', 'op-client-id')
+				await nextTick()
 
-				expect(wrapper.find(selectors.saveFormButton).attributes().disabled).toBe(undefined)
-				expect(clientIdInput.attributes().value).toBe('op-client-id')
+				expect(wrapper.find(selectors.saveFormButton).attributes().disabled).toBe('false')
+				expect(clientIdInput.attributes().modelvalue).toBe('op-client-id')
 				expect(wrapper.vm.currentForm.targeted_audience_client_id).toBe('op-client-id')
 				toMatchSerializedSnapshot(wrapper.html())
 			})
 			it('should show form related to selected provider type', async () => {
-				const ssoExternalRadioBox = wrapper.find(selectors.ssoExternalRadioBox)
-				ssoExternalRadioBox.vm.$emit('update:checked', SSO_PROVIDER_TYPE.external)
-				await localVue.nextTick()
+				const ssoExternalRadioBox = wrapper.findComponent(selectors.ssoExternalRadioBox)
+				ssoExternalRadioBox.vm.$emit('update:modelValue', SSO_PROVIDER_TYPE.external)
+				await nextTick()
 
 				expect(wrapper.find(selectors.providerSelect).exists()).toBe(true)
 				expect(wrapper.find(selectors.tokenExchangeSwitch).exists()).toBe(true)
 				expect(wrapper.find(selectors.clientIdInput).exists()).toBe(false)
 				expect(wrapper.find(selectors.saveFormButton).attributes().disabled).toBe('true')
 				expect(wrapper.vm.currentForm.sso_provider_type).toBe(SSO_PROVIDER_TYPE.external)
-				expect(wrapper.vm.currentForm.oidc_provider).toBe(null)
+				expect(wrapper.vm.currentForm.oidc_provider).toBeNull()
 				expect(wrapper.find(selectors.editFormButton).exists()).toBe(false)
 				toMatchSerializedSnapshot(wrapper.html())
 
-				const ssoNCRadioBox = wrapper.find(selectors.ssoNextcloudRadioBox)
-				ssoNCRadioBox.vm.$emit('update:checked', SSO_PROVIDER_TYPE.nextcloudHub)
-				await localVue.nextTick()
+				const ssoNCRadioBox = wrapper.findComponent(selectors.ssoNextcloudRadioBox)
+				ssoNCRadioBox.vm.$emit('update:modelValue', SSO_PROVIDER_TYPE.nextcloudHub)
+				await nextTick()
 
 				expect(wrapper.find(selectors.providerSelect).exists()).toBe(false)
 				expect(wrapper.find(selectors.tokenExchangeSwitch).exists()).toBe(false)
 				expect(wrapper.find(selectors.clientIdInput).exists()).toBe(true)
 				expect(wrapper.find(selectors.saveFormButton).attributes().disabled).toBe('true')
 				expect(wrapper.vm.currentForm.sso_provider_type).toBe(SSO_PROVIDER_TYPE.nextcloudHub)
-				expect(wrapper.vm.currentForm.oidc_provider).toBe(null)
+				expect(wrapper.vm.currentForm.oidc_provider).toBeNull()
 				expect(wrapper.find(selectors.editFormButton).exists()).toBe(false)
 				toMatchSerializedSnapshot(wrapper.html())
 			})
@@ -192,9 +184,9 @@ describe('Component: FormSSOSettings', () => {
 			describe('external SSO provider', () => {
 				beforeEach(async () => {
 					wrapper = getWrapper({ props: defaultProps })
-					const ssoExternalRadioBox = wrapper.find(selectors.ssoExternalRadioBox)
-					ssoExternalRadioBox.vm.$emit('update:checked', SSO_PROVIDER_TYPE.external)
-					await localVue.nextTick()
+					const ssoExternalRadioBox = wrapper.findComponent(selectors.ssoExternalRadioBox)
+					ssoExternalRadioBox.vm.$emit('update:modelValue', SSO_PROVIDER_TYPE.external)
+					await nextTick()
 				})
 
 				it('should not disable form elements', () => {
@@ -202,7 +194,7 @@ describe('Component: FormSSOSettings', () => {
 					const clientIdInput = wrapper.find(selectors.clientIdInput)
 					const tokenExchangeSwitch = wrapper.find(selectors.tokenExchangeSwitch)
 
-					expect(providerSelectInput.attributes().disabled).toBe(undefined)
+					expect(providerSelectInput.attributes().disabled).toBe('false')
 					expect(tokenExchangeSwitch.exists()).toBe(true)
 					expect(clientIdInput.exists()).toBe(false)
 					expect(wrapper.vm.currentForm.sso_provider_type).toBe(SSO_PROVIDER_TYPE.external)
@@ -219,11 +211,11 @@ describe('Component: FormSSOSettings', () => {
 				it('should enable "Save" button if the form is complete', async () => {
 					expect(wrapper.find(selectors.saveFormButton).attributes().disabled).toBe('true')
 
-					const providerSelect = wrapper.find(selectors.providerSelect)
+					const providerSelect = wrapper.findComponent(selectors.providerSelect)
 					await providerSelect.vm.$emit('option:selected', 'keycloak')
-					await localVue.nextTick()
+					await nextTick()
 
-					expect(wrapper.find(selectors.saveFormButton).attributes().disabled).toBe(undefined)
+					expect(wrapper.find(selectors.saveFormButton).attributes().disabled).toBe('false')
 					expect(providerSelect.attributes().value).toBe('keycloak')
 					expect(wrapper.vm.currentForm.oidc_provider).toBe('keycloak')
 					toMatchSerializedSnapshot(wrapper.html())
@@ -231,9 +223,9 @@ describe('Component: FormSSOSettings', () => {
 
 				describe('when token change is enabled', () => {
 					beforeEach(async () => {
-						const tokenExchangeSwitch = wrapper.find(selectors.tokenExchangeSwitch)
-						await tokenExchangeSwitch.vm.$emit('update:checked', true)
-						await localVue.nextTick()
+						const tokenExchangeSwitch = wrapper.findComponent(selectors.tokenExchangeSwitch)
+						await tokenExchangeSwitch.vm.$emit('update:modelValue', true)
+						await nextTick()
 					})
 					it('should show client-id field', async () => {
 						expect(wrapper.find(selectors.clientIdInput).exists()).toBe(true)
@@ -245,44 +237,44 @@ describe('Component: FormSSOSettings', () => {
 						expect(saveFormButton.attributes().disabled).toBe('true')
 					})
 					it('should enable "Save" button if the form is complete', async () => {
-						const providerSelect = wrapper.find(selectors.providerSelect)
+						const providerSelect = wrapper.findComponent(selectors.providerSelect)
 						await providerSelect.vm.$emit('option:selected', 'keycloak')
-						const clientIdInput = wrapper.find(selectors.clientIdInput)
-						await clientIdInput.vm.$emit('input', 'op-client-id')
-						await localVue.nextTick()
+						const clientIdInput = wrapper.findComponent(selectors.clientIdInput)
+						await clientIdInput.vm.$emit('update:modelValue', 'op-client-id')
+						await nextTick()
 
 						const saveFormButton = wrapper.find(selectors.saveFormButton)
-						expect(saveFormButton.attributes().disabled).toBe(undefined)
+						expect(saveFormButton.attributes().disabled).toBe('false')
 						expect(providerSelect.attributes().value).toBe('keycloak')
 						expect(wrapper.vm.currentForm.oidc_provider).toBe('keycloak')
-						expect(clientIdInput.attributes().value).toBe('op-client-id')
+						expect(clientIdInput.attributes().modelvalue).toBe('op-client-id')
 						expect(wrapper.vm.currentForm.targeted_audience_client_id).toBe('op-client-id')
 						toMatchSerializedSnapshot(wrapper.html())
 					})
 					it('should disable "Save" button if the provider is not selected', async () => {
 						const providerSelect = wrapper.find(selectors.providerSelect)
-						const clientIdInput = wrapper.find(selectors.clientIdInput)
-						await clientIdInput.vm.$emit('input', 'op-client-id')
-						await localVue.nextTick()
+						const clientIdInput = wrapper.findComponent(selectors.clientIdInput)
+						await clientIdInput.vm.$emit('update:modelValue', 'op-client-id')
+						await nextTick()
 
 						const saveFormButton = wrapper.find(selectors.saveFormButton)
 						expect(saveFormButton.attributes().disabled).toBe('true')
-						expect(providerSelect.attributes().value).toBe(undefined)
-						expect(wrapper.vm.currentForm.oidc_provider).toBe(null)
-						expect(clientIdInput.attributes().value).toBe('op-client-id')
+						expect(providerSelect.attributes().value).toBeUndefined()
+						expect(wrapper.vm.currentForm.oidc_provider).toBeNull()
+						expect(clientIdInput.attributes().modelvalue).toBe('op-client-id')
 						expect(wrapper.vm.currentForm.targeted_audience_client_id).toBe('op-client-id')
 					})
 					it('should disable "Save" button if the client-id is not provided', async () => {
-						const providerSelect = wrapper.find(selectors.providerSelect)
+						const providerSelect = wrapper.findComponent(selectors.providerSelect)
 						await providerSelect.vm.$emit('option:selected', 'keycloak')
 						const clientIdInput = wrapper.find(selectors.clientIdInput)
-						await localVue.nextTick()
+						await nextTick()
 
 						const saveFormButton = wrapper.find(selectors.saveFormButton)
 						expect(saveFormButton.attributes().disabled).toBe('true')
 						expect(providerSelect.attributes().value).toBe('keycloak')
 						expect(wrapper.vm.currentForm.oidc_provider).toBe('keycloak')
-						expect(clientIdInput.attributes().value).toBe('')
+						expect(clientIdInput.attributes().modelvalue).toBe('')
 						expect(wrapper.vm.currentForm.targeted_audience_client_id).toBe('')
 					})
 				})
@@ -291,17 +283,17 @@ describe('Component: FormSSOSettings', () => {
 			describe('save button', () => {
 				describe('Nextcloud Hub', () => {
 					beforeEach(async () => {
-						jest.clearAllMocks()
-						const clientIdInput = wrapper.find(selectors.clientIdInput)
-						await clientIdInput.vm.$emit('input', 'op-client-id')
-						await localVue.nextTick()
+						vi.clearAllMocks()
+						const clientIdInput = wrapper.findComponent(selectors.clientIdInput)
+						await clientIdInput.vm.$emit('update:modelValue', 'op-client-id')
+						await nextTick()
 					})
 					it('should set sso settings on save', async () => {
-						const saveFormButton = wrapper.find(selectors.saveFormButton)
-						expect(saveFormButton.attributes().disabled).toBe(undefined)
+						const saveFormButton = wrapper.findComponent(selectors.saveFormButton)
+						expect(saveFormButton.attributes().disabled).toBe('false')
 						expect(wrapper.vm.savedForm.targeted_audience_client_id).toBe('')
 						await saveFormButton.vm.$emit('click')
-						await localVue.nextTick()
+						await nextTick()
 
 						expect(saveAdminConfig).toBeCalledTimes(1)
 						expect(saveAdminConfig).toBeCalledWith({
@@ -318,7 +310,7 @@ describe('Component: FormSSOSettings', () => {
 
 						expect(wrapper.vm.savedForm.sso_provider_type).toBe(SSO_PROVIDER_TYPE.nextcloudHub)
 						expect(wrapper.vm.savedForm.oidc_provider).toBe(SSO_PROVIDER_LABEL.nextcloudHub)
-						expect(wrapper.vm.savedForm.token_exchange).toBe(null)
+						expect(wrapper.vm.savedForm.token_exchange).toBeNull()
 						expect(wrapper.vm.savedForm.targeted_audience_client_id).toBe('op-client-id')
 						expect(wrapper.vm.loading).toBe(false)
 						expect(showSuccess).toHaveBeenCalledTimes(1)
@@ -330,22 +322,22 @@ describe('Component: FormSSOSettings', () => {
 
 				describe('external SSO Provider', () => {
 					beforeEach(async () => {
-						jest.clearAllMocks()
-						const ssoExternalRadioBox = wrapper.find(selectors.ssoExternalRadioBox)
-						await ssoExternalRadioBox.vm.$emit('update:checked', SSO_PROVIDER_TYPE.external)
-						const providerSelect = wrapper.find(selectors.providerSelect)
+						vi.clearAllMocks()
+						const ssoExternalRadioBox = wrapper.findComponent(selectors.ssoExternalRadioBox)
+						await ssoExternalRadioBox.vm.$emit('update:modelValue', SSO_PROVIDER_TYPE.external)
+						const providerSelect = wrapper.findComponent(selectors.providerSelect)
 						await providerSelect.vm.$emit('option:selected', 'keycloak')
-						await localVue.nextTick()
+						await nextTick()
 					})
 					it('should set sso settings on save: without token exchange', async () => {
-						const saveFormButton = wrapper.find(selectors.saveFormButton)
-						expect(saveFormButton.attributes().disabled).toBe(undefined)
+						const saveFormButton = wrapper.findComponent(selectors.saveFormButton)
+						expect(saveFormButton.attributes().disabled).toBe('false')
 						expect(wrapper.vm.savedForm.sso_provider_type).toBe(SSO_PROVIDER_TYPE.nextcloudHub)
 						expect(wrapper.vm.savedForm.oidc_provider).toBe(SSO_PROVIDER_LABEL.nextcloudHub)
 						expect(wrapper.vm.savedForm.token_exchange).toBe('')
 						expect(wrapper.vm.savedForm.targeted_audience_client_id).toBe('')
 						await saveFormButton.vm.$emit('click')
-						await localVue.nextTick()
+						await nextTick()
 
 						expect(saveAdminConfig).toBeCalledTimes(1)
 						expect(saveAdminConfig).toBeCalledWith({
@@ -363,7 +355,7 @@ describe('Component: FormSSOSettings', () => {
 						expect(wrapper.vm.savedForm.sso_provider_type).toBe(SSO_PROVIDER_TYPE.external)
 						expect(wrapper.vm.savedForm.oidc_provider).toBe('keycloak')
 						expect(wrapper.vm.savedForm.token_exchange).toBe('')
-						expect(wrapper.vm.savedForm.targeted_audience_client_id).toBe(null)
+						expect(wrapper.vm.savedForm.targeted_audience_client_id).toBeNull()
 						expect(wrapper.vm.loading).toBe(false)
 						expect(showSuccess).toHaveBeenCalledTimes(1)
 						expect(showError).toHaveBeenCalledTimes(0)
@@ -371,19 +363,19 @@ describe('Component: FormSSOSettings', () => {
 						toMatchSerializedSnapshot(wrapper.html())
 					})
 					it('should set sso settings on save: with token exchange', async () => {
-						const tokenExchangeSwitch = wrapper.find(selectors.tokenExchangeSwitch)
-						await tokenExchangeSwitch.vm.$emit('update:checked', true)
-						const clientIdInput = wrapper.find(selectors.clientIdInput)
-						await clientIdInput.vm.$emit('input', 'op-client-id')
-						await localVue.nextTick()
-						const saveFormButton = wrapper.find(selectors.saveFormButton)
-						expect(saveFormButton.attributes().disabled).toBe(undefined)
+						const tokenExchangeSwitch = wrapper.findComponent(selectors.tokenExchangeSwitch)
+						await tokenExchangeSwitch.vm.$emit('update:modelValue', true)
+						const clientIdInput = wrapper.findComponent(selectors.clientIdInput)
+						await clientIdInput.vm.$emit('update:modelValue', 'op-client-id')
+						await nextTick()
+						const saveFormButton = wrapper.findComponent(selectors.saveFormButton)
+						expect(saveFormButton.attributes().disabled).toBe('false')
 						expect(wrapper.vm.savedForm.sso_provider_type).toBe(SSO_PROVIDER_TYPE.nextcloudHub)
 						expect(wrapper.vm.savedForm.oidc_provider).toBe(SSO_PROVIDER_LABEL.nextcloudHub)
 						expect(wrapper.vm.savedForm.targeted_audience_client_id).toBe('')
 						expect(wrapper.vm.savedForm.token_exchange).toBe('')
 						await saveFormButton.vm.$emit('click')
-						await localVue.nextTick()
+						await nextTick()
 
 						expect(saveAdminConfig).toBeCalledTimes(1)
 						expect(saveAdminConfig).toBeCalledWith({
@@ -445,9 +437,9 @@ describe('Component: FormSSOSettings', () => {
 					const errorNote = wrapper.find(selectors.errorNote)
 
 					expect(formHeading.attributes().haserror).toBe('true')
-					expect(formHeading.attributes().isdisabled).toBe(undefined)
+					expect(formHeading.attributes().isdisabled).toBe('false')
 					expect(wrapper.findAll(selectors.errorNote)).toHaveLength(1)
-					expect(errorNote.attributes().errortitle).toBe(messagesFmt.appNotEnabledOrUnsupported())
+					expect(errorNote.attributes().errortitle).toBe(messagesFmt.appNotEnabledOrUnsupported(appsState.user_oidc.name, appsState.user_oidc.minimum_version))
 					expect(errorNote.attributes().errorlink).toBe(appLinks.user_oidc.installLink)
 
 					expect(wrapper.find(selectors.ssoNextcloudRadioBox).attributes().disabled).toBe('true')
@@ -476,7 +468,7 @@ describe('Component: FormSSOSettings', () => {
 					const formHeading = wrapper.find(selectors.formHeading)
 
 					expect(formHeading.attributes().isdisabled).toBe('true')
-					expect(formHeading.attributes().haserror).toBe(undefined)
+					expect(formHeading.attributes().haserror).toBe('false')
 					expect(wrapper.find(selectors.errorNote).exists()).toBe(false)
 
 					expect(wrapper.find(selectors.ssoNextcloudRadioBox).exists()).toBe(false)
@@ -486,17 +478,17 @@ describe('Component: FormSSOSettings', () => {
 				})
 				it('should show disabled error label but not error card', () => {
 					const formHeading = wrapper.find(selectors.formHeading)
-					expect(formHeading.attributes().isdisabled).toBe(undefined)
-					expect(formHeading.attributes().haserror).toBe(undefined)
+					expect(formHeading.attributes().isdisabled).toBe('false')
+					expect(formHeading.attributes().haserror).toBe('false')
 					expect(wrapper.find(selectors.errorNote).exists()).toBe(false)
 
 					const errorLabel = wrapper.find(selectors.errorLabel)
-					expect(errorLabel.attributes().error).toBe(messagesFmt.appNotEnabledOrUnsupported())
+					expect(errorLabel.attributes().error).toBe(messagesFmt.appNotEnabledOrUnsupported(appsState.oidc.name, appsState.oidc.minimum_version))
 					expect(errorLabel.attributes().disabled).toBe('true')
 
 					expect(wrapper.find(selectors.ssoNextcloudRadioBox).attributes().disabled).toBe('true')
-					expect(wrapper.find(selectors.ssoExternalRadioBox).attributes().disabled).toBe(undefined)
-					expect(wrapper.find(selectors.ssoExternalRadioBox).attributes().checked).toBe(SSO_PROVIDER_TYPE.external)
+					expect(wrapper.find(selectors.ssoExternalRadioBox).attributes().disabled).toBe('false')
+					expect(wrapper.find(selectors.ssoExternalRadioBox).attributes().modelvalue).toBe(SSO_PROVIDER_TYPE.external)
 					expect(wrapper.vm.currentForm.sso_provider_type).toBe(SSO_PROVIDER_TYPE.external)
 					expect(wrapper.find(selectors.providerSelect).exists()).toBe(true)
 					expect(wrapper.find(selectors.tokenExchangeSwitch).exists()).toBe(true)
@@ -540,26 +532,26 @@ describe('Component: FormSSOSettings', () => {
 			const wrapper = getWrapper({ props })
 
 			expect(wrapper.vm.formMode).toBe(F_MODES.NEW)
-			expect(wrapper.find(selectors.formHeading).attributes().iscomplete).toBe(undefined)
+			expect(wrapper.find(selectors.formHeading).attributes().iscomplete).toBe('false')
 			expect(wrapper.find(selectors.saveFormButton).attributes().disabled).toBe('true')
 			expect(wrapper.find(selectors.cancelFormButton).exists()).toBe(false)
 			expect(wrapper.find(selectors.editFormButton).exists()).toBe(false)
 
 			if (settings.sso_provider_type === SSO_PROVIDER_TYPE.nextcloudHub) {
-				expect(wrapper.find(selectors.ssoNextcloudRadioBox).attributes().checked).toBe(SSO_PROVIDER_TYPE.nextcloudHub)
-				expect(wrapper.find(selectors.ssoExternalRadioBox).attributes().checked).toBe(SSO_PROVIDER_TYPE.nextcloudHub)
-				expect(wrapper.find(selectors.clientIdInput).attributes().value).toBe(settings.targeted_audience_client_id)
+				expect(wrapper.find(selectors.ssoNextcloudRadioBox).attributes().modelvalue).toBe(SSO_PROVIDER_TYPE.nextcloudHub)
+				expect(wrapper.find(selectors.ssoExternalRadioBox).attributes().modelvalue).toBe(SSO_PROVIDER_TYPE.nextcloudHub)
+				expect(wrapper.find(selectors.clientIdInput).attributes().modelvalue).toBe(settings.targeted_audience_client_id)
 				expect(wrapper.find(selectors.providerSelect).exists()).toBe(false)
 				expect(wrapper.find(selectors.tokenExchangeSwitch).exists()).toBe(false)
 			} else {
-				expect(wrapper.find(selectors.ssoNextcloudRadioBox).attributes().checked).toBe(SSO_PROVIDER_TYPE.external)
-				expect(wrapper.find(selectors.ssoExternalRadioBox).attributes().checked).toBe(SSO_PROVIDER_TYPE.external)
+				expect(wrapper.find(selectors.ssoNextcloudRadioBox).attributes().modelvalue).toBe(SSO_PROVIDER_TYPE.external)
+				expect(wrapper.find(selectors.ssoExternalRadioBox).attributes().modelvalue).toBe(SSO_PROVIDER_TYPE.external)
 				expect(wrapper.find(selectors.providerSelect).attributes().value).toBe(settings.oidc_provider)
 				if (settings.token_exchange) {
-					expect(wrapper.find(selectors.clientIdInput).attributes().value).toBe(settings.targeted_audience_client_id)
-					expect(wrapper.find(selectors.tokenExchangeSwitch).attributes().checked).toBe(`${settings.token_exchange}`)
+					expect(wrapper.find(selectors.clientIdInput).attributes().modelvalue).toBe(settings.targeted_audience_client_id)
+					expect(wrapper.find(selectors.tokenExchangeSwitch).attributes().modelvalue).toBe(`${settings.token_exchange}`)
 				} else {
-					expect(wrapper.find(selectors.tokenExchangeSwitch).attributes().checked).toBe(undefined)
+					expect(wrapper.find(selectors.tokenExchangeSwitch).attributes().modelvalue).toBe('false')
 					expect(wrapper.find(selectors.clientIdInput).exists()).toBe(false)
 				}
 			}
@@ -612,8 +604,8 @@ describe('Component: FormSSOSettings', () => {
 				wrapper = getWrapper({ props })
 
 				const formHeading = wrapper.find(selectors.formHeading)
-				expect(formHeading.attributes().haserror).toBe(undefined)
-				expect(formHeading.attributes().disabled).toBe(undefined)
+				expect(formHeading.attributes().haserror).toBe('false')
+				expect(formHeading.attributes().isdisabled).toBe('false')
 				expect(wrapper.find(selectors.errorNote).exists()).toBe(false)
 
 				expect(wrapper.vm.formMode).toBe(F_MODES.VIEW)
@@ -626,13 +618,13 @@ describe('Component: FormSSOSettings', () => {
 				const formFields = wrapper.findAll(selectors.fieldValue)
 
 				expect(formFields).toHaveLength(fieldsLength)
-				expect(formFields.at(0).attributes().value).toBe(settings.sso_provider_type)
+				expect(formFields[0].attributes().value).toBe(settings.sso_provider_type)
 				if (providerType === SSO_PROVIDER_TYPE.nextcloudHub) {
-					expect(formFields.at(1).attributes().value).toBe(settings.targeted_audience_client_id)
+					expect(formFields[1].attributes().value).toBe(settings.targeted_audience_client_id)
 				} else {
-					expect(formFields.at(1).attributes().value).toBe(settings.oidc_provider)
-					expect(formFields.at(2).attributes().value).toBe(`${settings.token_exchange}`)
-					fieldsLength === 4 && expect(formFields.at(3).attributes().value).toBe(settings.targeted_audience_client_id)
+					expect(formFields[1].attributes().value).toBe(settings.oidc_provider)
+					expect(formFields[2].attributes().value).toBe(`${settings.token_exchange}`)
+					fieldsLength === 4 && expect(formFields[3].attributes().value).toBe(settings.targeted_audience_client_id)
 				}
 
 				expect(wrapper.find(selectors.ssoNextcloudRadioBox).exists()).toBe(false)
@@ -683,7 +675,12 @@ describe('Component: FormSSOSettings', () => {
 					const errorNote = wrapper.find(selectors.errorNote)
 					expect(wrapper.findAll(selectors.errorNote)).toHaveLength(1)
 					expect(errorNote.exists()).toBe(true)
-					expect(errorNote.attributes().errortitle).toBe(messagesFmt.appNotEnabledOrUnsupported('user_oidc'))
+					expect(errorNote.attributes().errortitle).toBe(
+						messagesFmt.appNotEnabledOrUnsupported(
+							appsState.user_oidc.name,
+							appsState.user_oidc.minimum_version,
+						),
+					)
 					expect(errorNote.attributes().errorlink).toBe(appLinks.user_oidc.installLink)
 					expect(errorNote.attributes().errorlinklabel).toBe(messages.installLatestVersionNow)
 					expect(wrapper.find(selectors.formHeading).attributes().haserror).toBe('true')
@@ -737,7 +734,12 @@ describe('Component: FormSSOSettings', () => {
 						const errorNote = wrapper.find(selectors.errorNote)
 						expect(wrapper.findAll(selectors.errorNote)).toHaveLength(1)
 						expect(errorNote.exists()).toBe(true)
-						expect(errorNote.attributes().errortitle).toBe(messagesFmt.appNotEnabledOrUnsupported('oidc'))
+						expect(errorNote.attributes().errortitle).toBe(
+							messagesFmt.appNotEnabledOrUnsupported(
+								appsState.oidc.name,
+								appsState.oidc.minimum_version,
+							),
+						)
 						expect(errorNote.attributes().errorlink).toBe(appLinks.oidc.installLink)
 						expect(errorNote.attributes().errorlinklabel).toBe(messages.installLatestVersionNow)
 						expect(wrapper.find(selectors.formHeading).attributes().haserror).toBe('true')
@@ -752,7 +754,7 @@ describe('Component: FormSSOSettings', () => {
 						expect(wrapper.findAll(selectors.fieldValue)).toHaveLength(2)
 					})
 					it('should show "Edit" button', () => {
-						expect(wrapper.find(selectors.editFormButton).attributes().disabled).toBe(undefined)
+						expect(wrapper.find(selectors.editFormButton).attributes().disabled).toBe('false')
 					})
 				})
 
@@ -790,7 +792,7 @@ describe('Component: FormSSOSettings', () => {
 
 					it('should not show error card', () => {
 						expect(wrapper.find(selectors.errorNote).exists()).toBe(false)
-						expect(wrapper.find(selectors.formHeading).attributes().haserror).toBe(undefined)
+						expect(wrapper.find(selectors.formHeading).attributes().haserror).toBe('false')
 
 						expect(wrapper.find(selectors.ssoNextcloudRadioBox).exists()).toBe(false)
 						expect(wrapper.find(selectors.ssoExternalRadioBox).exists()).toBe(false)
@@ -802,7 +804,7 @@ describe('Component: FormSSOSettings', () => {
 						expect(wrapper.findAll(selectors.fieldValue)).toHaveLength(fieldsLength)
 					})
 					it('should show "Edit" button', () => {
-						expect(wrapper.find(selectors.editFormButton).attributes().disabled).toBe(undefined)
+						expect(wrapper.find(selectors.editFormButton).attributes().disabled).toBe('false')
 					})
 				})
 			})
@@ -823,18 +825,18 @@ describe('Component: FormSSOSettings', () => {
 				}
 				wrapper = getWrapper({ props })
 				expect(wrapper.find(selectors.formHeading).attributes().iscomplete).toBe('true')
-				const editFormButton = wrapper.find(selectors.editFormButton)
+				const editFormButton = wrapper.findComponent(selectors.editFormButton)
 				editFormButton.vm.$emit('click')
-				await localVue.nextTick()
-				expect(wrapper.find(selectors.formHeading).attributes().iscomplete).toBe(undefined)
+				await nextTick()
+				expect(wrapper.find(selectors.formHeading).attributes().iscomplete).toBe('false')
 			})
 
 			it('should show the form fields', () => {
 				expect(wrapper.vm.formMode).toBe(F_MODES.EDIT)
 				expect(wrapper.find(selectors.editFormButton).exists()).toBe(false)
-				expect(wrapper.find(selectors.ssoNextcloudRadioBox).attributes().checked).toBe(SSO_PROVIDER_TYPE.nextcloudHub)
-				expect(wrapper.find(selectors.ssoExternalRadioBox).attributes().checked).toBe(SSO_PROVIDER_TYPE.nextcloudHub)
-				expect(wrapper.find(selectors.clientIdInput).attributes().value).toBe('op-client-id')
+				expect(wrapper.find(selectors.ssoNextcloudRadioBox).attributes().modelvalue).toBe(SSO_PROVIDER_TYPE.nextcloudHub)
+				expect(wrapper.find(selectors.ssoExternalRadioBox).attributes().modelvalue).toBe(SSO_PROVIDER_TYPE.nextcloudHub)
+				expect(wrapper.find(selectors.clientIdInput).attributes().modelvalue).toBe('op-client-id')
 				toMatchSerializedSnapshot(wrapper.html())
 			})
 			it('should show the action buttons', () => {
@@ -842,23 +844,23 @@ describe('Component: FormSSOSettings', () => {
 				expect(wrapper.find(selectors.saveFormButton).attributes().disabled).toBe('true')
 			})
 			it('should enable "save" button if client-id is changed', async () => {
-				const clientIdInput = wrapper.find(selectors.clientIdInput)
-				await clientIdInput.vm.$emit('input', 'op-client-id-new')
-				await localVue.nextTick()
-				expect(wrapper.find(selectors.saveFormButton).attributes().disabled).toBe(undefined)
+				const clientIdInput = wrapper.findComponent(selectors.clientIdInput)
+				await clientIdInput.vm.$emit('update:modelValue', 'op-client-id-new')
+				await nextTick()
+				expect(wrapper.find(selectors.saveFormButton).attributes().disabled).toBe('false')
 				// disabled save button on old client id
-				await clientIdInput.vm.$emit('input', 'op-client-id')
-				await localVue.nextTick()
+				await clientIdInput.vm.$emit('update:modelValue', 'op-client-id')
+				await nextTick()
 				expect(wrapper.find(selectors.saveFormButton).attributes().disabled).toBe('true')
 				toMatchSerializedSnapshot(wrapper.html())
 			})
 			it('should reset the changes on cancel', async () => {
-				const clientIdInput = wrapper.find(selectors.clientIdInput)
-				await clientIdInput.vm.$emit('input', 'op-client-id-new')
-				const cancelFormButton = wrapper.find(selectors.cancelFormButton)
+				const clientIdInput = wrapper.findComponent(selectors.clientIdInput)
+				await clientIdInput.vm.$emit('update:modelValue', 'op-client-id-new')
+				const cancelFormButton = wrapper.findComponent(selectors.cancelFormButton)
 				expect(wrapper.vm.savedForm.targeted_audience_client_id).toBe('op-client-id')
 				await cancelFormButton.vm.$emit('click')
-				await localVue.nextTick()
+				await nextTick()
 
 				expect(saveAdminConfig).toBeCalledTimes(0)
 				expect(wrapper.vm.formMode).toBe(F_MODES.VIEW)
@@ -879,12 +881,12 @@ describe('Component: FormSSOSettings', () => {
 				toMatchSerializedSnapshot(wrapper.html())
 			})
 			it('should set sso settings on save', async () => {
-				const clientIdInput = wrapper.find(selectors.clientIdInput)
-				await clientIdInput.vm.$emit('input', 'op-client-id-new')
-				const saveFormButton = wrapper.find(selectors.saveFormButton)
+				const clientIdInput = wrapper.findComponent(selectors.clientIdInput)
+				await clientIdInput.vm.$emit('update:modelValue', 'op-client-id-new')
+				const saveFormButton = wrapper.findComponent(selectors.saveFormButton)
 				expect(wrapper.vm.savedForm.targeted_audience_client_id).toBe('op-client-id')
 				await saveFormButton.vm.$emit('click')
-				await localVue.nextTick()
+				await nextTick()
 
 				expect(saveAdminConfig).toBeCalledTimes(1)
 				expect(saveAdminConfig).toBeCalledWith({
@@ -901,11 +903,11 @@ describe('Component: FormSSOSettings', () => {
 
 				expect(wrapper.vm.savedForm.sso_provider_type).toBe(SSO_PROVIDER_TYPE.nextcloudHub)
 				expect(wrapper.vm.savedForm.oidc_provider).toBe(SSO_PROVIDER_LABEL.nextcloudHub)
-				expect(wrapper.vm.savedForm.token_exchange).toBe(null)
+				expect(wrapper.vm.savedForm.token_exchange).toBeNull()
 				expect(wrapper.vm.savedForm.targeted_audience_client_id).toBe('op-client-id-new')
 				expect(wrapper.vm.currentForm.sso_provider_type).toBe(SSO_PROVIDER_TYPE.nextcloudHub)
 				expect(wrapper.vm.currentForm.oidc_provider).toBe(SSO_PROVIDER_LABEL.nextcloudHub)
-				expect(wrapper.vm.currentForm.token_exchange).toBe(null)
+				expect(wrapper.vm.currentForm.token_exchange).toBeNull()
 				expect(wrapper.vm.currentForm.targeted_audience_client_id).toBe('op-client-id-new')
 				expect(wrapper.vm.loading).toBe(false)
 				expect(showSuccess).toHaveBeenCalledTimes(1)
@@ -925,14 +927,14 @@ describe('Component: FormSSOSettings', () => {
 					}
 					wrapper = getWrapper({ props })
 					expect(wrapper.find(selectors.formHeading).attributes().iscomplete).toBe('true')
-					const editFormButton = wrapper.find(selectors.editFormButton)
+					const editFormButton = wrapper.findComponent(selectors.editFormButton)
 					editFormButton.vm.$emit('click')
-					await localVue.nextTick()
-					expect(wrapper.find(selectors.formHeading).attributes().iscomplete).toBe(undefined)
+					await nextTick()
+					expect(wrapper.find(selectors.formHeading).attributes().iscomplete).toBe('false')
 					expect(wrapper.vm.currentForm.oidc_provider).toBe(SSO_PROVIDER_LABEL.nextcloudHub)
-					const ssoExternalRadioBox = wrapper.find(selectors.ssoExternalRadioBox)
-					ssoExternalRadioBox.vm.$emit('update:checked', SSO_PROVIDER_TYPE.external)
-					await localVue.nextTick()
+					const ssoExternalRadioBox = wrapper.findComponent(selectors.ssoExternalRadioBox)
+					ssoExternalRadioBox.vm.$emit('update:modelValue', SSO_PROVIDER_TYPE.external)
+					await nextTick()
 				})
 
 				it('should show external provider form fields', async () => {
@@ -944,30 +946,30 @@ describe('Component: FormSSOSettings', () => {
 					expect(wrapper.find(selectors.cancelFormButton).exists()).toBe(true)
 					expect(wrapper.find(selectors.saveFormButton).attributes().disabled).toBe('true')
 
-					expect(wrapper.vm.currentForm.oidc_provider).toBe(null)
+					expect(wrapper.vm.currentForm.oidc_provider).toBeNull()
 
-					const tokenExchangeSwitch = wrapper.find(selectors.tokenExchangeSwitch)
-					tokenExchangeSwitch.vm.$emit('update:checked', true)
-					await localVue.nextTick()
+					const tokenExchangeSwitch = wrapper.findComponent(selectors.tokenExchangeSwitch)
+					tokenExchangeSwitch.vm.$emit('update:modelValue', true)
+					await nextTick()
 					expect(wrapper.find(selectors.clientIdInput).exists()).toBe(true)
 					expect(wrapper.vm.currentForm.targeted_audience_client_id).toBe('op-client-id')
 					toMatchSerializedSnapshot(wrapper.html())
 				})
 				it('should reset the changes on cancel', async () => {
 					expect(wrapper.vm.savedForm.sso_provider_type).toBe(SSO_PROVIDER_TYPE.nextcloudHub)
-					const providerSelect = wrapper.find(selectors.providerSelect)
+					const providerSelect = wrapper.findComponent(selectors.providerSelect)
 					await providerSelect.vm.$emit('option:selected', 'keycloak')
-					const tokenExchangeSwitch = wrapper.find(selectors.tokenExchangeSwitch)
-					tokenExchangeSwitch.vm.$emit('update:checked', true)
-					await localVue.nextTick()
-					const clientIdInput = wrapper.find(selectors.clientIdInput)
-					await clientIdInput.vm.$emit('input', 'op-client-id-new')
-					await localVue.nextTick()
-					expect(wrapper.find(selectors.saveFormButton).attributes().disabled).toBe(undefined)
+					const tokenExchangeSwitch = wrapper.findComponent(selectors.tokenExchangeSwitch)
+					tokenExchangeSwitch.vm.$emit('update:modelValue', true)
+					await nextTick()
+					const clientIdInput = wrapper.findComponent(selectors.clientIdInput)
+					await clientIdInput.vm.$emit('update:modelValue', 'op-client-id-new')
+					await nextTick()
+					expect(wrapper.find(selectors.saveFormButton).attributes().disabled).toBe('false')
 
-					const cancelFormButton = wrapper.find(selectors.cancelFormButton)
+					const cancelFormButton = wrapper.findComponent(selectors.cancelFormButton)
 					await cancelFormButton.vm.$emit('click')
-					await localVue.nextTick()
+					await nextTick()
 
 					expect(saveAdminConfig).toBeCalledTimes(0)
 					expect(wrapper.vm.formMode).toBe(F_MODES.VIEW)
@@ -991,17 +993,17 @@ describe('Component: FormSSOSettings', () => {
 				})
 				it('should set settings on save', async () => {
 					expect(wrapper.vm.savedForm.sso_provider_type).toBe(SSO_PROVIDER_TYPE.nextcloudHub)
-					const providerSelect = wrapper.find(selectors.providerSelect)
+					const providerSelect = wrapper.findComponent(selectors.providerSelect)
 					await providerSelect.vm.$emit('option:selected', 'keycloak')
-					const tokenExchangeSwitch = wrapper.find(selectors.tokenExchangeSwitch)
-					tokenExchangeSwitch.vm.$emit('update:checked', true)
-					await localVue.nextTick()
-					const clientIdInput = wrapper.find(selectors.clientIdInput)
-					await clientIdInput.vm.$emit('input', 'op-client-id-new')
-					await localVue.nextTick()
-					const saveFormButton = wrapper.find(selectors.saveFormButton)
+					const tokenExchangeSwitch = wrapper.findComponent(selectors.tokenExchangeSwitch)
+					tokenExchangeSwitch.vm.$emit('update:modelValue', true)
+					await nextTick()
+					const clientIdInput = wrapper.findComponent(selectors.clientIdInput)
+					await clientIdInput.vm.$emit('update:modelValue', 'op-client-id-new')
+					await nextTick()
+					const saveFormButton = wrapper.findComponent(selectors.saveFormButton)
 					await saveFormButton.vm.$emit('click')
-					await localVue.nextTick()
+					await nextTick()
 
 					expect(saveAdminConfig).toBeCalledTimes(1)
 					expect(saveAdminConfig).toBeCalledWith({
@@ -1043,41 +1045,41 @@ describe('Component: FormSSOSettings', () => {
 					props.apps.oidc.enabled = false
 					wrapper = getWrapper({ props })
 					expect(wrapper.find(selectors.formHeading).attributes().iscomplete).toBe('true')
-					const editFormButton = wrapper.find(selectors.editFormButton)
+					const editFormButton = wrapper.findComponent(selectors.editFormButton)
 					editFormButton.vm.$emit('click')
-					await localVue.nextTick()
-					expect(wrapper.find(selectors.formHeading).attributes().iscomplete).toBe(undefined)
+					await nextTick()
+					expect(wrapper.find(selectors.formHeading).attributes().iscomplete).toBe('false')
 				})
 
 				it('should be able to select external provider', async () => {
 					const ssoNextcloudRadioBox = wrapper.find(selectors.ssoNextcloudRadioBox)
 					expect(ssoNextcloudRadioBox.attributes().disabled).toBe('true')
-					expect(ssoNextcloudRadioBox.attributes().checked).toBe(SSO_PROVIDER_TYPE.nextcloudHub)
-					const ssoExternalRadioBox = wrapper.find(selectors.ssoExternalRadioBox)
-					expect(ssoExternalRadioBox.attributes().disabled).toBe(undefined)
-					expect(ssoExternalRadioBox.attributes().checked).toBe(SSO_PROVIDER_TYPE.nextcloudHub)
-					ssoExternalRadioBox.vm.$emit('update:checked', SSO_PROVIDER_TYPE.external)
-					await localVue.nextTick()
+					expect(ssoNextcloudRadioBox.attributes().modelvalue).toBe(SSO_PROVIDER_TYPE.nextcloudHub)
+					const ssoExternalRadioBox = wrapper.findComponent(selectors.ssoExternalRadioBox)
+					expect(ssoExternalRadioBox.attributes().disabled).toBe('false')
+					expect(ssoExternalRadioBox.attributes().modelvalue).toBe(SSO_PROVIDER_TYPE.nextcloudHub)
+					ssoExternalRadioBox.vm.$emit('update:modelValue', SSO_PROVIDER_TYPE.external)
+					await nextTick()
 
-					expect(wrapper.find(selectors.ssoNextcloudRadioBox).attributes().checked).toBe(SSO_PROVIDER_TYPE.external)
+					expect(wrapper.find(selectors.ssoNextcloudRadioBox).attributes().modelvalue).toBe(SSO_PROVIDER_TYPE.external)
 					expect(wrapper.find(selectors.formHeading).attributes().haserror).toBe('true')
 					expect(wrapper.find(selectors.errorNote).exists()).toBe(true)
 					expect(wrapper.findAll(selectors.errorNote)).toHaveLength(1)
 					expect(wrapper.find(selectors.errorLabel).exists()).toBe(true)
-					expect(wrapper.find(selectors.errorLabel).attributes().disabled).toBe(undefined)
+					expect(wrapper.find(selectors.errorLabel).attributes().disabled).toBe('false')
 					expect(wrapper.vm.savedForm.sso_provider_type).toBe(SSO_PROVIDER_TYPE.nextcloudHub)
 
-					const providerSelect = wrapper.find(selectors.providerSelect)
+					const providerSelect = wrapper.findComponent(selectors.providerSelect)
 					await providerSelect.vm.$emit('option:selected', 'keycloak')
-					const tokenExchangeSwitch = wrapper.find(selectors.tokenExchangeSwitch)
-					tokenExchangeSwitch.vm.$emit('update:checked', true)
-					await localVue.nextTick()
-					const clientIdInput = wrapper.find(selectors.clientIdInput)
-					await clientIdInput.vm.$emit('input', 'op-client-id-new')
-					await localVue.nextTick()
-					const saveFormButton = wrapper.find(selectors.saveFormButton)
+					const tokenExchangeSwitch = wrapper.findComponent(selectors.tokenExchangeSwitch)
+					tokenExchangeSwitch.vm.$emit('update:modelValue', true)
+					await nextTick()
+					const clientIdInput = wrapper.findComponent(selectors.clientIdInput)
+					await clientIdInput.vm.$emit('update:modelValue', 'op-client-id-new')
+					await nextTick()
+					const saveFormButton = wrapper.findComponent(selectors.saveFormButton)
 					await saveFormButton.vm.$emit('click')
-					await localVue.nextTick()
+					await nextTick()
 
 					expect(saveAdminConfig).toBeCalledTimes(1)
 					expect(saveAdminConfig).toBeCalledWith({
@@ -1090,7 +1092,7 @@ describe('Component: FormSSOSettings', () => {
 					expect(wrapper.find(selectors.formHeading).attributes().iscomplete).toBe('true')
 					expect(wrapper.find(selectors.errorNote).exists()).toBe(false)
 					expect(wrapper.find(selectors.errorLabel).exists()).toBe(false)
-					expect(wrapper.find(selectors.formHeading).attributes().haserror).toBe(undefined)
+					expect(wrapper.find(selectors.formHeading).attributes().haserror).toBe('false')
 
 					expect(wrapper.find(selectors.editFormButton).exists()).toBe(true)
 					expect(wrapper.vm.savedForm.sso_provider_type).toBe(SSO_PROVIDER_TYPE.external)
@@ -1104,27 +1106,27 @@ describe('Component: FormSSOSettings', () => {
 					toMatchSerializedSnapshot(wrapper.html())
 				})
 				it('should preserve the errors on cancel', async () => {
-					const ssoExternalRadioBox = wrapper.find(selectors.ssoExternalRadioBox)
-					ssoExternalRadioBox.vm.$emit('update:checked', SSO_PROVIDER_TYPE.external)
-					await localVue.nextTick()
+					const ssoExternalRadioBox = wrapper.findComponent(selectors.ssoExternalRadioBox)
+					ssoExternalRadioBox.vm.$emit('update:modelValue', SSO_PROVIDER_TYPE.external)
+					await nextTick()
 
 					expect(wrapper.find(selectors.errorNote).exists()).toBe(true)
 					expect(wrapper.findAll(selectors.errorNote)).toHaveLength(1)
 					expect(wrapper.find(selectors.errorLabel).exists()).toBe(true)
-					expect(wrapper.find(selectors.errorLabel).attributes().disabled).toBe(undefined)
+					expect(wrapper.find(selectors.errorLabel).attributes().disabled).toBe('false')
 					expect(wrapper.vm.savedForm.sso_provider_type).toBe(SSO_PROVIDER_TYPE.nextcloudHub)
 
-					const providerSelect = wrapper.find(selectors.providerSelect)
+					const providerSelect = wrapper.findComponent(selectors.providerSelect)
 					await providerSelect.vm.$emit('option:selected', 'keycloak')
-					const tokenExchangeSwitch = wrapper.find(selectors.tokenExchangeSwitch)
-					tokenExchangeSwitch.vm.$emit('update:checked', true)
-					await localVue.nextTick()
-					const clientIdInput = wrapper.find(selectors.clientIdInput)
-					await clientIdInput.vm.$emit('input', 'op-client-id-new')
-					await localVue.nextTick()
-					const cancelFormButton = wrapper.find(selectors.cancelFormButton)
+					const tokenExchangeSwitch = wrapper.findComponent(selectors.tokenExchangeSwitch)
+					tokenExchangeSwitch.vm.$emit('update:modelValue', true)
+					await nextTick()
+					const clientIdInput = wrapper.findComponent(selectors.clientIdInput)
+					await clientIdInput.vm.$emit('update:modelValue', 'op-client-id-new')
+					await nextTick()
+					const cancelFormButton = wrapper.findComponent(selectors.cancelFormButton)
 					await cancelFormButton.vm.$emit('click')
-					await localVue.nextTick()
+					await nextTick()
 
 					expect(saveAdminConfig).toBeCalledTimes(0)
 					expect(wrapper.vm.formMode).toBe(F_MODES.VIEW)
@@ -1157,17 +1159,17 @@ describe('Component: FormSSOSettings', () => {
 				}
 				wrapper = getWrapper({ props })
 				expect(wrapper.find(selectors.formHeading).attributes().iscomplete).toBe('true')
-				const editFormButton = wrapper.find(selectors.editFormButton)
+				const editFormButton = wrapper.findComponent(selectors.editFormButton)
 				editFormButton.vm.$emit('click')
-				await localVue.nextTick()
-				expect(wrapper.find(selectors.formHeading).attributes().iscomplete).toBe(undefined)
+				await nextTick()
+				expect(wrapper.find(selectors.formHeading).attributes().iscomplete).toBe('false')
 			})
 
 			it('should show the form fields', () => {
 				expect(wrapper.vm.formMode).toBe(F_MODES.EDIT)
 				expect(wrapper.find(selectors.editFormButton).exists()).toBe(false)
-				expect(wrapper.find(selectors.ssoNextcloudRadioBox).attributes().checked).toBe(SSO_PROVIDER_TYPE.external)
-				expect(wrapper.find(selectors.ssoExternalRadioBox).attributes().checked).toBe(SSO_PROVIDER_TYPE.external)
+				expect(wrapper.find(selectors.ssoNextcloudRadioBox).attributes().modelvalue).toBe(SSO_PROVIDER_TYPE.external)
+				expect(wrapper.find(selectors.ssoExternalRadioBox).attributes().modelvalue).toBe(SSO_PROVIDER_TYPE.external)
 				expect(wrapper.find(selectors.providerSelect).attributes().value).toBe('keycloak')
 				expect(wrapper.find(selectors.tokenExchangeSwitch).exists()).toBe(true)
 				expect(wrapper.find(selectors.clientIdInput).exists()).toBe(false)
@@ -1179,39 +1181,39 @@ describe('Component: FormSSOSettings', () => {
 			})
 			it('should enable "save" button if the settings changed', async () => {
 				// change provider
-				const providerSelect = wrapper.find(selectors.providerSelect)
+				const providerSelect = wrapper.findComponent(selectors.providerSelect)
 				await providerSelect.vm.$emit('option:selected', 'new-provider')
-				await localVue.nextTick()
-				expect(wrapper.find(selectors.saveFormButton).attributes().disabled).toBe(undefined)
+				await nextTick()
+				expect(wrapper.find(selectors.saveFormButton).attributes().disabled).toBe('false')
 				// revert
 				await providerSelect.vm.$emit('option:selected', 'keycloak')
-				await localVue.nextTick()
+				await nextTick()
 				expect(wrapper.find(selectors.saveFormButton).attributes().disabled).toBe('true')
 
 				// enable token exchange
-				const tokenExchangeSwitch = wrapper.find(selectors.tokenExchangeSwitch)
-				tokenExchangeSwitch.vm.$emit('update:checked', true)
-				await localVue.nextTick()
-				const clientIdInput = wrapper.find(selectors.clientIdInput)
-				await clientIdInput.vm.$emit('input', 'op-client-id-new')
-				await localVue.nextTick()
-				expect(wrapper.find(selectors.saveFormButton).attributes().disabled).toBe(undefined)
+				const tokenExchangeSwitch = wrapper.findComponent(selectors.tokenExchangeSwitch)
+				tokenExchangeSwitch.vm.$emit('update:modelValue', true)
+				await nextTick()
+				const clientIdInput = wrapper.findComponent(selectors.clientIdInput)
+				await clientIdInput.vm.$emit('update:modelValue', 'op-client-id-new')
+				await nextTick()
+				expect(wrapper.find(selectors.saveFormButton).attributes().disabled).toBe('false')
 				// revert
-				tokenExchangeSwitch.vm.$emit('update:checked', false)
-				await localVue.nextTick()
+				tokenExchangeSwitch.vm.$emit('update:modelValue', false)
+				await nextTick()
 				expect(wrapper.find(selectors.saveFormButton).attributes().disabled).toBe('true')
 			})
 			it('should reset the changes on cancel', async () => {
-				const providerSelect = wrapper.find(selectors.providerSelect)
+				const providerSelect = wrapper.findComponent(selectors.providerSelect)
 				await providerSelect.vm.$emit('option:selected', 'new-provider')
-				const tokenExchangeSwitch = wrapper.find(selectors.tokenExchangeSwitch)
-				tokenExchangeSwitch.vm.$emit('update:checked', true)
-				await localVue.nextTick()
+				const tokenExchangeSwitch = wrapper.findComponent(selectors.tokenExchangeSwitch)
+				tokenExchangeSwitch.vm.$emit('update:modelValue', true)
+				await nextTick()
 				expect(wrapper.find(selectors.saveFormButton).attributes().disabled).toBe('true')
 
-				const cancelFormButton = wrapper.find(selectors.cancelFormButton)
+				const cancelFormButton = wrapper.findComponent(selectors.cancelFormButton)
 				await cancelFormButton.vm.$emit('click')
-				await localVue.nextTick()
+				await nextTick()
 
 				expect(saveAdminConfig).toBeCalledTimes(0)
 				expect(wrapper.vm.formMode).toBe(F_MODES.VIEW)
@@ -1233,16 +1235,16 @@ describe('Component: FormSSOSettings', () => {
 				toMatchSerializedSnapshot(wrapper.html())
 			})
 			it('should set sso settings on save', async () => {
-				const providerSelect = wrapper.find(selectors.providerSelect)
+				const providerSelect = wrapper.findComponent(selectors.providerSelect)
 				await providerSelect.vm.$emit('option:selected', 'new-provider')
-				const tokenExchangeSwitch = wrapper.find(selectors.tokenExchangeSwitch)
-				tokenExchangeSwitch.vm.$emit('update:checked', true)
-				await localVue.nextTick()
-				const clientIdInput = wrapper.find(selectors.clientIdInput)
-				await clientIdInput.vm.$emit('input', 'op-client-id')
-				const saveFormButton = wrapper.find(selectors.saveFormButton)
+				const tokenExchangeSwitch = wrapper.findComponent(selectors.tokenExchangeSwitch)
+				tokenExchangeSwitch.vm.$emit('update:modelValue', true)
+				await nextTick()
+				const clientIdInput = wrapper.findComponent(selectors.clientIdInput)
+				await clientIdInput.vm.$emit('update:modelValue', 'op-client-id')
+				const saveFormButton = wrapper.findComponent(selectors.saveFormButton)
 				await saveFormButton.vm.$emit('click')
-				await localVue.nextTick()
+				await nextTick()
 
 				expect(saveAdminConfig).toBeCalledTimes(1)
 				expect(saveAdminConfig).toBeCalledWith({
@@ -1283,13 +1285,13 @@ describe('Component: FormSSOSettings', () => {
 					}
 					wrapper = getWrapper({ props })
 					expect(wrapper.find(selectors.formHeading).attributes().iscomplete).toBe('true')
-					const editFormButton = wrapper.find(selectors.editFormButton)
+					const editFormButton = wrapper.findComponent(selectors.editFormButton)
 					editFormButton.vm.$emit('click')
-					await localVue.nextTick()
-					expect(wrapper.find(selectors.formHeading).attributes().iscomplete).toBe(undefined)
-					const ssoNextcloudRadioBox = wrapper.find(selectors.ssoNextcloudRadioBox)
-					ssoNextcloudRadioBox.vm.$emit('update:checked', SSO_PROVIDER_TYPE.nextcloudHub)
-					await localVue.nextTick()
+					await nextTick()
+					expect(wrapper.find(selectors.formHeading).attributes().iscomplete).toBe('false')
+					const ssoNextcloudRadioBox = wrapper.findComponent(selectors.ssoNextcloudRadioBox)
+					ssoNextcloudRadioBox.vm.$emit('update:modelValue', SSO_PROVIDER_TYPE.nextcloudHub)
+					await nextTick()
 				})
 
 				it('should show form fields', async () => {
@@ -1305,14 +1307,14 @@ describe('Component: FormSSOSettings', () => {
 				it('should reset the changes on cancel', async () => {
 					expect(wrapper.vm.savedForm.sso_provider_type).toBe(SSO_PROVIDER_TYPE.external)
 					expect(wrapper.vm.savedForm.oidc_provider).toBe('keycloak')
-					const clientIdInput = wrapper.find(selectors.clientIdInput)
-					await clientIdInput.vm.$emit('input', 'op-client-id')
-					await localVue.nextTick()
-					expect(wrapper.find(selectors.saveFormButton).attributes().disabled).toBe(undefined)
+					const clientIdInput = wrapper.findComponent(selectors.clientIdInput)
+					await clientIdInput.vm.$emit('update:modelValue', 'op-client-id')
+					await nextTick()
+					expect(wrapper.find(selectors.saveFormButton).attributes().disabled).toBe('false')
 
-					const cancelFormButton = wrapper.find(selectors.cancelFormButton)
+					const cancelFormButton = wrapper.findComponent(selectors.cancelFormButton)
 					await cancelFormButton.vm.$emit('click')
-					await localVue.nextTick()
+					await nextTick()
 
 					expect(saveAdminConfig).toBeCalledTimes(0)
 					expect(wrapper.vm.formMode).toBe(F_MODES.VIEW)
@@ -1336,13 +1338,13 @@ describe('Component: FormSSOSettings', () => {
 				it('should set settings on save', async () => {
 					expect(wrapper.vm.savedForm.sso_provider_type).toBe(SSO_PROVIDER_TYPE.external)
 					expect(wrapper.vm.savedForm.oidc_provider).toBe('keycloak')
-					const clientIdInput = wrapper.find(selectors.clientIdInput)
-					await clientIdInput.vm.$emit('input', 'op-client-id')
-					await localVue.nextTick()
+					const clientIdInput = wrapper.findComponent(selectors.clientIdInput)
+					await clientIdInput.vm.$emit('update:modelValue', 'op-client-id')
+					await nextTick()
 
-					const saveFormButton = wrapper.find(selectors.saveFormButton)
+					const saveFormButton = wrapper.findComponent(selectors.saveFormButton)
 					await saveFormButton.vm.$emit('click')
-					await localVue.nextTick()
+					await nextTick()
 
 					expect(saveAdminConfig).toBeCalledTimes(1)
 					expect(saveAdminConfig).toBeCalledWith({
@@ -1359,11 +1361,11 @@ describe('Component: FormSSOSettings', () => {
 
 					expect(wrapper.vm.savedForm.sso_provider_type).toBe(SSO_PROVIDER_TYPE.nextcloudHub)
 					expect(wrapper.vm.savedForm.oidc_provider).toBe(SSO_PROVIDER_LABEL.nextcloudHub)
-					expect(wrapper.vm.savedForm.token_exchange).toBe(null)
+					expect(wrapper.vm.savedForm.token_exchange).toBeNull()
 					expect(wrapper.vm.savedForm.targeted_audience_client_id).toBe('op-client-id')
 					expect(wrapper.vm.currentForm.sso_provider_type).toBe(SSO_PROVIDER_TYPE.nextcloudHub)
 					expect(wrapper.vm.currentForm.oidc_provider).toBe(SSO_PROVIDER_LABEL.nextcloudHub)
-					expect(wrapper.vm.currentForm.token_exchange).toBe(null)
+					expect(wrapper.vm.currentForm.token_exchange).toBeNull()
 					expect(wrapper.vm.currentForm.targeted_audience_client_id).toBe('op-client-id')
 					expect(wrapper.vm.loading).toBe(false)
 					expect(showSuccess).toHaveBeenCalledTimes(1)
@@ -1384,21 +1386,21 @@ describe('Component: FormSSOSettings', () => {
 					props.apps.oidc.enabled = false
 					wrapper = getWrapper({ props })
 					expect(wrapper.find(selectors.formHeading).attributes().iscomplete).toBe('true')
-					const editFormButton = wrapper.find(selectors.editFormButton)
+					const editFormButton = wrapper.findComponent(selectors.editFormButton)
 					editFormButton.vm.$emit('click')
-					await localVue.nextTick()
-					expect(wrapper.find(selectors.formHeading).attributes().iscomplete).toBe(undefined)
+					await nextTick()
+					expect(wrapper.find(selectors.formHeading).attributes().iscomplete).toBe('false')
 				})
 
 				it('should not show error card', async () => {
 					const ssoNextcloudRadioBox = wrapper.find(selectors.ssoNextcloudRadioBox)
 					expect(ssoNextcloudRadioBox.attributes().disabled).toBe('true')
-					expect(ssoNextcloudRadioBox.attributes().checked).toBe(SSO_PROVIDER_TYPE.external)
+					expect(ssoNextcloudRadioBox.attributes().modelvalue).toBe(SSO_PROVIDER_TYPE.external)
 					const ssoExternalRadioBox = wrapper.find(selectors.ssoExternalRadioBox)
-					expect(ssoExternalRadioBox.attributes().disabled).toBe(undefined)
-					expect(ssoExternalRadioBox.attributes().checked).toBe(SSO_PROVIDER_TYPE.external)
+					expect(ssoExternalRadioBox.attributes().disabled).toBe('false')
+					expect(ssoExternalRadioBox.attributes().modelvalue).toBe(SSO_PROVIDER_TYPE.external)
 
-					expect(wrapper.find(selectors.formHeading).attributes().haserror).toBe(undefined)
+					expect(wrapper.find(selectors.formHeading).attributes().haserror).toBe('false')
 					expect(wrapper.find(selectors.errorNote).exists()).toBe(false)
 					expect(wrapper.find(selectors.errorLabel).exists()).toBe(true)
 					expect(wrapper.find(selectors.errorLabel).attributes().disabled).toBe('true')
@@ -1417,19 +1419,19 @@ describe('Component: FormSSOSettings', () => {
 					}
 					wrapper = getWrapper({ props })
 					expect(wrapper.find(selectors.formHeading).attributes().iscomplete).toBe('true')
-					const editFormButton = wrapper.find(selectors.editFormButton)
+					const editFormButton = wrapper.findComponent(selectors.editFormButton)
 					editFormButton.vm.$emit('click')
-					await localVue.nextTick()
-					expect(wrapper.find(selectors.formHeading).attributes().iscomplete).toBe(undefined)
+					await nextTick()
+					expect(wrapper.find(selectors.formHeading).attributes().iscomplete).toBe('false')
 				})
 
 				it('should show the form fields', () => {
 					expect(wrapper.vm.formMode).toBe(F_MODES.EDIT)
-					expect(wrapper.find(selectors.ssoNextcloudRadioBox).attributes().checked).toBe(SSO_PROVIDER_TYPE.external)
-					expect(wrapper.find(selectors.ssoExternalRadioBox).attributes().checked).toBe(SSO_PROVIDER_TYPE.external)
+					expect(wrapper.find(selectors.ssoNextcloudRadioBox).attributes().modelvalue).toBe(SSO_PROVIDER_TYPE.external)
+					expect(wrapper.find(selectors.ssoExternalRadioBox).attributes().modelvalue).toBe(SSO_PROVIDER_TYPE.external)
 					expect(wrapper.find(selectors.providerSelect).attributes().value).toBe('keycloak')
 					expect(wrapper.find(selectors.tokenExchangeSwitch).exists()).toBe(true)
-					expect(wrapper.find(selectors.clientIdInput).attributes().value).toBe('op-client-id')
+					expect(wrapper.find(selectors.clientIdInput).attributes().modelvalue).toBe('op-client-id')
 
 					expect(wrapper.find(selectors.editFormButton).exists()).toBe(false)
 					expect(wrapper.find(selectors.cancelFormButton).exists()).toBe(true)
@@ -1437,14 +1439,14 @@ describe('Component: FormSSOSettings', () => {
 					toMatchSerializedSnapshot(wrapper.html())
 				})
 				it('should reset the changes on cancel', async () => {
-					const tokenExchangeSwitch = wrapper.find(selectors.tokenExchangeSwitch)
-					tokenExchangeSwitch.vm.$emit('update:checked', false)
-					await localVue.nextTick()
-					expect(wrapper.find(selectors.saveFormButton).attributes().disabled).toBe(undefined)
+					const tokenExchangeSwitch = wrapper.findComponent(selectors.tokenExchangeSwitch)
+					tokenExchangeSwitch.vm.$emit('update:modelValue', false)
+					await nextTick()
+					expect(wrapper.find(selectors.saveFormButton).attributes().disabled).toBe('false')
 
-					const cancelFormButton = wrapper.find(selectors.cancelFormButton)
+					const cancelFormButton = wrapper.findComponent(selectors.cancelFormButton)
 					await cancelFormButton.vm.$emit('click')
-					await localVue.nextTick()
+					await nextTick()
 
 					expect(saveAdminConfig).toBeCalledTimes(0)
 					expect(wrapper.vm.formMode).toBe(F_MODES.VIEW)
@@ -1466,13 +1468,13 @@ describe('Component: FormSSOSettings', () => {
 					expect(wrapper.findAll(selectors.fieldValue)).toHaveLength(4)
 				})
 				it('should set sso settings on save', async () => {
-					const providerSelect = wrapper.find(selectors.providerSelect)
+					const providerSelect = wrapper.findComponent(selectors.providerSelect)
 					await providerSelect.vm.$emit('option:selected', 'new-provider')
-					const tokenExchangeSwitch = wrapper.find(selectors.tokenExchangeSwitch)
-					tokenExchangeSwitch.vm.$emit('update:checked', false)
-					const saveFormButton = wrapper.find(selectors.saveFormButton)
+					const tokenExchangeSwitch = wrapper.findComponent(selectors.tokenExchangeSwitch)
+					tokenExchangeSwitch.vm.$emit('update:modelValue', false)
+					const saveFormButton = wrapper.findComponent(selectors.saveFormButton)
 					await saveFormButton.vm.$emit('click')
-					await localVue.nextTick()
+					await nextTick()
 
 					expect(saveAdminConfig).toBeCalledTimes(1)
 					expect(saveAdminConfig).toBeCalledWith({
@@ -1490,11 +1492,11 @@ describe('Component: FormSSOSettings', () => {
 					expect(wrapper.vm.savedForm.sso_provider_type).toBe(SSO_PROVIDER_TYPE.external)
 					expect(wrapper.vm.savedForm.oidc_provider).toBe('new-provider')
 					expect(wrapper.vm.savedForm.token_exchange).toBe(false)
-					expect(wrapper.vm.savedForm.targeted_audience_client_id).toBe(null)
+					expect(wrapper.vm.savedForm.targeted_audience_client_id).toBeNull()
 					expect(wrapper.vm.currentForm.sso_provider_type).toBe(SSO_PROVIDER_TYPE.external)
 					expect(wrapper.vm.currentForm.oidc_provider).toBe('new-provider')
 					expect(wrapper.vm.currentForm.token_exchange).toBe(false)
-					expect(wrapper.vm.currentForm.targeted_audience_client_id).toBe(null)
+					expect(wrapper.vm.currentForm.targeted_audience_client_id).toBeNull()
 					expect(showSuccess).toHaveBeenCalledTimes(1)
 					expect(showError).toHaveBeenCalledTimes(0)
 					expect(wrapper.findAll(selectors.fieldValue)).toHaveLength(3)
@@ -1503,15 +1505,15 @@ describe('Component: FormSSOSettings', () => {
 
 				describe('change to Nextcloud Hub', () => {
 					it('should set sso settings on save', async () => {
-						const ssoNextcloudRadioBox = wrapper.find(selectors.ssoNextcloudRadioBox)
-						ssoNextcloudRadioBox.vm.$emit('update:checked', SSO_PROVIDER_TYPE.nextcloudHub)
-						await localVue.nextTick()
+						const ssoNextcloudRadioBox = wrapper.findComponent(selectors.ssoNextcloudRadioBox)
+						ssoNextcloudRadioBox.vm.$emit('update:modelValue', SSO_PROVIDER_TYPE.nextcloudHub)
+						await nextTick()
 						expect(wrapper.vm.currentForm.targeted_audience_client_id).toBe('op-client-id')
-						expect(wrapper.find(selectors.saveFormButton).attributes().disabled).toBe(undefined)
+						expect(wrapper.find(selectors.saveFormButton).attributes().disabled).toBe('false')
 
-						const saveFormButton = wrapper.find(selectors.saveFormButton)
+						const saveFormButton = wrapper.findComponent(selectors.saveFormButton)
 						await saveFormButton.vm.$emit('click')
-						await localVue.nextTick()
+						await nextTick()
 
 						expect(saveAdminConfig).toBeCalledTimes(1)
 						expect(saveAdminConfig).toBeCalledWith({
@@ -1528,11 +1530,11 @@ describe('Component: FormSSOSettings', () => {
 
 						expect(wrapper.vm.savedForm.sso_provider_type).toBe(SSO_PROVIDER_TYPE.nextcloudHub)
 						expect(wrapper.vm.savedForm.oidc_provider).toBe(SSO_PROVIDER_LABEL.nextcloudHub)
-						expect(wrapper.vm.savedForm.token_exchange).toBe(null)
+						expect(wrapper.vm.savedForm.token_exchange).toBeNull()
 						expect(wrapper.vm.savedForm.targeted_audience_client_id).toBe('op-client-id')
 						expect(wrapper.vm.currentForm.sso_provider_type).toBe(SSO_PROVIDER_TYPE.nextcloudHub)
 						expect(wrapper.vm.currentForm.oidc_provider).toBe(SSO_PROVIDER_LABEL.nextcloudHub)
-						expect(wrapper.vm.currentForm.token_exchange).toBe(null)
+						expect(wrapper.vm.currentForm.token_exchange).toBeNull()
 						expect(wrapper.vm.currentForm.targeted_audience_client_id).toBe('op-client-id')
 						expect(wrapper.vm.loading).toBe(false)
 						expect(showSuccess).toHaveBeenCalledTimes(1)
@@ -1562,7 +1564,7 @@ describe('Component: FormSSOSettings', () => {
 				},
 			})
 			await wrapper.vm.saveSettings()
-			await localVue.nextTick()
+			await nextTick()
 
 			expect(saveAdminConfig).toBeCalledTimes(1)
 			expect(showError).toHaveBeenCalledTimes(1)
@@ -1572,7 +1574,7 @@ describe('Component: FormSSOSettings', () => {
 			expect(wrapper.find(selectors.editFormButton).exists()).toBe(false)
 			expect(wrapper.find(selectors.cancelFormButton).exists()).toBe(false)
 			expect(wrapper.find(selectors.saveFormButton).exists()).toBe(true)
-			expect(wrapper.find(selectors.saveFormButton).attributes().disabled).toBe(undefined)
+			expect(wrapper.find(selectors.saveFormButton).attributes().disabled).toBe('false')
 			expect(wrapper.vm.loading).toBe(false)
 			toMatchSerializedSnapshot(wrapper.html())
 		})
@@ -1581,11 +1583,12 @@ describe('Component: FormSSOSettings', () => {
 
 function getWrapper({ data = {}, props = {} } = {}) {
 	return shallowMount(FormSSOSettings, {
-		localVue,
-		mocks: {
-			t: (app, msg) => msg,
+		global: {
+			mocks: {
+				t: (app, msg) => msg,
+			},
 		},
-		propsData: { ...defaultProps, ...props },
+		props: { ...defaultProps, ...props },
 		data() {
 			return data
 		},
