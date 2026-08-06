@@ -70,7 +70,7 @@
 						:options="ssoProviders"
 						:modelValue="currentForm.oidc_provider"
 						:filterable="true"
-						:close-on-select="true"
+						:keep-open="false"
 						:clear-search-on-blur="() => false"
 						:append-to-body="false"
 						:label-outside="true"

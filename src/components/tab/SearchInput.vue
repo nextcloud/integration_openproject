@@ -10,7 +10,6 @@
 			input-id="searchInput"
 			:placeholder="placeholder"
 			:options="setOptionForSearch"
-			:user-select="true"
 			:append-to-body="false"
 			label="displayName"
 			:loading="isStateLoading"
