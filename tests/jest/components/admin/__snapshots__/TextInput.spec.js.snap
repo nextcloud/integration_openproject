@@ -1,288 +1,320 @@
-// Jest Snapshot v1, https://goo.gl/fbAQLP
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
 
-exports[`TextInput.vue is required prop should add asterik to the label text 1`] = `
+exports[`TextInput.vue > is required prop > should add asterik to the label text 1`] = `
 <div
   class="text-input-label"
+  data-v-ba52c013=""
 >
-  
-		some label *
-	
+  some label *
 </div>
 `;
 
-exports[`TextInput.vue is required prop should not add asterik to the label text 1`] = `
+exports[`TextInput.vue > is required prop > should not add asterik to the label text 1`] = `
 <div
   class="text-input-label"
+  data-v-ba52c013=""
 >
-  
-		some label
-	
+  some label
 </div>
 `;
 
-exports[`TextInput.vue messages should not show error message details if not error message is provided 1`] = `
+exports[`TextInput.vue > messages > should not show error message details if not error message is provided 1`] = `
 <div
   class="text-input"
+  data-v-ba52c013=""
   id="unique-id"
 >
   <div
     class="text-input-label"
+    data-v-ba52c013=""
   >
-    
-		some label
-	
+    some label
   </div>
-   
   <div
     class="text-input-input-wrapper"
+    data-v-ba52c013=""
   >
     <input
       class=""
+      data-v-ba52c013=""
       placeholder=""
       type="text"
+      value=""
     />
-     
-    <!---->
+    <!--v-if-->
   </div>
-   
-  <!---->
+  <!--v-if-->
 </div>
 `;
 
-exports[`TextInput.vue messages should show error message details if both error message and details are provided 1`] = `
+exports[`TextInput.vue > messages > should show error message details if both error message and details are provided 1`] = `
 <div
   class="text-input"
+  data-v-ba52c013=""
   id="unique-id"
 >
   <div
     class="text-input-label"
+    data-v-ba52c013=""
   >
-    
-		some label
-	
+    some label
   </div>
-   
   <div
     class="text-input-input-wrapper"
+    data-v-ba52c013=""
   >
     <input
       class="text-input-error"
+      data-v-ba52c013=""
       placeholder=""
       type="text"
+      value=""
     />
-     
-    <!---->
+    <!--v-if-->
   </div>
-   
-  <div>
-    <div>
+  <div
+    data-v-ba52c013=""
+  >
+    <div
+      data-v-ba52c013=""
+    >
       <div
         class="text-input-error-message"
+        data-v-ba52c013=""
       >
         some error message
       </div>
-       
+      <!-- eslint-disable-line vue/no-v-html -->
       <div
-        class="v-popper v-popper--theme-nc-popover-8"
+        class="v-popper v-popper--theme-nc-popover-9"
+        data-v-ba52c013=""
       >
+        
+        
+        
+        
         <a
           class="link"
+          data-v-ba52c013=""
           href="#"
         >
           Details
         </a>
+        
+        
+        
+        
       </div>
     </div>
+    <!-- eslint-disable-line vue/no-v-html -->
   </div>
 </div>
 `;
 
-exports[`TextInput.vue messages should show error message if both error message and hint text are provided 1`] = `
+exports[`TextInput.vue > messages > should show error message if both error message and hint text are provided 1`] = `
 <div
   class="text-input"
+  data-v-ba52c013=""
   id="unique-id"
 >
   <div
     class="text-input-label"
+    data-v-ba52c013=""
   >
-    
-		some label
-	
+    some label
   </div>
-   
   <div
     class="text-input-input-wrapper"
+    data-v-ba52c013=""
   >
     <input
       class="text-input-error"
+      data-v-ba52c013=""
       placeholder=""
       type="text"
+      value=""
     />
-     
-    <!---->
+    <!--v-if-->
   </div>
-   
-  <div>
-    <div>
+  <div
+    data-v-ba52c013=""
+  >
+    <div
+      data-v-ba52c013=""
+    >
       <div
         class="text-input-error-message"
+        data-v-ba52c013=""
       >
         some error message
       </div>
-       
-      <!---->
+      <!-- eslint-disable-line vue/no-v-html -->
+      <!--v-if-->
     </div>
+    <!-- eslint-disable-line vue/no-v-html -->
   </div>
 </div>
 `;
 
-exports[`TextInput.vue messages should show error message if provided 1`] = `
+exports[`TextInput.vue > messages > should show error message if provided 1`] = `
 <div
   class="text-input"
+  data-v-ba52c013=""
   id="unique-id"
 >
   <div
     class="text-input-label"
+    data-v-ba52c013=""
   >
-    
-		some label
-	
+    some label
   </div>
-   
   <div
     class="text-input-input-wrapper"
+    data-v-ba52c013=""
   >
     <input
       class="text-input-error"
+      data-v-ba52c013=""
       placeholder=""
       type="text"
+      value=""
     />
-     
-    <!---->
+    <!--v-if-->
   </div>
-   
-  <div>
-    <div>
+  <div
+    data-v-ba52c013=""
+  >
+    <div
+      data-v-ba52c013=""
+    >
       <div
         class="text-input-error-message"
+        data-v-ba52c013=""
       >
         some error message
       </div>
-       
-      <!---->
+      <!-- eslint-disable-line vue/no-v-html -->
+      <!--v-if-->
     </div>
+    <!-- eslint-disable-line vue/no-v-html -->
   </div>
 </div>
 `;
 
-exports[`TextInput.vue messages should show hint text if provided 1`] = `
+exports[`TextInput.vue > messages > should show hint text if provided 1`] = `
 <div
   class="text-input"
+  data-v-ba52c013=""
   id="unique-id"
 >
   <div
     class="text-input-label"
+    data-v-ba52c013=""
   >
-    
-		some label
-	
+    some label
   </div>
-   
   <div
     class="text-input-input-wrapper"
+    data-v-ba52c013=""
   >
     <input
       class=""
+      data-v-ba52c013=""
       placeholder=""
       type="text"
+      value=""
     />
-     
-    <!---->
+    <!--v-if-->
   </div>
-   
-  <div>
+  <div
+    data-v-ba52c013=""
+  >
     <div
       class="text-input-hint"
+      data-v-ba52c013=""
     >
       some hint message
     </div>
+    <!-- eslint-disable-line vue/no-v-html -->
   </div>
 </div>
 `;
 
-exports[`TextInput.vue readonly prop should set the input to readonly 1`] = `
+exports[`TextInput.vue > readonly prop > should set the input to readonly 1`] = `
 <div
   class="text-input"
+  data-v-ba52c013=""
   id="unique-id"
 >
   <div
     class="text-input-label"
+    data-v-ba52c013=""
   >
-    
-		some label
-	
+    some label
   </div>
-   
   <div
     class="text-input-input-wrapper"
+    data-v-ba52c013=""
   >
     <input
       class="text-input-readonly"
+      data-v-ba52c013=""
       placeholder=""
-      readonly="readonly"
+      readonly=""
       type="text"
+      value=""
     />
-     
-    <!---->
+    <!--v-if-->
   </div>
-   
-  <!---->
+  <!--v-if-->
 </div>
 `;
 
-exports[`TextInput.vue with copy button prop should render copy button if set 1`] = `
+exports[`TextInput.vue > with copy button prop > should render copy button if set 1`] = `
 <div
   class="text-input"
+  data-v-ba52c013=""
   id="unique-id"
 >
   <div
     class="text-input-label"
+    data-v-ba52c013=""
   >
-    
-		some label
-	
+    some label
   </div>
-   
   <div
     class="text-input-input-wrapper"
+    data-v-ba52c013=""
   >
     <input
       class=""
+      data-v-ba52c013=""
       placeholder=""
       type="text"
+      value=""
     />
-     
     <button
-      class="text-input-copy-value button-vue button-vue--size-normal button-vue--icon-and-text button-vue--vue-secondary"
-      data-v-29ac0caf=""
-      disabled="disabled"
+      class="button-vue button-vue--size-normal button-vue--secondary text-input-copy-value"
+      data-v-00a99684=""
+      data-v-ba52c013=""
+      disabled=""
       title="Copy value"
       type="button"
     >
       <span
         class="button-vue__wrapper"
-        data-v-29ac0caf=""
+        data-v-00a99684=""
       >
         <span
-          aria-hidden="true"
           class="button-vue__icon"
-          data-v-29ac0caf=""
+          data-v-00a99684=""
         >
+          
           <span
             aria-hidden="true"
             aria-label=""
             class="material-design-icon clippy-icon"
-            data-v-29ac0caf=""
+            data-v-ba52c013=""
             role="img"
           >
             <svg
@@ -300,19 +332,19 @@ exports[`TextInput.vue with copy button prop should render copy button if set 1`
               />
             </svg>
           </span>
+          
         </span>
         <span
           class="button-vue__text"
-          data-v-29ac0caf=""
+          data-v-00a99684=""
         >
           
-			Copy value
-		
+           Copy value
+          
         </span>
       </span>
     </button>
   </div>
-   
-  <!---->
+  <!--v-if-->
 </div>
 `;

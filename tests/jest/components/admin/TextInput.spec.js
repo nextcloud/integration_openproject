@@ -4,10 +4,11 @@
  * SPDX-License-Identifier: AGPL-3.0-or-later
  */
 
-import { createLocalVue, mount } from '@vue/test-utils'
-import TextInput from '../../../../src/components/admin/TextInput.vue'
+import { mount } from '@vue/test-utils'
+import { describe, expect, it, beforeEach, afterEach, vi } from 'vitest'
+import { nextTick } from 'vue'
 
-const localVue = createLocalVue()
+import TextInput from '../../../../src/components/admin/TextInput.vue'
 
 Object.assign(navigator, {
 	clipboard: {
@@ -15,8 +16,8 @@ Object.assign(navigator, {
 	},
 })
 
-jest.mock('@nextcloud/dialogs', () => ({
-	showSuccess: jest.fn(),
+vi.mock('@nextcloud/dialogs', () => ({
+	showSuccess: vi.fn(),
 }))
 
 const selector = {
@@ -87,7 +88,7 @@ describe('TextInput.vue', () => {
 	})
 	describe('with copy button prop', () => {
 		let wrapper
-		beforeEach(() => {
+		beforeEach(async () => {
 			wrapper = getWrapper({
 				withCopyBtn: true,
 			})
@@ -96,24 +97,24 @@ describe('TextInput.vue', () => {
 			expect(wrapper.element).toMatchSnapshot()
 		})
 		it('should be disabled if the input value is empty', () => {
-			expect(wrapper.find(selector.copyButton).attributes().disabled).toBe('disabled')
+			expect(wrapper.find(selector.copyButton).attributes()).toHaveProperty('disabled')
 		})
 		it('should be enabled if the input value is non empty', async () => {
 			wrapper = getWrapper({
 				withCopyBtn: true,
-				value: 'some-value',
+				modelValue: 'some-value',
 			})
-			expect(wrapper.find(selector.copyButton).attributes().disabled).toBe(undefined)
+			expect(wrapper.find(selector.copyButton).attributes().disabled).toBeUndefined()
 		})
 		describe('on click', () => {
 			let copyButton
-			jest.useFakeTimers()
-			const spyWriteToClipboard = jest.spyOn(navigator.clipboard, 'writeText')
-				.mockImplementationOnce(() => jest.fn())
+			vi.useFakeTimers()
+			const spyWriteToClipboard = vi.spyOn(navigator.clipboard, 'writeText')
+				.mockImplementationOnce(() => vi.fn())
 			beforeEach(() => {
 				wrapper = getWrapper({
 					withCopyBtn: true,
-					value: 'some-value-to-copy',
+					modelValue: 'some-value-to-copy',
 				})
 				copyButton = wrapper.find(selector.copyButton)
 			})
@@ -125,11 +126,11 @@ describe('TextInput.vue', () => {
 			it('should change the copy icon with the copied icon', async () => {
 				expect(copyButton.attributes().title).toBe('Copy value')
 				await copyButton.trigger('click')
-				await wrapper.vm.$nextTick()
+				await nextTick()
 				copyButton = wrapper.find(selector.copyButton)
 				expect(copyButton.attributes().title).toBe('Copied!')
-				jest.advanceTimersByTime(5000)
-				await wrapper.vm.$nextTick()
+				vi.advanceTimersByTime(5000)
+				await nextTick()
 				copyButton = wrapper.find(selector.copyButton)
 				expect(copyButton.attributes().title).toBe('Copy value')
 			})
@@ -149,18 +150,18 @@ describe('TextInput.vue', () => {
 				label: 'test label',
 				withCopyBtn: true,
 				disabled: true,
-				value: 'some value',
+				modelValue: 'some value',
 			})
 
-			expect(wrapper.find(selectors.input).attributes().disabled).toBe('disabled')
-			expect(wrapper.find(selectors.copyButton).attributes().disabled).toBe('disabled')
+			expect(wrapper.find(selectors.input).attributes()).toHaveProperty('disabled')
+			expect(wrapper.find(selectors.copyButton).attributes()).toHaveProperty('disabled')
 		})
 		it('should disable input elements when disabled is false', () => {
 			const wrapper = getWrapper({
 				label: 'test label',
 				withCopyBtn: true,
 				disabled: false,
-				value: 'some value',
+				modelValue: 'some value',
 			})
 
 			expect(wrapper.find(selectors.input).attributes().disabled).toBeFalsy()
@@ -171,15 +172,15 @@ describe('TextInput.vue', () => {
 
 function getWrapper(props = {}) {
 	return mount(TextInput, {
-		localVue,
-		propsData: {
-			value: null,
+		props: {
 			id: 'unique-id',
 			label: 'some label',
 			...props,
 		},
-		mocks: {
-			t: (app, msg) => msg,
+		global: {
+			mocks: {
+				t: (app, msg) => msg,
+			},
 		},
 	})
 }

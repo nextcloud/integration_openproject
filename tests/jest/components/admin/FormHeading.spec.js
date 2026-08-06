@@ -4,12 +4,11 @@
  * SPDX-License-Identifier: AGPL-3.0-or-later
  */
 
-import { createLocalVue, mount } from '@vue/test-utils'
+import { mount } from '@vue/test-utils'
+import { describe, expect, it } from 'vitest'
+import flushPromises from 'flush-promises'
+
 import FormHeading from '../../../../src/components/admin/FormHeading.vue'
-
-const localVue = createLocalVue()
-
-global.t = (app, text) => text
 
 describe('FormHeading.vue', () => {
 	describe('is complete prop', () => {
@@ -38,14 +37,15 @@ describe('FormHeading.vue', () => {
 
 function getWrapper(props = {}) {
 	return mount(FormHeading, {
-		localVue,
-		propsData: {
+		props: {
 			title: 'Some Field Title',
 			index: '1',
 			...props,
 		},
-		mocks: {
-			t: (app, msg) => msg,
+		global: {
+			mocks: {
+				t: (app, msg) => msg,
+			},
 		},
 	})
 }

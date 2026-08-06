@@ -5,15 +5,19 @@
  * SPDX-License-Identifier: AGPL-3.0-or-later
  */
 
-import { mount, createLocalVue } from '@vue/test-utils'
-import TermsOfServiceUnsigned from '../../../../src/components/admin/TermsOfServiceUnsigned.vue'
+import { mount } from '@vue/test-utils'
+import { describe, expect, it, beforeEach, afterEach, vi } from 'vitest'
+import { nextTick } from 'vue'
+import flushPromises from 'flush-promises'
 import axios from '@nextcloud/axios'
 import * as dialogs from '@nextcloud/dialogs'
-const localVue = createLocalVue()
-jest.mock('@nextcloud/dialogs', () => ({
-	getLanguage: jest.fn(() => ''),
-	showError: jest.fn(),
-	showSuccess: jest.fn(),
+
+import TermsOfServiceUnsigned from '../../../../src/components/admin/TermsOfServiceUnsigned.vue'
+
+vi.mock(import('@nextcloud/dialogs'), () => ({
+	getLanguage: vi.fn(() => ''),
+	showError: vi.fn(),
+	showSuccess: vi.fn(),
 }))
 
 describe('TermsOfServiceUnsigned.vue', () => {
@@ -31,7 +35,7 @@ describe('TermsOfServiceUnsigned.vue', () => {
 			let wrapper
 			let axiospostSpy
 			beforeEach(async () => {
-				axiospostSpy = jest.spyOn(axios, 'post')
+				axiospostSpy = vi.spyOn(axios, 'post')
 					.mockImplementationOnce(() => Promise.resolve({
 						status: 200,
 						data: { result: true },
@@ -39,7 +43,7 @@ describe('TermsOfServiceUnsigned.vue', () => {
 				wrapper = mountWrapper()
 				const signTermsOfServiceButton = wrapper.find(signTermsOfServiceButtonSelector)
 				await signTermsOfServiceButton.trigger('click')
-				await localVue.nextTick()
+				await nextTick()
 			})
 			afterEach(async () => {
 				axiospostSpy.mockReset()
@@ -55,12 +59,12 @@ describe('TermsOfServiceUnsigned.vue', () => {
 			})
 
 			it('should give error toast on failure', async () => {
-				jest.spyOn(axios, 'post')
+				vi.spyOn(axios, 'post')
 					.mockImplementation(() => Promise.reject(new Error('Throw error')))
 				const wrapper = mountWrapper()
 				const signTermsOfServiceButton = wrapper.find(signTermsOfServiceButtonSelector)
 				await signTermsOfServiceButton.trigger('click')
-				await localVue.nextTick()
+				await nextTick()
 				expect(dialogs.showError).toBeCalledTimes(1)
 			})
 
@@ -71,18 +75,17 @@ describe('TermsOfServiceUnsigned.vue', () => {
 		})
 	})
 })
+
 function mountWrapper() {
 	return mount(TermsOfServiceUnsigned, {
-		localVue,
 		attachTo: document.body,
-		mocks: {
-			t: (app, msg) => msg,
-			generateUrl() {
-				return '/'
+		global: {
+			mocks: {
+				t: (app, msg) => msg,
 			},
-		},
-		stubs: {
-			NcModal: true,
+			stubs: {
+				NcModal: true,
+			},
 		},
 		data: () => ({
 			showModal: true,
