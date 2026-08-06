@@ -4,7 +4,8 @@ exports[`Component: ErrorNote > should show all provided props 1`] = `
 <nc-note-card-stub
   class="note-card"
   showalert="false"
-  type="error"
+  type="warning"
+  variant="error"
 >
   <p
     class="note-card--title"
@@ -35,7 +36,8 @@ exports[`Component: ErrorNote > should show error title 1`] = `
 <nc-note-card-stub
   class="note-card"
   showalert="false"
-  type="error"
+  type="warning"
+  variant="error"
 >
   <p
     class="note-card--title"
@@ -57,7 +59,8 @@ exports[`Component: ErrorNote > should show error title and error message 1`] = 
 <nc-note-card-stub
   class="note-card"
   showalert="false"
-  type="error"
+  type="warning"
+  variant="error"
 >
   <p
     class="note-card--title"

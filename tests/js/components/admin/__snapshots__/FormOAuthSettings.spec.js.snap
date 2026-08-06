@@ -187,8 +187,8 @@ exports[`Component: FormOAuthSettings > form states > form state: complete autho
           disabled="true"
           size="normal"
           target="_self"
-          type="primary"
-          variant="secondary"
+          type="button"
+          variant="primary"
           wide="false"
         >
            Save
@@ -428,8 +428,8 @@ exports[`Component: FormOAuthSettings > form states > form state: complete autho
           disabled="true"
           size="normal"
           target="_self"
-          type="primary"
-          variant="secondary"
+          type="button"
+          variant="primary"
           wide="false"
         >
            Save

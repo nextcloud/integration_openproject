@@ -31,13 +31,13 @@ exports[`FormHeading.vue > is complete prop > should show checkmark icon, add gr
   >
     <span
       aria-hidden="true"
-      class="material-design-icon check-bold-icon"
+      class="inner-icon material-design-icon check-bold-icon inner-icon"
       data-v-665ce85f=""
       role="img"
     >
       <svg
         class="material-design-icon__svg"
-        fill="#FFFFFF"
+        fill="currentColor"
         height="12"
         viewBox="0 0 24 24"
         width="12"

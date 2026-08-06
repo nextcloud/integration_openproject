@@ -8,7 +8,7 @@ exports[`Component: FormOpenProjectHost > completed form > edit mode > should sh
     <div data-v-0c0c1908="" class="form-actions">
       <!--v-if-->
       <nc-button-stub data-v-0c0c1908="" alignment="center" disabled="false" size="normal" target="_self" type="button" variant="secondary" wide="false" class="mr-2" data-test-id="cancel-server-host-edit">Cancel</nc-button-stub>
-      <nc-button-stub data-v-0c0c1908="" alignment="center" disabled="true" size="normal" target="_self" type="primary" variant="secondary" wide="false" data-test-id="save-server-host"> Save</nc-button-stub>
+      <nc-button-stub data-v-0c0c1908="" alignment="center" disabled="true" size="normal" target="_self" type="button" variant="primary" wide="false" data-test-id="save-server-host"> Save</nc-button-stub>
     </div>
   </div>
 </div>"
@@ -36,7 +36,7 @@ exports[`Component: FormOpenProjectHost > initial incomplete form > invalid url 
     <div data-v-0c0c1908="" class="form-actions">
       <!--v-if-->
       <!--v-if-->
-      <nc-button-stub data-v-0c0c1908="" alignment="center" disabled="false" size="normal" target="_self" type="primary" variant="secondary" wide="false" data-test-id="save-server-host"> Save</nc-button-stub>
+      <nc-button-stub data-v-0c0c1908="" alignment="center" disabled="false" size="normal" target="_self" type="button" variant="primary" wide="false" data-test-id="save-server-host"> Save</nc-button-stub>
     </div>
   </div>
 </div>"
@@ -50,7 +50,7 @@ exports[`Component: FormOpenProjectHost > initial incomplete form > invalid url 
     <div data-v-0c0c1908="" class="form-actions">
       <!--v-if-->
       <!--v-if-->
-      <nc-button-stub data-v-0c0c1908="" alignment="center" disabled="false" size="normal" target="_self" type="primary" variant="secondary" wide="false" data-test-id="save-server-host"> Save</nc-button-stub>
+      <nc-button-stub data-v-0c0c1908="" alignment="center" disabled="false" size="normal" target="_self" type="button" variant="primary" wide="false" data-test-id="save-server-host"> Save</nc-button-stub>
     </div>
   </div>
 </div>"
@@ -64,7 +64,7 @@ exports[`Component: FormOpenProjectHost > initial incomplete form > invalid url 
     <div data-v-0c0c1908="" class="form-actions">
       <!--v-if-->
       <!--v-if-->
-      <nc-button-stub data-v-0c0c1908="" alignment="center" disabled="false" size="normal" target="_self" type="primary" variant="secondary" wide="false" data-test-id="save-server-host"> Save</nc-button-stub>
+      <nc-button-stub data-v-0c0c1908="" alignment="center" disabled="false" size="normal" target="_self" type="button" variant="primary" wide="false" data-test-id="save-server-host"> Save</nc-button-stub>
     </div>
   </div>
 </div>"
@@ -78,7 +78,7 @@ exports[`Component: FormOpenProjectHost > initial incomplete form > invalid url 
     <div data-v-0c0c1908="" class="form-actions">
       <!--v-if-->
       <!--v-if-->
-      <nc-button-stub data-v-0c0c1908="" alignment="center" disabled="false" size="normal" target="_self" type="primary" variant="secondary" wide="false" data-test-id="save-server-host"> Save</nc-button-stub>
+      <nc-button-stub data-v-0c0c1908="" alignment="center" disabled="false" size="normal" target="_self" type="button" variant="primary" wide="false" data-test-id="save-server-host"> Save</nc-button-stub>
     </div>
   </div>
 </div>"
@@ -92,7 +92,7 @@ exports[`Component: FormOpenProjectHost > initial incomplete form > invalid url 
     <div data-v-0c0c1908="" class="form-actions">
       <!--v-if-->
       <!--v-if-->
-      <nc-button-stub data-v-0c0c1908="" alignment="center" disabled="false" size="normal" target="_self" type="primary" variant="secondary" wide="false" data-test-id="save-server-host"> Save</nc-button-stub>
+      <nc-button-stub data-v-0c0c1908="" alignment="center" disabled="false" size="normal" target="_self" type="button" variant="primary" wide="false" data-test-id="save-server-host"> Save</nc-button-stub>
     </div>
   </div>
 </div>"
@@ -106,7 +106,7 @@ exports[`Component: FormOpenProjectHost > initial incomplete form > invalid url 
     <div data-v-0c0c1908="" class="form-actions">
       <!--v-if-->
       <!--v-if-->
-      <nc-button-stub data-v-0c0c1908="" alignment="center" disabled="false" size="normal" target="_self" type="primary" variant="secondary" wide="false" data-test-id="save-server-host"> Save</nc-button-stub>
+      <nc-button-stub data-v-0c0c1908="" alignment="center" disabled="false" size="normal" target="_self" type="button" variant="primary" wide="false" data-test-id="save-server-host"> Save</nc-button-stub>
     </div>
   </div>
 </div>"
@@ -120,7 +120,7 @@ exports[`Component: FormOpenProjectHost > initial incomplete form > invalid url 
     <div data-v-0c0c1908="" class="form-actions">
       <!--v-if-->
       <!--v-if-->
-      <nc-button-stub data-v-0c0c1908="" alignment="center" disabled="false" size="normal" target="_self" type="primary" variant="secondary" wide="false" data-test-id="save-server-host"> Save</nc-button-stub>
+      <nc-button-stub data-v-0c0c1908="" alignment="center" disabled="false" size="normal" target="_self" type="button" variant="primary" wide="false" data-test-id="save-server-host"> Save</nc-button-stub>
     </div>
   </div>
 </div>"
@@ -134,7 +134,7 @@ exports[`Component: FormOpenProjectHost > initial incomplete form > invalid url 
     <div data-v-0c0c1908="" class="form-actions">
       <!--v-if-->
       <!--v-if-->
-      <nc-button-stub data-v-0c0c1908="" alignment="center" disabled="false" size="normal" target="_self" type="primary" variant="secondary" wide="false" data-test-id="save-server-host"> Save</nc-button-stub>
+      <nc-button-stub data-v-0c0c1908="" alignment="center" disabled="false" size="normal" target="_self" type="button" variant="primary" wide="false" data-test-id="save-server-host"> Save</nc-button-stub>
     </div>
   </div>
 </div>"
@@ -148,7 +148,7 @@ exports[`Component: FormOpenProjectHost > initial incomplete form > invalid url 
     <div data-v-0c0c1908="" class="form-actions">
       <!--v-if-->
       <!--v-if-->
-      <nc-button-stub data-v-0c0c1908="" alignment="center" disabled="false" size="normal" target="_self" type="primary" variant="secondary" wide="false" data-test-id="save-server-host"> Save</nc-button-stub>
+      <nc-button-stub data-v-0c0c1908="" alignment="center" disabled="false" size="normal" target="_self" type="button" variant="primary" wide="false" data-test-id="save-server-host"> Save</nc-button-stub>
     </div>
   </div>
 </div>"
@@ -162,7 +162,7 @@ exports[`Component: FormOpenProjectHost > initial incomplete form > should show 
     <div data-v-0c0c1908="" class="form-actions">
       <!--v-if-->
       <!--v-if-->
-      <nc-button-stub data-v-0c0c1908="" alignment="center" disabled="true" size="normal" target="_self" type="primary" variant="secondary" wide="false" data-test-id="save-server-host"> Save</nc-button-stub>
+      <nc-button-stub data-v-0c0c1908="" alignment="center" disabled="true" size="normal" target="_self" type="button" variant="primary" wide="false" data-test-id="save-server-host"> Save</nc-button-stub>
     </div>
   </div>
 </div>"

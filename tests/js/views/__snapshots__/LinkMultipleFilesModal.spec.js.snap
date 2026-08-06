@@ -7,7 +7,6 @@ exports[`LinkMultipleFilesModal.vue > fetch workpackages > multiple files select
 >
   <nc-modal-stub
     additionaltrapelements=""
-    can-close="true"
     closebuttonoutside="false"
     closeonclickoutside="false"
     container="body"
@@ -68,7 +67,6 @@ exports[`LinkMultipleFilesModal.vue > fetch workpackages > single file selected 
 >
   <nc-modal-stub
     additionaltrapelements=""
-    can-close="true"
     closebuttonoutside="false"
     closeonclickoutside="false"
     container="body"

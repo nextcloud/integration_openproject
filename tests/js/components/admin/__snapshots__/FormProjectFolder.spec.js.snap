@@ -44,7 +44,7 @@ exports[`Component: FormProjectFolder > Project folder setup > edit mode  > fres
           <p data-v-67bc9f59="" class="project-folder-description">Let OpenProject create folders per project automatically. It will ensure that every team member has always the correct access permissions.</p><br data-v-67bc9f59=""><b data-v-67bc9f59="">OpenProject user, group and folder</b>
           <p data-v-67bc9f59="" class="project-folder-description">For automatically managing project folders, this app needs to setup a special team folder, assigned to a group and managed by a user, each called "OpenProject". <br data-v-67bc9f59=""> The app will never delete files or folders, even if you deactivate this later.</p>
           <div data-v-67bc9f59="" class="form-actions">
-            <nc-button-stub data-v-67bc9f59="" alignment="center" disabled="false" size="normal" target="_self" type="primary" variant="secondary" wide="false" data-test-id="complete-with-project-folders-form-btn"> Retry setup OpenProject user, group and folder</nc-button-stub>
+            <nc-button-stub data-v-67bc9f59="" alignment="center" disabled="false" size="normal" target="_self" type="button" variant="primary" wide="false" data-test-id="complete-with-project-folders-form-btn"> Retry setup OpenProject user, group and folder</nc-button-stub>
           </div>
         </div>
       </div>
@@ -69,7 +69,7 @@ exports[`Component: FormProjectFolder > Project folder setup > edit mode  > fres
           <p data-v-67bc9f59="" class="project-folder-description">Let OpenProject create folders per project automatically. It will ensure that every team member has always the correct access permissions.</p><br data-v-67bc9f59=""><b data-v-67bc9f59="">OpenProject user, group and folder</b>
           <p data-v-67bc9f59="" class="project-folder-description">For automatically managing project folders, this app needs to setup a special team folder, assigned to a group and managed by a user, each called "OpenProject". <br data-v-67bc9f59=""> The app will never delete files or folders, even if you deactivate this later.</p>
           <div data-v-67bc9f59="" class="form-actions">
-            <nc-button-stub data-v-67bc9f59="" alignment="center" disabled="false" size="normal" target="_self" type="primary" variant="secondary" wide="false" data-test-id="complete-with-project-folders-form-btn"> Retry setup OpenProject user, group and folder</nc-button-stub>
+            <nc-button-stub data-v-67bc9f59="" alignment="center" disabled="false" size="normal" target="_self" type="button" variant="primary" wide="false" data-test-id="complete-with-project-folders-form-btn"> Retry setup OpenProject user, group and folder</nc-button-stub>
           </div>
         </div>
       </div>
@@ -94,7 +94,7 @@ exports[`Component: FormProjectFolder > Project folder setup > edit mode  > fres
           <p data-v-67bc9f59="" class="project-folder-description">Let OpenProject create folders per project automatically. It will ensure that every team member has always the correct access permissions.</p><br data-v-67bc9f59=""><b data-v-67bc9f59="">OpenProject user, group and folder</b>
           <p data-v-67bc9f59="" class="project-folder-description">For automatically managing project folders, this app needs to setup a special team folder, assigned to a group and managed by a user, each called "OpenProject". <br data-v-67bc9f59=""> The app will never delete files or folders, even if you deactivate this later.</p>
           <div data-v-67bc9f59="" class="form-actions">
-            <nc-button-stub data-v-67bc9f59="" alignment="center" disabled="false" size="normal" target="_self" type="primary" variant="secondary" wide="false" data-test-id="complete-with-project-folders-form-btn"> Retry setup OpenProject user, group and folder</nc-button-stub>
+            <nc-button-stub data-v-67bc9f59="" alignment="center" disabled="false" size="normal" target="_self" type="button" variant="primary" wide="false" data-test-id="complete-with-project-folders-form-btn"> Retry setup OpenProject user, group and folder</nc-button-stub>
           </div>
         </div>
       </div>
@@ -146,7 +146,7 @@ exports[`Component: FormProjectFolder > Project folder setup > edit mode  > fres
     <form-heading-stub data-v-67bc9f59="" index="6" title="Project folders application connection" isdisabled="false" iscomplete="true" issetupcompletewithoutprojectfolders="false" isprojectfoldersetupheading="false" haserror="false" showencryptionwarningforgroupfolders="false" isdarktheme="false"></form-heading-stub>
     <text-input-stub data-v-67bc9f59="" label="Application Password" modelvalue="12345678" type="text" placeholder="" hinttext="This value will only be accessible once. Now, as an administrator copy this password to OpenProject {htmlLink}." isrequired="true" withcopybtn="true" readonly="true" disabled="false" id="__ID__" class="py-1"></text-input-stub>
     <div data-v-67bc9f59="" class="form-actions">
-      <nc-button-stub data-v-67bc9f59="" alignment="center" disabled="false" size="normal" target="_self" type="primary" variant="secondary" wide="false" data-test-id="submit-op-system-password-form-btn"> Done, complete setup</nc-button-stub>
+      <nc-button-stub data-v-67bc9f59="" alignment="center" disabled="false" size="normal" target="_self" type="button" variant="primary" wide="false" data-test-id="submit-op-system-password-form-btn"> Done, complete setup</nc-button-stub>
     </div>
   </div>
 </section>"
@@ -163,7 +163,7 @@ exports[`Component: FormProjectFolder > Project folder setup > edit mode  > fres
         <div data-v-67bc9f59="" class="complete-without-groupfolders">
           <p data-v-67bc9f59="" class="project-folder-description">We recommend using this functionality but it is not mandatory. Please activate it in case you want to use the automatic creation and management of project folders.</p>
           <div data-v-67bc9f59="" class="form-actions">
-            <nc-button-stub data-v-67bc9f59="" alignment="center" disabled="false" size="normal" target="_self" type="primary" variant="secondary" wide="false" data-test-id="complete-without-project-folder-form-btn"> Complete without project folders</nc-button-stub>
+            <nc-button-stub data-v-67bc9f59="" alignment="center" disabled="false" size="normal" target="_self" type="button" variant="primary" wide="false" data-test-id="complete-without-project-folder-form-btn"> Complete without project folders</nc-button-stub>
           </div>
         </div>
       </div>
@@ -185,7 +185,7 @@ exports[`Component: FormProjectFolder > Project folder setup > edit mode  > fres
           <p data-v-67bc9f59="" class="project-folder-description">Let OpenProject create folders per project automatically. It will ensure that every team member has always the correct access permissions.</p><br data-v-67bc9f59=""><b data-v-67bc9f59="">OpenProject user, group and folder</b>
           <p data-v-67bc9f59="" class="project-folder-description">For automatically managing project folders, this app needs to setup a special team folder, assigned to a group and managed by a user, each called "OpenProject". <br data-v-67bc9f59=""> The app will never delete files or folders, even if you deactivate this later.</p>
           <div data-v-67bc9f59="" class="form-actions">
-            <nc-button-stub data-v-67bc9f59="" alignment="center" disabled="true" size="normal" target="_self" type="primary" variant="secondary" wide="false" data-test-id="complete-with-project-folders-form-btn"> Setup OpenProject user, group and folder</nc-button-stub>
+            <nc-button-stub data-v-67bc9f59="" alignment="center" disabled="true" size="normal" target="_self" type="button" variant="primary" wide="false" data-test-id="complete-with-project-folders-form-btn"> Setup OpenProject user, group and folder</nc-button-stub>
           </div>
         </div>
       </div>

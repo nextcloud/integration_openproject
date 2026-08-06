@@ -212,7 +212,7 @@ describe('Component: FormSSOSettings', () => {
 					await nextTick()
 
 					expect(wrapper.find(selectors.saveFormButton).attributes().disabled).toBe('false')
-					expect(providerSelect.attributes().value).toBe('keycloak')
+					expect(providerSelect.attributes().modelvalue).toBe('keycloak')
 					expect(wrapper.vm.currentForm.oidc_provider).toBe('keycloak')
 					toMatchSerializedSnapshot(wrapper.html())
 				})
@@ -241,7 +241,7 @@ describe('Component: FormSSOSettings', () => {
 
 						const saveFormButton = wrapper.find(selectors.saveFormButton)
 						expect(saveFormButton.attributes().disabled).toBe('false')
-						expect(providerSelect.attributes().value).toBe('keycloak')
+						expect(providerSelect.attributes().modelvalue).toBe('keycloak')
 						expect(wrapper.vm.currentForm.oidc_provider).toBe('keycloak')
 						expect(clientIdInput.attributes().modelvalue).toBe('op-client-id')
 						expect(wrapper.vm.currentForm.targeted_audience_client_id).toBe('op-client-id')
@@ -255,7 +255,7 @@ describe('Component: FormSSOSettings', () => {
 
 						const saveFormButton = wrapper.find(selectors.saveFormButton)
 						expect(saveFormButton.attributes().disabled).toBe('true')
-						expect(providerSelect.attributes().value).toBeUndefined()
+						expect(providerSelect.attributes().modelvalue).toBeUndefined()
 						expect(wrapper.vm.currentForm.oidc_provider).toBeNull()
 						expect(clientIdInput.attributes().modelvalue).toBe('op-client-id')
 						expect(wrapper.vm.currentForm.targeted_audience_client_id).toBe('op-client-id')
@@ -268,7 +268,7 @@ describe('Component: FormSSOSettings', () => {
 
 						const saveFormButton = wrapper.find(selectors.saveFormButton)
 						expect(saveFormButton.attributes().disabled).toBe('true')
-						expect(providerSelect.attributes().value).toBe('keycloak')
+						expect(providerSelect.attributes().modelvalue).toBe('keycloak')
 						expect(wrapper.vm.currentForm.oidc_provider).toBe('keycloak')
 						expect(clientIdInput.attributes().modelvalue).toBe('')
 						expect(wrapper.vm.currentForm.targeted_audience_client_id).toBe('')
@@ -540,7 +540,7 @@ describe('Component: FormSSOSettings', () => {
 			} else {
 				expect(wrapper.find(selectors.ssoNextcloudRadioBox).attributes().modelvalue).toBe(SSO_PROVIDER_TYPE.external)
 				expect(wrapper.find(selectors.ssoExternalRadioBox).attributes().modelvalue).toBe(SSO_PROVIDER_TYPE.external)
-				expect(wrapper.find(selectors.providerSelect).attributes().value).toBe(settings.oidc_provider)
+				expect(wrapper.find(selectors.providerSelect).attributes().modelvalue).toBe(settings.oidc_provider)
 				if (settings.token_exchange) {
 					expect(wrapper.find(selectors.clientIdInput).attributes().modelvalue).toBe(settings.targeted_audience_client_id)
 					expect(wrapper.find(selectors.tokenExchangeSwitch).attributes().modelvalue).toBe(`${settings.token_exchange}`)
@@ -1164,7 +1164,7 @@ describe('Component: FormSSOSettings', () => {
 				expect(wrapper.find(selectors.editFormButton).exists()).toBe(false)
 				expect(wrapper.find(selectors.ssoNextcloudRadioBox).attributes().modelvalue).toBe(SSO_PROVIDER_TYPE.external)
 				expect(wrapper.find(selectors.ssoExternalRadioBox).attributes().modelvalue).toBe(SSO_PROVIDER_TYPE.external)
-				expect(wrapper.find(selectors.providerSelect).attributes().value).toBe('keycloak')
+				expect(wrapper.find(selectors.providerSelect).attributes().modelvalue).toBe('keycloak')
 				expect(wrapper.find(selectors.tokenExchangeSwitch).exists()).toBe(true)
 				expect(wrapper.find(selectors.clientIdInput).exists()).toBe(false)
 				toMatchSerializedSnapshot(wrapper.html())
@@ -1423,7 +1423,7 @@ describe('Component: FormSSOSettings', () => {
 					expect(wrapper.vm.formMode).toBe(F_MODES.EDIT)
 					expect(wrapper.find(selectors.ssoNextcloudRadioBox).attributes().modelvalue).toBe(SSO_PROVIDER_TYPE.external)
 					expect(wrapper.find(selectors.ssoExternalRadioBox).attributes().modelvalue).toBe(SSO_PROVIDER_TYPE.external)
-					expect(wrapper.find(selectors.providerSelect).attributes().value).toBe('keycloak')
+					expect(wrapper.find(selectors.providerSelect).attributes().modelvalue).toBe('keycloak')
 					expect(wrapper.find(selectors.tokenExchangeSwitch).exists()).toBe(true)
 					expect(wrapper.find(selectors.clientIdInput).attributes().modelvalue).toBe('op-client-id')
 

@@ -77,7 +77,7 @@ exports[`Component: FormSSOSettings > complete form: edit mode > Nextcloud Hub >
     <div data-v-c0ecf6bf="" class="form-actions">
       <!--v-if-->
       <nc-button-stub data-v-c0ecf6bf="" alignment="center" disabled="false" size="normal" target="_self" type="button" variant="secondary" wide="false" class="mr-2" data-test-id="cancel-sso-settings-edit">Cancel</nc-button-stub>
-      <nc-button-stub data-v-c0ecf6bf="" alignment="center" disabled="true" size="normal" target="_self" type="primary" variant="secondary" wide="false" data-test-id="save-sso-settings"> Save</nc-button-stub>
+      <nc-button-stub data-v-c0ecf6bf="" alignment="center" disabled="true" size="normal" target="_self" type="button" variant="primary" wide="false" data-test-id="save-sso-settings"> Save</nc-button-stub>
     </div>
   </div>
 </div>"
@@ -152,7 +152,7 @@ exports[`Component: FormSSOSettings > complete form: edit mode > Nextcloud Hub >
     <div data-v-c0ecf6bf="" class="form-actions">
       <!--v-if-->
       <nc-button-stub data-v-c0ecf6bf="" alignment="center" disabled="false" size="normal" target="_self" type="button" variant="secondary" wide="false" class="mr-2" data-test-id="cancel-sso-settings-edit">Cancel</nc-button-stub>
-      <nc-button-stub data-v-c0ecf6bf="" alignment="center" disabled="true" size="normal" target="_self" type="primary" variant="secondary" wide="false" data-test-id="save-sso-settings"> Save</nc-button-stub>
+      <nc-button-stub data-v-c0ecf6bf="" alignment="center" disabled="true" size="normal" target="_self" type="button" variant="primary" wide="false" data-test-id="save-sso-settings"> Save</nc-button-stub>
     </div>
   </div>
 </div>"
@@ -227,7 +227,7 @@ exports[`Component: FormSSOSettings > complete form: edit mode > Nextcloud Hub >
     <div data-v-c0ecf6bf="" class="form-actions">
       <!--v-if-->
       <nc-button-stub data-v-c0ecf6bf="" alignment="center" disabled="false" size="normal" target="_self" type="button" variant="secondary" wide="false" class="mr-2" data-test-id="cancel-sso-settings-edit">Cancel</nc-button-stub>
-      <nc-button-stub data-v-c0ecf6bf="" alignment="center" disabled="true" size="normal" target="_self" type="primary" variant="secondary" wide="false" data-test-id="save-sso-settings"> Save</nc-button-stub>
+      <nc-button-stub data-v-c0ecf6bf="" alignment="center" disabled="true" size="normal" target="_self" type="button" variant="primary" wide="false" data-test-id="save-sso-settings"> Save</nc-button-stub>
     </div>
   </div>
 </div>"
@@ -258,7 +258,7 @@ exports[`Component: FormSSOSettings > complete form: edit mode > external provid
     <div data-v-c0ecf6bf="" class="form-actions">
       <!--v-if-->
       <nc-button-stub data-v-c0ecf6bf="" alignment="center" disabled="false" size="normal" target="_self" type="button" variant="secondary" wide="false" class="mr-2" data-test-id="cancel-sso-settings-edit">Cancel</nc-button-stub>
-      <nc-button-stub data-v-c0ecf6bf="" alignment="center" disabled="true" size="normal" target="_self" type="primary" variant="secondary" wide="false" data-test-id="save-sso-settings"> Save</nc-button-stub>
+      <nc-button-stub data-v-c0ecf6bf="" alignment="center" disabled="true" size="normal" target="_self" type="button" variant="primary" wide="false" data-test-id="save-sso-settings"> Save</nc-button-stub>
     </div>
   </div>
 </div>"
@@ -280,7 +280,7 @@ exports[`Component: FormSSOSettings > complete form: edit mode > external provid
       </div>
       <div data-v-c0ecf6bf="" class="sso-settings--content--section sso-provider">
         <p data-v-c0ecf6bf="" class="sso-settings--content--label">Select a provider *</p>
-        <nc-select-stub data-v-c0ecf6bf="" components="[object Object]" options="keycloak" disabled="false" clearable="true" deselectfromdropdown="false" searchable="true" multiple="false" placeholder="Select an OIDC provider" transition="vs__fade" clearsearchonselect="true" closeonselect="true" arialabellistbox="Options" arialabelclearselected="Clear selected" arialabeldeselectoption="[Function]" autocomplete="off" reduce="[Function]" selectable="[Function]" getoptionlabel="[Function]" getoptionkey="[Function]" taggable="false" pushtags="false" filterable="true" filter="[Function]" createoption="[Function]" resetfocusonoptionschange="true" resetonoptionschange="false" clearsearchonblur="[Function]" nodrop="false" inputid="provider-search-input" dir="auto" selectontab="false" selectonkeycodes="13" searchinputqueryselector="[type=search]" mapkeydown="[Function]" appendtobody="false" dropdownshouldopen="[Function]" keyboardfocusborder="true" uid="__UID__" autoscroll="true" loading="false" keepopen="false" inputlabel="OIDC provider" labeloutside="true" nowrap="false" placement="bottom" required="false" value="keycloak"></nc-select-stub>
+        <nc-select-stub data-v-c0ecf6bf="" modelvalue="keycloak" components="[object Object]" options="keycloak" disabled="false" clearable="true" deselectfromdropdown="false" searchable="true" multiple="false" placeholder="Select an OIDC provider" transition="vs__fade" clearsearchonselect="true" closeonselect="true" arialabellistbox="Options" arialabelclearselected="Clear selected" arialabeldeselectoption="[Function]" autocomplete="off" reduce="[Function]" selectable="[Function]" getoptionlabel="[Function]" getoptionkey="[Function]" taggable="false" pushtags="false" filterable="true" filter="[Function]" createoption="[Function]" resetfocusonoptionschange="true" resetonoptionschange="false" clearsearchonblur="[Function]" nodrop="false" inputid="provider-search-input" dir="auto" selectontab="false" selectonkeycodes="13" searchinputqueryselector="[type=search]" mapkeydown="[Function]" appendtobody="false" dropdownshouldopen="[Function]" keyboardfocusborder="true" uid="__UID__" autoscroll="true" loading="false" keepopen="false" inputlabel="OIDC provider" labeloutside="true" nowrap="false" placement="bottom" required="false"></nc-select-stub>
         <p data-v-c0ecf6bf="" class="description">You can configure OIDC providers in the <a class="link" href="//index.php/settings/admin/user_oidc" target="_blank" title="OpenID Connect settings">OpenID Connect settings</a></p><!-- eslint-disable-line vue/no-v-html -->
       </div>
       <div data-v-c0ecf6bf="" class="sso-settings--content--section sso-token-exchange">
@@ -293,7 +293,7 @@ exports[`Component: FormSSOSettings > complete form: edit mode > external provid
     <div data-v-c0ecf6bf="" class="form-actions">
       <!--v-if-->
       <nc-button-stub data-v-c0ecf6bf="" alignment="center" disabled="false" size="normal" target="_self" type="button" variant="secondary" wide="false" class="mr-2" data-test-id="cancel-sso-settings-edit">Cancel</nc-button-stub>
-      <nc-button-stub data-v-c0ecf6bf="" alignment="center" disabled="true" size="normal" target="_self" type="primary" variant="secondary" wide="false" data-test-id="save-sso-settings"> Save</nc-button-stub>
+      <nc-button-stub data-v-c0ecf6bf="" alignment="center" disabled="true" size="normal" target="_self" type="button" variant="primary" wide="false" data-test-id="save-sso-settings"> Save</nc-button-stub>
     </div>
   </div>
 </div>"
@@ -357,7 +357,7 @@ exports[`Component: FormSSOSettings > complete form: edit mode > external provid
       </div>
       <div data-v-c0ecf6bf="" class="sso-settings--content--section sso-provider">
         <p data-v-c0ecf6bf="" class="sso-settings--content--label">Select a provider *</p>
-        <nc-select-stub data-v-c0ecf6bf="" components="[object Object]" options="keycloak" disabled="false" clearable="true" deselectfromdropdown="false" searchable="true" multiple="false" placeholder="Select an OIDC provider" transition="vs__fade" clearsearchonselect="true" closeonselect="true" arialabellistbox="Options" arialabelclearselected="Clear selected" arialabeldeselectoption="[Function]" autocomplete="off" reduce="[Function]" selectable="[Function]" getoptionlabel="[Function]" getoptionkey="[Function]" taggable="false" pushtags="false" filterable="true" filter="[Function]" createoption="[Function]" resetfocusonoptionschange="true" resetonoptionschange="false" clearsearchonblur="[Function]" nodrop="false" inputid="provider-search-input" dir="auto" selectontab="false" selectonkeycodes="13" searchinputqueryselector="[type=search]" mapkeydown="[Function]" appendtobody="false" dropdownshouldopen="[Function]" keyboardfocusborder="true" uid="__UID__" autoscroll="true" loading="false" keepopen="false" inputlabel="OIDC provider" labeloutside="true" nowrap="false" placement="bottom" required="false" value="keycloak"></nc-select-stub>
+        <nc-select-stub data-v-c0ecf6bf="" modelvalue="keycloak" components="[object Object]" options="keycloak" disabled="false" clearable="true" deselectfromdropdown="false" searchable="true" multiple="false" placeholder="Select an OIDC provider" transition="vs__fade" clearsearchonselect="true" closeonselect="true" arialabellistbox="Options" arialabelclearselected="Clear selected" arialabeldeselectoption="[Function]" autocomplete="off" reduce="[Function]" selectable="[Function]" getoptionlabel="[Function]" getoptionkey="[Function]" taggable="false" pushtags="false" filterable="true" filter="[Function]" createoption="[Function]" resetfocusonoptionschange="true" resetonoptionschange="false" clearsearchonblur="[Function]" nodrop="false" inputid="provider-search-input" dir="auto" selectontab="false" selectonkeycodes="13" searchinputqueryselector="[type=search]" mapkeydown="[Function]" appendtobody="false" dropdownshouldopen="[Function]" keyboardfocusborder="true" uid="__UID__" autoscroll="true" loading="false" keepopen="false" inputlabel="OIDC provider" labeloutside="true" nowrap="false" placement="bottom" required="false"></nc-select-stub>
         <p data-v-c0ecf6bf="" class="description">You can configure OIDC providers in the <a class="link" href="//index.php/settings/admin/user_oidc" target="_blank" title="OpenID Connect settings">OpenID Connect settings</a></p><!-- eslint-disable-line vue/no-v-html -->
       </div>
       <div data-v-c0ecf6bf="" class="sso-settings--content--section sso-token-exchange">
@@ -370,7 +370,7 @@ exports[`Component: FormSSOSettings > complete form: edit mode > external provid
     <div data-v-c0ecf6bf="" class="form-actions">
       <!--v-if-->
       <nc-button-stub data-v-c0ecf6bf="" alignment="center" disabled="false" size="normal" target="_self" type="button" variant="secondary" wide="false" class="mr-2" data-test-id="cancel-sso-settings-edit">Cancel</nc-button-stub>
-      <nc-button-stub data-v-c0ecf6bf="" alignment="center" disabled="true" size="normal" target="_self" type="primary" variant="secondary" wide="false" data-test-id="save-sso-settings"> Save</nc-button-stub>
+      <nc-button-stub data-v-c0ecf6bf="" alignment="center" disabled="true" size="normal" target="_self" type="button" variant="primary" wide="false" data-test-id="save-sso-settings"> Save</nc-button-stub>
     </div>
   </div>
 </div>"
@@ -412,7 +412,7 @@ exports[`Component: FormSSOSettings > complete form: edit mode > external provid
       </div>
       <div data-v-c0ecf6bf="" class="sso-settings--content--section sso-provider">
         <p data-v-c0ecf6bf="" class="sso-settings--content--label">Select a provider *</p>
-        <nc-select-stub data-v-c0ecf6bf="" components="[object Object]" options="keycloak" disabled="false" clearable="true" deselectfromdropdown="false" searchable="true" multiple="false" placeholder="Select an OIDC provider" transition="vs__fade" clearsearchonselect="true" closeonselect="true" arialabellistbox="Options" arialabelclearselected="Clear selected" arialabeldeselectoption="[Function]" autocomplete="off" reduce="[Function]" selectable="[Function]" getoptionlabel="[Function]" getoptionkey="[Function]" taggable="false" pushtags="false" filterable="true" filter="[Function]" createoption="[Function]" resetfocusonoptionschange="true" resetonoptionschange="false" clearsearchonblur="[Function]" nodrop="false" inputid="provider-search-input" dir="auto" selectontab="false" selectonkeycodes="13" searchinputqueryselector="[type=search]" mapkeydown="[Function]" appendtobody="false" dropdownshouldopen="[Function]" keyboardfocusborder="true" uid="__UID__" autoscroll="true" loading="false" keepopen="false" inputlabel="OIDC provider" labeloutside="true" nowrap="false" placement="bottom" required="false" value="keycloak"></nc-select-stub>
+        <nc-select-stub data-v-c0ecf6bf="" modelvalue="keycloak" components="[object Object]" options="keycloak" disabled="false" clearable="true" deselectfromdropdown="false" searchable="true" multiple="false" placeholder="Select an OIDC provider" transition="vs__fade" clearsearchonselect="true" closeonselect="true" arialabellistbox="Options" arialabelclearselected="Clear selected" arialabeldeselectoption="[Function]" autocomplete="off" reduce="[Function]" selectable="[Function]" getoptionlabel="[Function]" getoptionkey="[Function]" taggable="false" pushtags="false" filterable="true" filter="[Function]" createoption="[Function]" resetfocusonoptionschange="true" resetonoptionschange="false" clearsearchonblur="[Function]" nodrop="false" inputid="provider-search-input" dir="auto" selectontab="false" selectonkeycodes="13" searchinputqueryselector="[type=search]" mapkeydown="[Function]" appendtobody="false" dropdownshouldopen="[Function]" keyboardfocusborder="true" uid="__UID__" autoscroll="true" loading="false" keepopen="false" inputlabel="OIDC provider" labeloutside="true" nowrap="false" placement="bottom" required="false"></nc-select-stub>
         <p data-v-c0ecf6bf="" class="description">You can configure OIDC providers in the <a class="link" href="//index.php/settings/admin/user_oidc" target="_blank" title="OpenID Connect settings">OpenID Connect settings</a></p><!-- eslint-disable-line vue/no-v-html -->
       </div>
       <div data-v-c0ecf6bf="" class="sso-settings--content--section sso-token-exchange">
@@ -429,7 +429,7 @@ exports[`Component: FormSSOSettings > complete form: edit mode > external provid
     <div data-v-c0ecf6bf="" class="form-actions">
       <!--v-if-->
       <nc-button-stub data-v-c0ecf6bf="" alignment="center" disabled="false" size="normal" target="_self" type="button" variant="secondary" wide="false" class="mr-2" data-test-id="cancel-sso-settings-edit">Cancel</nc-button-stub>
-      <nc-button-stub data-v-c0ecf6bf="" alignment="center" disabled="true" size="normal" target="_self" type="primary" variant="secondary" wide="false" data-test-id="save-sso-settings"> Save</nc-button-stub>
+      <nc-button-stub data-v-c0ecf6bf="" alignment="center" disabled="true" size="normal" target="_self" type="button" variant="primary" wide="false" data-test-id="save-sso-settings"> Save</nc-button-stub>
     </div>
   </div>
 </div>"
@@ -663,7 +663,7 @@ exports[`Component: FormSSOSettings > new form: edit mode > apps state > disable
     <div data-v-c0ecf6bf="" class="form-actions">
       <!--v-if-->
       <!--v-if-->
-      <nc-button-stub data-v-c0ecf6bf="" alignment="center" disabled="true" size="normal" target="_self" type="primary" variant="secondary" wide="false" data-test-id="save-sso-settings"> Save</nc-button-stub>
+      <nc-button-stub data-v-c0ecf6bf="" alignment="center" disabled="true" size="normal" target="_self" type="button" variant="primary" wide="false" data-test-id="save-sso-settings"> Save</nc-button-stub>
     </div>
   </div>
 </div>"
@@ -701,7 +701,7 @@ exports[`Component: FormSSOSettings > new form: edit mode > apps state > disable
     <div data-v-c0ecf6bf="" class="form-actions">
       <!--v-if-->
       <!--v-if-->
-      <nc-button-stub data-v-c0ecf6bf="" alignment="center" disabled="true" size="normal" target="_self" type="primary" variant="secondary" wide="false" data-test-id="save-sso-settings"> Save</nc-button-stub>
+      <nc-button-stub data-v-c0ecf6bf="" alignment="center" disabled="true" size="normal" target="_self" type="button" variant="primary" wide="false" data-test-id="save-sso-settings"> Save</nc-button-stub>
     </div>
   </div>
 </div>"
@@ -743,7 +743,7 @@ exports[`Component: FormSSOSettings > new form: edit mode > apps state > unsuppo
     <div data-v-c0ecf6bf="" class="form-actions">
       <!--v-if-->
       <!--v-if-->
-      <nc-button-stub data-v-c0ecf6bf="" alignment="center" disabled="true" size="normal" target="_self" type="primary" variant="secondary" wide="false" data-test-id="save-sso-settings"> Save</nc-button-stub>
+      <nc-button-stub data-v-c0ecf6bf="" alignment="center" disabled="true" size="normal" target="_self" type="button" variant="primary" wide="false" data-test-id="save-sso-settings"> Save</nc-button-stub>
     </div>
   </div>
 </div>"
@@ -781,7 +781,7 @@ exports[`Component: FormSSOSettings > new form: edit mode > apps state > unsuppo
     <div data-v-c0ecf6bf="" class="form-actions">
       <!--v-if-->
       <!--v-if-->
-      <nc-button-stub data-v-c0ecf6bf="" alignment="center" disabled="true" size="normal" target="_self" type="primary" variant="secondary" wide="false" data-test-id="save-sso-settings"> Save</nc-button-stub>
+      <nc-button-stub data-v-c0ecf6bf="" alignment="center" disabled="true" size="normal" target="_self" type="button" variant="primary" wide="false" data-test-id="save-sso-settings"> Save</nc-button-stub>
     </div>
   </div>
 </div>"
@@ -803,7 +803,7 @@ exports[`Component: FormSSOSettings > new form: edit mode > with supported apps 
       </div>
       <div data-v-c0ecf6bf="" class="sso-settings--content--section sso-provider">
         <p data-v-c0ecf6bf="" class="sso-settings--content--label">Select a provider *</p>
-        <nc-select-stub data-v-c0ecf6bf="" components="[object Object]" options="keycloak" disabled="false" clearable="true" deselectfromdropdown="false" searchable="true" multiple="false" placeholder="Select an OIDC provider" transition="vs__fade" clearsearchonselect="true" closeonselect="true" arialabellistbox="Options" arialabelclearselected="Clear selected" arialabeldeselectoption="[Function]" autocomplete="off" reduce="[Function]" selectable="[Function]" getoptionlabel="[Function]" getoptionkey="[Function]" taggable="false" pushtags="false" filterable="true" filter="[Function]" createoption="[Function]" resetfocusonoptionschange="true" resetonoptionschange="false" clearsearchonblur="[Function]" nodrop="false" inputid="provider-search-input" dir="auto" selectontab="false" selectonkeycodes="13" searchinputqueryselector="[type=search]" mapkeydown="[Function]" appendtobody="false" dropdownshouldopen="[Function]" keyboardfocusborder="true" uid="__UID__" autoscroll="true" loading="false" keepopen="false" inputlabel="OIDC provider" labeloutside="true" nowrap="false" placement="bottom" required="false" value="keycloak"></nc-select-stub>
+        <nc-select-stub data-v-c0ecf6bf="" components="[object Object]" options="keycloak" disabled="false" clearable="true" deselectfromdropdown="false" searchable="true" multiple="false" placeholder="Select an OIDC provider" transition="vs__fade" clearsearchonselect="true" closeonselect="true" arialabellistbox="Options" arialabelclearselected="Clear selected" arialabeldeselectoption="[Function]" autocomplete="off" reduce="[Function]" selectable="[Function]" getoptionlabel="[Function]" getoptionkey="[Function]" taggable="false" pushtags="false" filterable="true" filter="[Function]" createoption="[Function]" resetfocusonoptionschange="true" resetonoptionschange="false" clearsearchonblur="[Function]" nodrop="false" inputid="provider-search-input" dir="auto" selectontab="false" selectonkeycodes="13" searchinputqueryselector="[type=search]" mapkeydown="[Function]" appendtobody="false" dropdownshouldopen="[Function]" keyboardfocusborder="true" uid="__UID__" autoscroll="true" loading="false" keepopen="false" inputlabel="OIDC provider" labeloutside="true" nowrap="false" placement="bottom" required="false" modelvalue="keycloak"></nc-select-stub>
         <p data-v-c0ecf6bf="" class="description">You can configure OIDC providers in the <a class="link" href="//index.php/settings/admin/user_oidc" target="_blank" title="OpenID Connect settings">OpenID Connect settings</a></p><!-- eslint-disable-line vue/no-v-html -->
       </div>
       <div data-v-c0ecf6bf="" class="sso-settings--content--section sso-token-exchange">
@@ -816,7 +816,7 @@ exports[`Component: FormSSOSettings > new form: edit mode > with supported apps 
     <div data-v-c0ecf6bf="" class="form-actions">
       <!--v-if-->
       <!--v-if-->
-      <nc-button-stub data-v-c0ecf6bf="" alignment="center" disabled="false" size="normal" target="_self" type="primary" variant="secondary" wide="false" data-test-id="save-sso-settings"> Save</nc-button-stub>
+      <nc-button-stub data-v-c0ecf6bf="" alignment="center" disabled="false" size="normal" target="_self" type="button" variant="primary" wide="false" data-test-id="save-sso-settings"> Save</nc-button-stub>
     </div>
   </div>
 </div>"
@@ -838,7 +838,7 @@ exports[`Component: FormSSOSettings > new form: edit mode > with supported apps 
       </div>
       <div data-v-c0ecf6bf="" class="sso-settings--content--section sso-provider">
         <p data-v-c0ecf6bf="" class="sso-settings--content--label">Select a provider *</p>
-        <nc-select-stub data-v-c0ecf6bf="" components="[object Object]" options="keycloak" disabled="false" clearable="true" deselectfromdropdown="false" searchable="true" multiple="false" placeholder="Select an OIDC provider" transition="vs__fade" clearsearchonselect="true" closeonselect="true" arialabellistbox="Options" arialabelclearselected="Clear selected" arialabeldeselectoption="[Function]" autocomplete="off" reduce="[Function]" selectable="[Function]" getoptionlabel="[Function]" getoptionkey="[Function]" taggable="false" pushtags="false" filterable="true" filter="[Function]" createoption="[Function]" resetfocusonoptionschange="true" resetonoptionschange="false" clearsearchonblur="[Function]" nodrop="false" inputid="provider-search-input" dir="auto" selectontab="false" selectonkeycodes="13" searchinputqueryselector="[type=search]" mapkeydown="[Function]" appendtobody="false" dropdownshouldopen="[Function]" keyboardfocusborder="true" uid="__UID__" autoscroll="true" loading="false" keepopen="false" inputlabel="OIDC provider" labeloutside="true" nowrap="false" placement="bottom" required="false" value="keycloak"></nc-select-stub>
+        <nc-select-stub data-v-c0ecf6bf="" components="[object Object]" options="keycloak" disabled="false" clearable="true" deselectfromdropdown="false" searchable="true" multiple="false" placeholder="Select an OIDC provider" transition="vs__fade" clearsearchonselect="true" closeonselect="true" arialabellistbox="Options" arialabelclearselected="Clear selected" arialabeldeselectoption="[Function]" autocomplete="off" reduce="[Function]" selectable="[Function]" getoptionlabel="[Function]" getoptionkey="[Function]" taggable="false" pushtags="false" filterable="true" filter="[Function]" createoption="[Function]" resetfocusonoptionschange="true" resetonoptionschange="false" clearsearchonblur="[Function]" nodrop="false" inputid="provider-search-input" dir="auto" selectontab="false" selectonkeycodes="13" searchinputqueryselector="[type=search]" mapkeydown="[Function]" appendtobody="false" dropdownshouldopen="[Function]" keyboardfocusborder="true" uid="__UID__" autoscroll="true" loading="false" keepopen="false" inputlabel="OIDC provider" labeloutside="true" nowrap="false" placement="bottom" required="false" modelvalue="keycloak"></nc-select-stub>
         <p data-v-c0ecf6bf="" class="description">You can configure OIDC providers in the <a class="link" href="//index.php/settings/admin/user_oidc" target="_blank" title="OpenID Connect settings">OpenID Connect settings</a></p><!-- eslint-disable-line vue/no-v-html -->
       </div>
       <div data-v-c0ecf6bf="" class="sso-settings--content--section sso-token-exchange">
@@ -855,7 +855,7 @@ exports[`Component: FormSSOSettings > new form: edit mode > with supported apps 
     <div data-v-c0ecf6bf="" class="form-actions">
       <!--v-if-->
       <!--v-if-->
-      <nc-button-stub data-v-c0ecf6bf="" alignment="center" disabled="false" size="normal" target="_self" type="primary" variant="secondary" wide="false" data-test-id="save-sso-settings"> Save</nc-button-stub>
+      <nc-button-stub data-v-c0ecf6bf="" alignment="center" disabled="false" size="normal" target="_self" type="button" variant="primary" wide="false" data-test-id="save-sso-settings"> Save</nc-button-stub>
     </div>
   </div>
 </div>"
@@ -894,7 +894,7 @@ exports[`Component: FormSSOSettings > new form: edit mode > with supported apps 
     <div data-v-c0ecf6bf="" class="form-actions">
       <!--v-if-->
       <!--v-if-->
-      <nc-button-stub data-v-c0ecf6bf="" alignment="center" disabled="true" size="normal" target="_self" type="primary" variant="secondary" wide="false" data-test-id="save-sso-settings"> Save</nc-button-stub>
+      <nc-button-stub data-v-c0ecf6bf="" alignment="center" disabled="true" size="normal" target="_self" type="button" variant="primary" wide="false" data-test-id="save-sso-settings"> Save</nc-button-stub>
     </div>
   </div>
 </div>"
@@ -989,7 +989,7 @@ exports[`Component: FormSSOSettings > new form: edit mode > with supported apps 
     <div data-v-c0ecf6bf="" class="form-actions">
       <!--v-if-->
       <!--v-if-->
-      <nc-button-stub data-v-c0ecf6bf="" alignment="center" disabled="false" size="normal" target="_self" type="primary" variant="secondary" wide="false" data-test-id="save-sso-settings"> Save</nc-button-stub>
+      <nc-button-stub data-v-c0ecf6bf="" alignment="center" disabled="false" size="normal" target="_self" type="button" variant="primary" wide="false" data-test-id="save-sso-settings"> Save</nc-button-stub>
     </div>
   </div>
 </div>"
@@ -1027,7 +1027,7 @@ exports[`Component: FormSSOSettings > new form: edit mode > with supported apps 
     <div data-v-c0ecf6bf="" class="form-actions">
       <!--v-if-->
       <!--v-if-->
-      <nc-button-stub data-v-c0ecf6bf="" alignment="center" disabled="true" size="normal" target="_self" type="primary" variant="secondary" wide="false" data-test-id="save-sso-settings"> Save</nc-button-stub>
+      <nc-button-stub data-v-c0ecf6bf="" alignment="center" disabled="true" size="normal" target="_self" type="button" variant="primary" wide="false" data-test-id="save-sso-settings"> Save</nc-button-stub>
     </div>
   </div>
 </div>"
@@ -1062,7 +1062,7 @@ exports[`Component: FormSSOSettings > new form: edit mode > with supported apps 
     <div data-v-c0ecf6bf="" class="form-actions">
       <!--v-if-->
       <!--v-if-->
-      <nc-button-stub data-v-c0ecf6bf="" alignment="center" disabled="true" size="normal" target="_self" type="primary" variant="secondary" wide="false" data-test-id="save-sso-settings"> Save</nc-button-stub>
+      <nc-button-stub data-v-c0ecf6bf="" alignment="center" disabled="true" size="normal" target="_self" type="button" variant="primary" wide="false" data-test-id="save-sso-settings"> Save</nc-button-stub>
     </div>
   </div>
 </div>"
@@ -1093,7 +1093,7 @@ exports[`Component: FormSSOSettings > new form: edit mode > with supported apps 
     <div data-v-c0ecf6bf="" class="form-actions">
       <!--v-if-->
       <!--v-if-->
-      <nc-button-stub data-v-c0ecf6bf="" alignment="center" disabled="true" size="normal" target="_self" type="primary" variant="secondary" wide="false" data-test-id="save-sso-settings"> Save</nc-button-stub>
+      <nc-button-stub data-v-c0ecf6bf="" alignment="center" disabled="true" size="normal" target="_self" type="button" variant="primary" wide="false" data-test-id="save-sso-settings"> Save</nc-button-stub>
     </div>
   </div>
 </div>"
@@ -1124,7 +1124,7 @@ exports[`Component: FormSSOSettings > partially complete form > Nextcloud Hub - 
     <div data-v-c0ecf6bf="" class="form-actions">
       <!--v-if-->
       <!--v-if-->
-      <nc-button-stub data-v-c0ecf6bf="" alignment="center" disabled="true" size="normal" target="_self" type="primary" variant="secondary" wide="false" data-test-id="save-sso-settings"> Save</nc-button-stub>
+      <nc-button-stub data-v-c0ecf6bf="" alignment="center" disabled="true" size="normal" target="_self" type="button" variant="primary" wide="false" data-test-id="save-sso-settings"> Save</nc-button-stub>
     </div>
   </div>
 </div>"
@@ -1146,7 +1146,7 @@ exports[`Component: FormSSOSettings > partially complete form > external token e
       </div>
       <div data-v-c0ecf6bf="" class="sso-settings--content--section sso-provider">
         <p data-v-c0ecf6bf="" class="sso-settings--content--label">Select a provider *</p>
-        <nc-select-stub data-v-c0ecf6bf="" components="[object Object]" options="keycloak" disabled="false" clearable="true" deselectfromdropdown="false" searchable="true" multiple="false" placeholder="Select an OIDC provider" transition="vs__fade" clearsearchonselect="true" closeonselect="true" arialabellistbox="Options" arialabelclearselected="Clear selected" arialabeldeselectoption="[Function]" autocomplete="off" reduce="[Function]" selectable="[Function]" getoptionlabel="[Function]" getoptionkey="[Function]" taggable="false" pushtags="false" filterable="true" filter="[Function]" createoption="[Function]" resetfocusonoptionschange="true" resetonoptionschange="false" clearsearchonblur="[Function]" nodrop="false" inputid="provider-search-input" dir="auto" selectontab="false" selectonkeycodes="13" searchinputqueryselector="[type=search]" mapkeydown="[Function]" appendtobody="false" dropdownshouldopen="[Function]" keyboardfocusborder="true" uid="__UID__" autoscroll="true" loading="false" keepopen="false" inputlabel="OIDC provider" labeloutside="true" nowrap="false" placement="bottom" required="false" value="keycloak"></nc-select-stub>
+        <nc-select-stub data-v-c0ecf6bf="" modelvalue="keycloak" components="[object Object]" options="keycloak" disabled="false" clearable="true" deselectfromdropdown="false" searchable="true" multiple="false" placeholder="Select an OIDC provider" transition="vs__fade" clearsearchonselect="true" closeonselect="true" arialabellistbox="Options" arialabelclearselected="Clear selected" arialabeldeselectoption="[Function]" autocomplete="off" reduce="[Function]" selectable="[Function]" getoptionlabel="[Function]" getoptionkey="[Function]" taggable="false" pushtags="false" filterable="true" filter="[Function]" createoption="[Function]" resetfocusonoptionschange="true" resetonoptionschange="false" clearsearchonblur="[Function]" nodrop="false" inputid="provider-search-input" dir="auto" selectontab="false" selectonkeycodes="13" searchinputqueryselector="[type=search]" mapkeydown="[Function]" appendtobody="false" dropdownshouldopen="[Function]" keyboardfocusborder="true" uid="__UID__" autoscroll="true" loading="false" keepopen="false" inputlabel="OIDC provider" labeloutside="true" nowrap="false" placement="bottom" required="false"></nc-select-stub>
         <p data-v-c0ecf6bf="" class="description">You can configure OIDC providers in the <a class="link" href="//index.php/settings/admin/user_oidc" target="_blank" title="OpenID Connect settings">OpenID Connect settings</a></p><!-- eslint-disable-line vue/no-v-html -->
       </div>
       <div data-v-c0ecf6bf="" class="sso-settings--content--section sso-token-exchange">
@@ -1163,7 +1163,7 @@ exports[`Component: FormSSOSettings > partially complete form > external token e
     <div data-v-c0ecf6bf="" class="form-actions">
       <!--v-if-->
       <!--v-if-->
-      <nc-button-stub data-v-c0ecf6bf="" alignment="center" disabled="true" size="normal" target="_self" type="primary" variant="secondary" wide="false" data-test-id="save-sso-settings"> Save</nc-button-stub>
+      <nc-button-stub data-v-c0ecf6bf="" alignment="center" disabled="true" size="normal" target="_self" type="button" variant="primary" wide="false" data-test-id="save-sso-settings"> Save</nc-button-stub>
     </div>
   </div>
 </div>"
@@ -1185,7 +1185,7 @@ exports[`Component: FormSSOSettings > partially complete form > external token e
       </div>
       <div data-v-c0ecf6bf="" class="sso-settings--content--section sso-provider">
         <p data-v-c0ecf6bf="" class="sso-settings--content--label">Select a provider *</p>
-        <nc-select-stub data-v-c0ecf6bf="" components="[object Object]" options="keycloak" disabled="false" clearable="true" deselectfromdropdown="false" searchable="true" multiple="false" placeholder="Select an OIDC provider" transition="vs__fade" clearsearchonselect="true" closeonselect="true" arialabellistbox="Options" arialabelclearselected="Clear selected" arialabeldeselectoption="[Function]" autocomplete="off" reduce="[Function]" selectable="[Function]" getoptionlabel="[Function]" getoptionkey="[Function]" taggable="false" pushtags="false" filterable="true" filter="[Function]" createoption="[Function]" resetfocusonoptionschange="true" resetonoptionschange="false" clearsearchonblur="[Function]" nodrop="false" inputid="provider-search-input" dir="auto" selectontab="false" selectonkeycodes="13" searchinputqueryselector="[type=search]" mapkeydown="[Function]" appendtobody="false" dropdownshouldopen="[Function]" keyboardfocusborder="true" uid="__UID__" autoscroll="true" loading="false" keepopen="false" inputlabel="OIDC provider" labeloutside="true" nowrap="false" placement="bottom" required="false" value=""></nc-select-stub>
+        <nc-select-stub data-v-c0ecf6bf="" modelvalue="" components="[object Object]" options="keycloak" disabled="false" clearable="true" deselectfromdropdown="false" searchable="true" multiple="false" placeholder="Select an OIDC provider" transition="vs__fade" clearsearchonselect="true" closeonselect="true" arialabellistbox="Options" arialabelclearselected="Clear selected" arialabeldeselectoption="[Function]" autocomplete="off" reduce="[Function]" selectable="[Function]" getoptionlabel="[Function]" getoptionkey="[Function]" taggable="false" pushtags="false" filterable="true" filter="[Function]" createoption="[Function]" resetfocusonoptionschange="true" resetonoptionschange="false" clearsearchonblur="[Function]" nodrop="false" inputid="provider-search-input" dir="auto" selectontab="false" selectonkeycodes="13" searchinputqueryselector="[type=search]" mapkeydown="[Function]" appendtobody="false" dropdownshouldopen="[Function]" keyboardfocusborder="true" uid="__UID__" autoscroll="true" loading="false" keepopen="false" inputlabel="OIDC provider" labeloutside="true" nowrap="false" placement="bottom" required="false"></nc-select-stub>
         <p data-v-c0ecf6bf="" class="description">You can configure OIDC providers in the <a class="link" href="//index.php/settings/admin/user_oidc" target="_blank" title="OpenID Connect settings">OpenID Connect settings</a></p><!-- eslint-disable-line vue/no-v-html -->
       </div>
       <div data-v-c0ecf6bf="" class="sso-settings--content--section sso-token-exchange">
@@ -1202,7 +1202,7 @@ exports[`Component: FormSSOSettings > partially complete form > external token e
     <div data-v-c0ecf6bf="" class="form-actions">
       <!--v-if-->
       <!--v-if-->
-      <nc-button-stub data-v-c0ecf6bf="" alignment="center" disabled="true" size="normal" target="_self" type="primary" variant="secondary" wide="false" data-test-id="save-sso-settings"> Save</nc-button-stub>
+      <nc-button-stub data-v-c0ecf6bf="" alignment="center" disabled="true" size="normal" target="_self" type="button" variant="primary" wide="false" data-test-id="save-sso-settings"> Save</nc-button-stub>
     </div>
   </div>
 </div>"
@@ -1224,7 +1224,7 @@ exports[`Component: FormSSOSettings > partially complete form > external without
       </div>
       <div data-v-c0ecf6bf="" class="sso-settings--content--section sso-provider">
         <p data-v-c0ecf6bf="" class="sso-settings--content--label">Select a provider *</p>
-        <nc-select-stub data-v-c0ecf6bf="" components="[object Object]" options="keycloak" disabled="false" clearable="true" deselectfromdropdown="false" searchable="true" multiple="false" placeholder="Select an OIDC provider" transition="vs__fade" clearsearchonselect="true" closeonselect="true" arialabellistbox="Options" arialabelclearselected="Clear selected" arialabeldeselectoption="[Function]" autocomplete="off" reduce="[Function]" selectable="[Function]" getoptionlabel="[Function]" getoptionkey="[Function]" taggable="false" pushtags="false" filterable="true" filter="[Function]" createoption="[Function]" resetfocusonoptionschange="true" resetonoptionschange="false" clearsearchonblur="[Function]" nodrop="false" inputid="provider-search-input" dir="auto" selectontab="false" selectonkeycodes="13" searchinputqueryselector="[type=search]" mapkeydown="[Function]" appendtobody="false" dropdownshouldopen="[Function]" keyboardfocusborder="true" uid="__UID__" autoscroll="true" loading="false" keepopen="false" inputlabel="OIDC provider" labeloutside="true" nowrap="false" placement="bottom" required="false" value=""></nc-select-stub>
+        <nc-select-stub data-v-c0ecf6bf="" modelvalue="" components="[object Object]" options="keycloak" disabled="false" clearable="true" deselectfromdropdown="false" searchable="true" multiple="false" placeholder="Select an OIDC provider" transition="vs__fade" clearsearchonselect="true" closeonselect="true" arialabellistbox="Options" arialabelclearselected="Clear selected" arialabeldeselectoption="[Function]" autocomplete="off" reduce="[Function]" selectable="[Function]" getoptionlabel="[Function]" getoptionkey="[Function]" taggable="false" pushtags="false" filterable="true" filter="[Function]" createoption="[Function]" resetfocusonoptionschange="true" resetonoptionschange="false" clearsearchonblur="[Function]" nodrop="false" inputid="provider-search-input" dir="auto" selectontab="false" selectonkeycodes="13" searchinputqueryselector="[type=search]" mapkeydown="[Function]" appendtobody="false" dropdownshouldopen="[Function]" keyboardfocusborder="true" uid="__UID__" autoscroll="true" loading="false" keepopen="false" inputlabel="OIDC provider" labeloutside="true" nowrap="false" placement="bottom" required="false"></nc-select-stub>
         <p data-v-c0ecf6bf="" class="description">You can configure OIDC providers in the <a class="link" href="//index.php/settings/admin/user_oidc" target="_blank" title="OpenID Connect settings">OpenID Connect settings</a></p><!-- eslint-disable-line vue/no-v-html -->
       </div>
       <div data-v-c0ecf6bf="" class="sso-settings--content--section sso-token-exchange">
@@ -1237,7 +1237,7 @@ exports[`Component: FormSSOSettings > partially complete form > external without
     <div data-v-c0ecf6bf="" class="form-actions">
       <!--v-if-->
       <!--v-if-->
-      <nc-button-stub data-v-c0ecf6bf="" alignment="center" disabled="true" size="normal" target="_self" type="primary" variant="secondary" wide="false" data-test-id="save-sso-settings"> Save</nc-button-stub>
+      <nc-button-stub data-v-c0ecf6bf="" alignment="center" disabled="true" size="normal" target="_self" type="button" variant="primary" wide="false" data-test-id="save-sso-settings"> Save</nc-button-stub>
     </div>
   </div>
 </div>"
@@ -1268,7 +1268,7 @@ exports[`Component: FormSSOSettings > save failure > should show error message o
     <div data-v-c0ecf6bf="" class="form-actions">
       <!--v-if-->
       <!--v-if-->
-      <nc-button-stub data-v-c0ecf6bf="" alignment="center" disabled="false" size="normal" target="_self" type="primary" variant="secondary" wide="false" data-test-id="save-sso-settings"> Save</nc-button-stub>
+      <nc-button-stub data-v-c0ecf6bf="" alignment="center" disabled="false" size="normal" target="_self" type="button" variant="primary" wide="false" data-test-id="save-sso-settings"> Save</nc-button-stub>
     </div>
   </div>
 </div>"

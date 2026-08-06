@@ -22,7 +22,7 @@ exports[`Component: FormAuthMethod > completed form > edit mode > disabled user_
     <div data-v-8809ae1a="" class="form-actions">
       <!--v-if-->
       <nc-button-stub data-v-8809ae1a="" alignment="center" disabled="false" size="normal" target="_self" type="button" variant="secondary" wide="false" class="mr-2" data-test-id="cancel-auth-method-edit">Cancel</nc-button-stub>
-      <nc-button-stub data-v-8809ae1a="" alignment="center" disabled="true" size="normal" target="_self" type="primary" variant="secondary" wide="false" data-test-id="save-auth-method"> Save</nc-button-stub>
+      <nc-button-stub data-v-8809ae1a="" alignment="center" disabled="true" size="normal" target="_self" type="button" variant="primary" wide="false" data-test-id="save-auth-method"> Save</nc-button-stub>
     </div>
   </div>
 </div>"
@@ -50,7 +50,7 @@ exports[`Component: FormAuthMethod > completed form > edit mode > disabled user_
     <div data-v-8809ae1a="" class="form-actions">
       <!--v-if-->
       <nc-button-stub data-v-8809ae1a="" alignment="center" disabled="false" size="normal" target="_self" type="button" variant="secondary" wide="false" class="mr-2" data-test-id="cancel-auth-method-edit">Cancel</nc-button-stub>
-      <nc-button-stub data-v-8809ae1a="" alignment="center" disabled="true" size="normal" target="_self" type="primary" variant="secondary" wide="false" data-test-id="save-auth-method"> Save</nc-button-stub>
+      <nc-button-stub data-v-8809ae1a="" alignment="center" disabled="true" size="normal" target="_self" type="button" variant="primary" wide="false" data-test-id="save-auth-method"> Save</nc-button-stub>
     </div>
   </div>
 </div>"
@@ -78,7 +78,7 @@ exports[`Component: FormAuthMethod > completed form > edit mode > should show fo
     <div data-v-8809ae1a="" class="form-actions">
       <!--v-if-->
       <nc-button-stub data-v-8809ae1a="" alignment="center" disabled="false" size="normal" target="_self" type="button" variant="secondary" wide="false" class="mr-2" data-test-id="cancel-auth-method-edit">Cancel</nc-button-stub>
-      <nc-button-stub data-v-8809ae1a="" alignment="center" disabled="true" size="normal" target="_self" type="primary" variant="secondary" wide="false" data-test-id="save-auth-method"> Save</nc-button-stub>
+      <nc-button-stub data-v-8809ae1a="" alignment="center" disabled="true" size="normal" target="_self" type="button" variant="primary" wide="false" data-test-id="save-auth-method"> Save</nc-button-stub>
     </div>
   </div>
 </div>"
@@ -106,7 +106,7 @@ exports[`Component: FormAuthMethod > completed form > edit mode > unsupported us
     <div data-v-8809ae1a="" class="form-actions">
       <!--v-if-->
       <nc-button-stub data-v-8809ae1a="" alignment="center" disabled="false" size="normal" target="_self" type="button" variant="secondary" wide="false" class="mr-2" data-test-id="cancel-auth-method-edit">Cancel</nc-button-stub>
-      <nc-button-stub data-v-8809ae1a="" alignment="center" disabled="true" size="normal" target="_self" type="primary" variant="secondary" wide="false" data-test-id="save-auth-method"> Save</nc-button-stub>
+      <nc-button-stub data-v-8809ae1a="" alignment="center" disabled="true" size="normal" target="_self" type="button" variant="primary" wide="false" data-test-id="save-auth-method"> Save</nc-button-stub>
     </div>
   </div>
 </div>"
@@ -134,7 +134,7 @@ exports[`Component: FormAuthMethod > completed form > edit mode > unsupported us
     <div data-v-8809ae1a="" class="form-actions">
       <!--v-if-->
       <nc-button-stub data-v-8809ae1a="" alignment="center" disabled="false" size="normal" target="_self" type="button" variant="secondary" wide="false" class="mr-2" data-test-id="cancel-auth-method-edit">Cancel</nc-button-stub>
-      <nc-button-stub data-v-8809ae1a="" alignment="center" disabled="true" size="normal" target="_self" type="primary" variant="secondary" wide="false" data-test-id="save-auth-method"> Save</nc-button-stub>
+      <nc-button-stub data-v-8809ae1a="" alignment="center" disabled="true" size="normal" target="_self" type="button" variant="primary" wide="false" data-test-id="save-auth-method"> Save</nc-button-stub>
     </div>
   </div>
 </div>"
@@ -222,7 +222,7 @@ exports[`Component: FormAuthMethod > initial incomplete form > current setting: 
     <div data-v-8809ae1a="" class="form-actions">
       <!--v-if-->
       <!--v-if-->
-      <nc-button-stub data-v-8809ae1a="" alignment="center" disabled="false" size="normal" target="_self" type="primary" variant="secondary" wide="false" data-test-id="save-auth-method"> Save</nc-button-stub>
+      <nc-button-stub data-v-8809ae1a="" alignment="center" disabled="false" size="normal" target="_self" type="button" variant="primary" wide="false" data-test-id="save-auth-method"> Save</nc-button-stub>
     </div>
   </div>
 </div>"
@@ -250,7 +250,7 @@ exports[`Component: FormAuthMethod > initial incomplete form > current setting: 
     <div data-v-8809ae1a="" class="form-actions">
       <!--v-if-->
       <!--v-if-->
-      <nc-button-stub data-v-8809ae1a="" alignment="center" disabled="false" size="normal" target="_self" type="primary" variant="secondary" wide="false" data-test-id="save-auth-method"> Save</nc-button-stub>
+      <nc-button-stub data-v-8809ae1a="" alignment="center" disabled="false" size="normal" target="_self" type="button" variant="primary" wide="false" data-test-id="save-auth-method"> Save</nc-button-stub>
     </div>
   </div>
 </div>"
@@ -278,7 +278,7 @@ exports[`Component: FormAuthMethod > initial incomplete form > disabled user_oid
     <div data-v-8809ae1a="" class="form-actions">
       <!--v-if-->
       <!--v-if-->
-      <nc-button-stub data-v-8809ae1a="" alignment="center" disabled="false" size="normal" target="_self" type="primary" variant="secondary" wide="false" data-test-id="save-auth-method"> Save</nc-button-stub>
+      <nc-button-stub data-v-8809ae1a="" alignment="center" disabled="false" size="normal" target="_self" type="button" variant="primary" wide="false" data-test-id="save-auth-method"> Save</nc-button-stub>
     </div>
   </div>
 </div>"
@@ -314,7 +314,7 @@ exports[`Component: FormAuthMethod > initial incomplete form > unsupported user_
     <div data-v-8809ae1a="" class="form-actions">
       <!--v-if-->
       <!--v-if-->
-      <nc-button-stub data-v-8809ae1a="" alignment="center" disabled="false" size="normal" target="_self" type="primary" variant="secondary" wide="false" data-test-id="save-auth-method"> Save</nc-button-stub>
+      <nc-button-stub data-v-8809ae1a="" alignment="center" disabled="false" size="normal" target="_self" type="button" variant="primary" wide="false" data-test-id="save-auth-method"> Save</nc-button-stub>
     </div>
   </div>
 </div>"
