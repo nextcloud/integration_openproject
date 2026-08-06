@@ -132,7 +132,7 @@ export default {
 	methods: {
 		onFormChanged(value) {
 			if (this.isFormComplete) {
-				this.formDirty = value && this.savedOpenprojectUrl !== value
+				this.formDirty = !!value && this.savedOpenprojectUrl !== value
 			} else {
 				this.formDirty = !!this.serverUrl
 			}
