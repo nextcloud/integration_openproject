@@ -21,20 +21,8 @@ global.OC = {
     YES_NO_BUTTONS: 70,
   },
 }
-
 globalThis.appName = appName
 globalThis.appVersion = '0.0.0'
 globalThis.structuredClone = v => JSON.parse(JSON.stringify(v))
-
 globalThis.t = (_app, text) => text
 globalThis.getLanguage = vi.fn(() => '')
-// globalThis.getGettextBuilder = vi.fn(() => ({
-// 	detectLanguage: () => ({
-// 		build: () => ({
-// 			ngettext: (s) => s,
-// 			gettext: (s) => s,
-// 			addTranslations: vi.fn(),
-// 		}),
-// 	}),
-//   getLanguage: vi.fn(() => ''),
-// }))

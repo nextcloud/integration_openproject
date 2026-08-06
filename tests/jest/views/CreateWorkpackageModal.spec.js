@@ -82,14 +82,12 @@ describe('CreateWorkPackageModal.vue', () => {
 	})
 	afterEach(async () => {
 		wrapper?.unmount()
-		vi.restoreAllMocks()
 	})
 
 	describe('workpackage creation form', () => {
 		let axiosSpy
 		afterEach(() => {
 			axiosSpy.mockRestore()
-			vi.clearAllMocks()
 		})
 
 		it('should display available projects in the project dropdown', async () => {
@@ -292,7 +290,7 @@ describe('CreateWorkPackageModal.vue', () => {
 
 			vi.spyOn(axios, 'get')
 				.mockImplementationOnce(() => sendOCSResponse(availableProjectsResponse))
-			const axiosSpy = vi.spyOn(axios, 'post')
+			axiosSpy = vi.spyOn(axios, 'post')
 				.mockImplementationOnce(() => sendOCSResponse(workpackageFormValidationProjectSelected))
 			const assigneeAxiosSpy = vi.spyOn(axios, 'get')
 				.mockImplementationOnce(() => sendOCSResponse(availableProjectAssignees))
@@ -319,9 +317,6 @@ describe('CreateWorkPackageModal.vue', () => {
 			await wrapper.find(assigneeInputFieldSelector).setValue(' ')
 			await nextTick()
 			toMatchSerializedSnapshot(wrapper.find(assigneesSelectSelector).html())
-			axiosSpy.mockRestore()
-			assigneeAxiosSpy.mockRestore()
-			vi.clearAllMocks()
 		})
 
 		it('should send the form validation request when type is changed', async () => {

@@ -93,7 +93,6 @@ describe('Component: FormProjectFolder', () => {
 	})
 
 	afterEach(() => {
-		vi.clearAllMocks()
 		saveAdminConfig.mockReset()
 		getProjectFolderStatus.mockReset()
 	})

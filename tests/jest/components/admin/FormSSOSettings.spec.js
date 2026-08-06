@@ -6,7 +6,7 @@
  */
 
 import { shallowMount } from '@vue/test-utils'
-import { describe, expect, it, beforeEach, afterEach, vi } from 'vitest'
+import { describe, expect, it, beforeEach, vi } from 'vitest'
 import { nextTick } from 'vue'
 import { showError, showSuccess } from '@nextcloud/dialogs'
 
@@ -73,10 +73,6 @@ const defaultProps = {
 }
 
 describe('Component: FormSSOSettings', () => {
-	afterEach(() => {
-		vi.clearAllMocks()
-	})
-
 	describe('new form: edit mode', () => {
 		let wrapper
 
@@ -283,7 +279,6 @@ describe('Component: FormSSOSettings', () => {
 			describe('save button', () => {
 				describe('Nextcloud Hub', () => {
 					beforeEach(async () => {
-						vi.clearAllMocks()
 						const clientIdInput = wrapper.findComponent(selectors.clientIdInput)
 						await clientIdInput.vm.$emit('update:modelValue', 'op-client-id')
 						await nextTick()
@@ -322,7 +317,6 @@ describe('Component: FormSSOSettings', () => {
 
 				describe('external SSO Provider', () => {
 					beforeEach(async () => {
-						vi.clearAllMocks()
 						const ssoExternalRadioBox = wrapper.findComponent(selectors.ssoExternalRadioBox)
 						await ssoExternalRadioBox.vm.$emit('update:modelValue', SSO_PROVIDER_TYPE.external)
 						const providerSelect = wrapper.findComponent(selectors.providerSelect)

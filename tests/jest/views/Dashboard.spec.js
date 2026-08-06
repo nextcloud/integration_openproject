@@ -8,7 +8,7 @@
 
 import { shallowMount } from '@vue/test-utils'
 import flushPromises from 'flush-promises'
-import { describe, expect, it, beforeEach, afterEach, vi } from 'vitest'
+import { describe, expect, it, beforeEach, vi } from 'vitest'
 import util from 'util'
 import { showError, showSuccess } from '@nextcloud/dialogs'
 import { generateOcsUrl } from '@nextcloud/router'
@@ -60,10 +60,6 @@ describe('Dashboard.vue', () => {
 		spyAxiosGet = vi.spyOn(axios, 'get')
 			.mockImplementation(getAxiosGetMockFn())
 		spyLaunchLoop = vi.spyOn(Dashboard.methods, 'launchLoop')
-	})
-	afterEach(() => {
-		vi.clearAllMocks()
-		vi.restoreAllMocks()
 	})
 
 	describe('auth method: OAUTH2', () => {
@@ -298,10 +294,6 @@ describe('Dashboard.vue', () => {
 			spyAxiosDelete = vi.spyOn(axios, 'delete')
 				.mockImplementation(() => Promise.resolve({}))
 			spyFetchNotifications = vi.spyOn(Dashboard.methods, 'fetchNotifications')
-		})
-		afterEach(() => {
-			vi.clearAllMocks()
-			vi.restoreAllMocks()
 		})
 
 		it('should re-fetch notifications on success', async () => {

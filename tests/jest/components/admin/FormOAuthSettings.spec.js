@@ -61,7 +61,6 @@ const defaultProps = {
 
 describe('Component: FormOAuthSettings', () => {
 	afterEach(() => {
-		vi.clearAllMocks()
 		saveAdminConfig.mockReset()
 		createNextcloudOAuthClient.mockReset()
 	})

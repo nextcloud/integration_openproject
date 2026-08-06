@@ -5,7 +5,7 @@
  */
 
 import { mount } from '@vue/test-utils'
-import { describe, expect, it, beforeEach, afterEach, vi } from 'vitest'
+import { describe, expect, it, beforeEach, vi } from 'vitest'
 import { nextTick } from 'vue'
 
 import TextInput from '../../../../src/components/admin/TextInput.vue'
@@ -107,17 +107,18 @@ describe('TextInput.vue', () => {
 			expect(wrapper.find(selector.copyButton).attributes().disabled).toBeUndefined()
 		})
 		describe('on click', () => {
-			let copyButton
-			vi.useFakeTimers()
-			const spyWriteToClipboard = vi.spyOn(navigator.clipboard, 'writeText')
-				.mockImplementationOnce(() => vi.fn())
+			let copyButton, spyWriteToClipboard
 			beforeEach(() => {
+				vi.useFakeTimers()
+				spyWriteToClipboard = vi.spyOn(navigator.clipboard, 'writeText')
+					.mockImplementationOnce(() => vi.fn())
 				wrapper = getWrapper({
 					withCopyBtn: true,
 					modelValue: 'some-value-to-copy',
 				})
 				copyButton = wrapper.find(selector.copyButton)
 			})
+
 			it('should copy the input value', async () => {
 				await copyButton.trigger('click')
 				expect(spyWriteToClipboard).toBeCalledTimes(1)

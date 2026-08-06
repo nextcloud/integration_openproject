@@ -475,9 +475,8 @@ describe('LinkMultipleFilesModal.vue', () => {
 					})
 					const relinkRemainingButton = wrapper.find(relinkRemainingFilesButtonSelector)
 					await relinkRemainingButton.trigger('click')
-					for (let i = 0; i < 5; i++) {
-						await nextTick()
-					}
+					await nextTick()
+
 					expect(postSpy).toHaveBeenCalledTimes(2)
 				})
 
@@ -530,9 +529,9 @@ describe('LinkMultipleFilesModal.vue', () => {
 					})
 					const relinkRemainingButton = wrapper.find(relinkRemainingFilesButtonSelector)
 					await relinkRemainingButton.trigger('click')
-					for (let i = 0; i < 5; i++) {
-						await nextTick()
-					}
+					await flushPromises()
+					await nextTick()
+
 					expect(dialogs.showError).toBeCalledTimes(1)
 				})
 			})

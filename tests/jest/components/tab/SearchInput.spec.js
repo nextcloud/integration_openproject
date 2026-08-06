@@ -105,8 +105,6 @@ describe('SearchInput.vue', () => {
 
 	afterEach(() => {
 		wrapper?.unmount()
-		vi.clearAllMocks()
-		vi.restoreAllMocks()
 	})
 
 	describe('state messages', () => {
@@ -119,8 +117,13 @@ describe('SearchInput.vue', () => {
 
 	describe('work packages select', () => {
 		describe('search input', () => {
+			let axiosSpy
+			afterEach(() => {
+				axiosSpy.mockRestore()
+			})
+
 			it('should reset the state if search value length becomes lesser than search char limit', async () => {
-				const axiosSpy = vi.spyOn(axios, 'get')
+				axiosSpy = vi.spyOn(axios, 'get')
 					.mockImplementationOnce(() => sendOCSResponse([]))
 				wrapper = getMountedWrapper()
 				const inputField = wrapper.find(inputSelector)
@@ -137,7 +140,6 @@ describe('SearchInput.vue', () => {
 
 				expect(wrapper.vm.searchResults).toMatchObject([])
 				expect(wrapper.vm.state).toBe(STATE.OK)
-				axiosSpy.mockRestore()
 			})
 			it.each([
 				{
@@ -156,7 +158,7 @@ describe('SearchInput.vue', () => {
 				search,
 				expectedCallCount,
 			}) => {
-				const axiosSpy = vi.spyOn(axios, 'get')
+				axiosSpy = vi.spyOn(axios, 'get')
 					.mockImplementationOnce(() => sendOCSResponse([]))
 				wrapper = getMountedWrapper()
 				await wrapper.setProps({
@@ -165,10 +167,9 @@ describe('SearchInput.vue', () => {
 				const inputField = wrapper.find(inputSelector)
 				await inputField.setValue(search)
 				expect(axiosSpy).toHaveBeenCalledTimes(expectedCallCount)
-				axiosSpy.mockRestore()
 			})
 			it('should include the search text in the search payload', async () => {
-				const axiosSpy = vi.spyOn(axios, 'get')
+				axiosSpy = vi.spyOn(axios, 'get')
 					.mockImplementationOnce(() => sendOCSResponse([]))
 				wrapper = getMountedWrapper()
 				await wrapper.setProps({
@@ -187,10 +188,9 @@ describe('SearchInput.vue', () => {
 						},
 					},
 				)
-				axiosSpy.mockRestore()
 			})
 			it('should log an error on invalid payload', async () => {
-				const axiosSpy = vi.spyOn(axios, 'get')
+				axiosSpy = vi.spyOn(axios, 'get')
 					.mockImplementationOnce(() => sendOCSResponse([{ id: 123 }]))
 				const consoleMock = vi.spyOn(console, 'error')
 					.mockImplementationOnce(() => {})
@@ -202,8 +202,6 @@ describe('SearchInput.vue', () => {
 				await inputField.setValue('orga')
 				await nextTick()
 				expect(consoleMock).toHaveBeenCalledWith('could not process work package data')
-				consoleMock.mockRestore()
-				axiosSpy.mockRestore()
 			})
 		})
 
@@ -265,15 +263,14 @@ describe('SearchInput.vue', () => {
 					.mockImplementationOnce(() => sendOCSResponse(simpleWorkPackageSearchResponse))
 					.mockImplementation(() => sendOCSResponse([]))
 				await inputField.setValue('orga')
-				for (let i = 0; i <= 10; i++) {
-					await nextTick()
-				}
+				await flushPromises()
+				await nextTick()
+
 				const workPackages = wrapper.findAllComponents(workPackageStubSelector)
 				expect(workPackages).toHaveLength(simpleWorkPackageSearchResponse.length)
 				for (let i = 0; i < workPackages.length; i++) {
 					expect(workPackages[i].props()).toMatchSnapshot()
 				}
-				axiosSpy.mockRestore()
 			})
 			it('should not display work packages that are already linked', async () => {
 				wrapper = getMountedWrapper({ id: 111 },
@@ -299,9 +296,8 @@ describe('SearchInput.vue', () => {
 
 				const inputField = wrapper.find(inputSelector)
 				await inputField.setValue('anything longer than 3 char')
-				for (let i = 0; i < 9; i++) {
-					await nextTick()
-				}
+				await flushPromises()
+				await nextTick()
 
 				// id no 13 is already in workpackages and also in the response
 				// so it should not be visible in the search results
@@ -331,7 +327,6 @@ describe('SearchInput.vue', () => {
 						},
 					],
 				)
-				axiosSpy.mockRestore()
 			})
 
 			it('should not display work packages that are already in the search results', async () => {
@@ -351,9 +346,8 @@ describe('SearchInput.vue', () => {
 
 				const inputField = wrapper.find(inputSelector)
 				await inputField.setValue('anything longer than 3 char')
-				for (let i = 0; i < 8; i++) {
-					await nextTick()
-				}
+				await flushPromises()
+				await nextTick()
 
 				expect(wrapper.vm.searchResults).toMatchObject(
 					[
@@ -386,7 +380,6 @@ describe('SearchInput.vue', () => {
 						},
 					],
 				)
-				axiosSpy.mockRestore()
 			})
 			it.each(
 				[
@@ -670,9 +663,9 @@ describe('SearchInput.vue', () => {
 
 					const inputField = wrapper.find(inputSelector)
 					await inputField.setValue('anything longer than 3 char')
-					for (let i = 0; i < 8; i++) {
-						await nextTick()
-					}
+					await flushPromises()
+					await nextTick()
+
 					expect(wrapper.vm.searchResults).toMatchObject(
 						[
 							{
@@ -699,7 +692,6 @@ describe('SearchInput.vue', () => {
 							},
 						],
 					)
-					axiosSpy.mockRestore()
 				})
 
 			})
@@ -769,9 +761,9 @@ describe('SearchInput.vue', () => {
 
 							const inputField = wrapper.find(inputSelector)
 							await inputField.setValue('anything longer than 3 char')
-							for (let i = 0; i < 8; i++) {
-								await nextTick()
-							}
+							await flushPromises()
+							await nextTick()
+
 							expect(wrapper.vm.searchResults).toMatchObject(
 								[
 									{
@@ -809,7 +801,6 @@ describe('SearchInput.vue', () => {
 									},
 								],
 							)
-							axiosSpy.mockRestore()
 						})
 					})
 				})
@@ -855,9 +846,9 @@ describe('SearchInput.vue', () => {
 								.mockImplementationOnce(() => sendOCSResponse({}))
 							const ncSelectItem = wrapper.find(firstWorkPackageSelector)
 							await ncSelectItem.trigger('click')
-							for (let i = 0; i < 5; i++) {
-								await nextTick()
-							}
+							await flushPromises()
+							await nextTick()
+
 							expect(postSpy).toHaveBeenCalledTimes(3)
 						})
 
@@ -950,9 +941,9 @@ describe('SearchInput.vue', () => {
 								.mockImplementation(() => sendOCSResponse({}))
 							const ncSelectItem = wrapper.find(firstWorkPackageSelector)
 							await ncSelectItem.trigger('click')
-							for (let i = 0; i < 5; i++) {
-								await nextTick()
-							}
+							await flushPromises()
+							await nextTick()
+
 							// here 'makeRequestToLinkFilesToWorkPackage' is called 4 times since the chunk is [20,20,15] 3 times and 1 is added for retry since it fails for the first time
 							expect(postSpy).toHaveBeenCalledTimes(4)
 						})
@@ -962,9 +953,9 @@ describe('SearchInput.vue', () => {
 								.mockImplementation(() => Promise.reject(new Error('Throw eror')))
 							const ncSelectItem = wrapper.find(firstWorkPackageSelector)
 							await ncSelectItem.trigger('click')
-							for (let i = 0; i < 5; i++) {
-								await nextTick()
-							}
+							await flushPromises()
+							await nextTick()
+
 							// here the post is called 2 times (1 extra for retry)
 							expect(postSpy).toHaveBeenCalledTimes(2)
 						})
@@ -1014,7 +1005,6 @@ describe('SearchInput.vue', () => {
 	describe('create work packages event handling', () => {
 		beforeEach(async () => {
 			wrapper = getMountedWrapper()
-			vi.clearAllMocks()
 			dialogs.showSuccess.mockReset()
 			dialogs.showError.mockReset()
 		})

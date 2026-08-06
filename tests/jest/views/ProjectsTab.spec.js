@@ -71,7 +71,7 @@ describe('ProjectsTab.vue', () => {
 	beforeEach(() => {
 		vi.useFakeTimers()
 		wrapper = shallowMount(ProjectsTab, {
-			propsData: {
+			props: {
 				node: fileOne,
 			},
 			data: () => ({

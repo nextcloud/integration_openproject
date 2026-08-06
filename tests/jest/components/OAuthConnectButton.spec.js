@@ -58,7 +58,6 @@ describe('OAuthConnectButton.vue', () => {
 			writable: true,
 			value: realLocation,
 		})
-		vi.clearAllMocks()
 	})
 	describe('when the admin config is not okay', () => {
 		it('should show message for normal user', async () => {

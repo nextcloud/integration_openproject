@@ -60,7 +60,7 @@ describe('EmptyContent.vue', () => {
 	})
 })
 
-function getWrapper(propsData = {}) {
+function getWrapper(props = {}) {
 	return shallowMount(EmptyContent, {
 		global: {
 			mocks: {
@@ -71,7 +71,7 @@ function getWrapper(propsData = {}) {
 			state: 'ok',
 			isAdminConfigOk: true,
 			authMethod: AUTH_METHOD.OAUTH2,
-			...propsData,
+			...props,
 		},
 	})
 }

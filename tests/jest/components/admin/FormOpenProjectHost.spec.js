@@ -6,7 +6,7 @@
  */
 
 import { shallowMount } from '@vue/test-utils'
-import { describe, expect, it, beforeEach, afterEach, vi } from 'vitest'
+import { describe, expect, it, beforeEach, vi } from 'vitest'
 import flushPromises from 'flush-promises'
 import { defineComponent, h } from 'vue'
 import { showError, showSuccess } from '@nextcloud/dialogs'
@@ -39,10 +39,6 @@ const selectors = {
 }
 
 describe('Component: FormOpenProjectHost', () => {
-	afterEach(() => {
-		vi.clearAllMocks()
-	})
-
 	describe('initial incomplete form', () => {
 		let wrapper
 		beforeEach(() => {

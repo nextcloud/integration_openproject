@@ -9,7 +9,7 @@
 import axios from '@nextcloud/axios'
 import * as dialogs from '@nextcloud/dialogs'
 import { shallowMount, mount } from '@vue/test-utils'
-import { describe, expect, it, beforeEach, afterEach, vi } from 'vitest'
+import { describe, expect, it, beforeEach, vi } from 'vitest'
 import { nextTick } from 'vue'
 
 import AdminSettings from '../../../src/components/AdminSettings.vue'
@@ -123,10 +123,6 @@ commonState.form.nextcloudOauth.complete = true
 commonState.form.projectFolder.complete = true
 
 describe('AdminSettings.vue', () => {
-	afterEach(() => {
-		vi.restoreAllMocks()
-	})
-
 	describe('reset button', () => {
 		it.each([
 			{
@@ -229,10 +225,6 @@ describe('AdminSettings.vue', () => {
 					},
 				})
 				confirmSpy = vi.spyOn(global.OC.dialogs, 'confirmDestructive')
-			})
-
-			afterEach(() => {
-				vi.clearAllMocks()
 			})
 
 			it('should trigger confirm dialog on click', async () => {
