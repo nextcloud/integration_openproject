@@ -92,7 +92,7 @@ import axios from '@nextcloud/axios'
 import { loadState } from '@nextcloud/initial-state'
 import { generateUrl } from '@nextcloud/router'
 import { showSuccess, showError } from '@nextcloud/dialogs'
-import { NcButton, NcNoteCard } from '@nextcloud/vue'
+import { NcButton, NcNoteCard, isDarkTheme } from '@nextcloud/vue'
 import RestoreIcon from 'vue-material-design-icons/Restore.vue'
 import dompurify from 'dompurify'
 import CheckBox from '../components/settings/CheckBox.vue'
@@ -127,7 +127,7 @@ export default {
 		return {
 			form: structuredClone(ADMIN_SETTINGS_FORM),
 			state: loadState('integration_openproject', 'admin-settings-config'),
-			isDarkTheme: null,
+			isDarkTheme,
 			isAllTermsOfServiceSignedForUserOpenProject: true,
 			userSettingDescription: USER_SETTINGS,
 			SSO_PROVIDER_TYPE,
@@ -200,9 +200,6 @@ export default {
 	},
 	created() {
 		this.init()
-	},
-	mounted() {
-		this.isDarkTheme = window.getComputedStyle(this.$el).getPropertyValue('--background-invert-if-dark') === 'invert(100%)'
 	},
 	methods: {
 		init() {
