@@ -59,7 +59,7 @@
 						@click="saveOpenProjectClient">
 						<template #icon>
 							<NcLoadingIcon v-if="loading" class="loading-spinner" :size="20" />
-							<CheckBoldIcon v-else fill-color="#FFFFFF" :size="20" />
+							<CheckBoldIcon v-else :size="20" />
 						</template>
 						{{ t('integration_openproject', 'Save') }}
 					</NcButton>
@@ -134,7 +134,7 @@
 						data-test-id="submit-nc-oauth-btn"
 						@click="setNextcloudFromToViewMode">
 						<template #icon>
-							<CheckBoldIcon fill-color="#FFFFFF" :size="20" />
+							<CheckBoldIcon :size="20" />
 						</template>
 						{{ t('integration_openproject', 'Yes, I have copied these values') }}
 					</NcButton>

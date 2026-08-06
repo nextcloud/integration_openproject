@@ -80,7 +80,7 @@
 					@click="saveSettings">
 					<template #icon>
 						<NcLoadingIcon v-if="loading" class="loading-spinner" :size="20" />
-						<CheckBoldIcon v-else fill-color="#FFFFFF" :size="20" />
+						<CheckBoldIcon v-else :size="20" />
 					</template>
 					{{ t('integration_openproject', 'Save') }}
 				</NcButton>
