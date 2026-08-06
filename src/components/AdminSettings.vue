@@ -51,7 +51,7 @@
 			}"
 			@formcomplete="markFormComplete" />
 		<NcButton id="reset-all-app-settings-btn"
-			type="error"
+			variant="error"
 			:disabled="!resettableForm"
 			@click="resetIntegrationSetup">
 			<template #icon>

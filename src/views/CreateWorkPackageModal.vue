@@ -6,7 +6,7 @@
 <template>
 	<NcModal
 		class="create-workpackage-modal"
-		:can-close="true"
+		:no-close="false"
 		:out-transition="true"
 		@close="closeModal">
 		<div>

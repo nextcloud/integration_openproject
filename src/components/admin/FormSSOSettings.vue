@@ -68,7 +68,7 @@
 						:disabled="!hasEnabledSupportedUserOidcApp"
 						:placeholder="t('integration_openproject', 'Select an OIDC provider')"
 						:options="ssoProviders"
-						:value="currentForm.oidc_provider"
+						:modelValue="currentForm.oidc_provider"
 						:filterable="true"
 						:close-on-select="true"
 						:clear-search-on-blur="() => false"
@@ -132,7 +132,7 @@
 				</NcButton>
 				<NcButton v-if="showSaveButton"
 					data-test-id="save-sso-settings"
-					type="primary"
+					variant="primary"
 					:disabled="disableSaveSSOSettings"
 					@click="saveSettings">
 					<template #icon>

@@ -75,7 +75,7 @@
 				</NcButton>
 				<NcButton v-if="isEditMode"
 					data-test-id="save-auth-method"
-					type="primary"
+					variant="primary"
 					:disabled="disableSave"
 					@click="saveSettings">
 					<template #icon>

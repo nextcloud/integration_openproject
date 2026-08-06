@@ -27,7 +27,6 @@ registerWidget(`${APP_ID}_work_package`, async (el, { richObjectType, richObject
 		accessible,
 	})
 	setupGlobalProperties(widget)
-	widget.mixin({ methods: { t, n } })
 	widget.mount(el)
 })
 
@@ -39,7 +38,6 @@ registerCustomPickerElement('openproject-work-package-ref', async (el, { provide
 		providerId,
 		accessible,
 	})
-	app.mixin({ methods: { t, n } })
 	setupGlobalProperties(app)
 	const vueElement = app.mount(el)
 

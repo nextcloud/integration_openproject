@@ -6,7 +6,7 @@
 	<div class="multiple-link-modal-container">
 		<NcModal
 			v-if="show"
-			:can-close="isError"
+			:no-close="noCloseModal"
 			@close="closeRequestModal">
 			<div class="multiple-link-modal-content">
 				<NcLoadingIcon v-if="isLoading" class="loading-spinner" :size="60" />
@@ -147,8 +147,8 @@ export default {
 		getError() {
 			return this.chunkingInformation?.error
 		},
-		isError() {
-			return this.chunkingInformation?.error !== false
+		noCloseModal() {
+			return this.chunkingInformation?.error === true
 		},
 	},
 

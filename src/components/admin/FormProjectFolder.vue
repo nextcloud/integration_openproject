@@ -62,7 +62,7 @@
 							}}
 						</p>
 						<div class="form-actions">
-							<NcButton type="primary"
+							<NcButton variant="primary"
 								data-test-id="complete-without-project-folder-form-btn"
 								@click="saveProjectFolder()">
 								<template #icon>
@@ -92,7 +92,7 @@
 						</p>
 						<div class="form-actions">
 							<NcButton
-								type="primary"
+								variant="primary"
 								:disabled="showTeamfolderAppError"
 								data-test-id="complete-with-project-folders-form-btn"
 								@click="saveProjectFolder()">
@@ -131,7 +131,7 @@
 				value="" />
 			<div class="form-actions">
 				<NcButton v-if="isAppPasswordFormInEditMode"
-					type="primary"
+					variant="primary"
 					:disabled="!appPassword"
 					data-test-id="submit-op-system-password-form-btn"
 					@click="setAppPasswordFormToViewMode">

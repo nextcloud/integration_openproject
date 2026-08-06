@@ -54,7 +54,7 @@
 					<NcButton
 						v-else
 						data-test-id="submit-op-oauth-btn"
-						type="primary"
+						variant="primary"
 						:disabled="disableOpenProjectFormSave"
 						@click="saveOpenProjectClient">
 						<template #icon>
@@ -129,7 +129,7 @@
 					</NcButton>
 					<NcButton
 						v-else
-						type="primary"
+						variant="primary"
 						:disabled="disableNextcloudFormSave"
 						data-test-id="submit-nc-oauth-btn"
 						@click="setNextcloudFromToViewMode">

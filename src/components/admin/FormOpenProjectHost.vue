@@ -45,7 +45,7 @@
 					{{ t('integration_openproject', 'Cancel') }}
 				</NcButton>
 				<NcButton v-if="isEditMode"
-					type="primary"
+					variant="primary"
 					data-test-id="save-server-host"
 					:disabled="disableSave"
 					@click="saveUrl">
