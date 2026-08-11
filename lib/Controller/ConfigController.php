@@ -241,14 +241,9 @@ class ConfigController extends Controller {
 		}
 		// since we can now switch between both authorization method we need to know what we are resetting (either "oauth2" or "oidc" method)
 		// determines if we are switching from "oauth2" to "oidc" auth method
-		$runningOauth2Reset = (
-			key_exists('openproject_client_id', $values) &&
-			!$values['openproject_client_id'] &&
-			key_exists('openproject_client_secret', $values) &&
-			!$values['openproject_client_secret'] &&
-			$oldOpenProjectOauthUrl &&
-			$oldClientId &&
-			$oldClientSecret
+		$switchingOAuthToOIDC = (
+			$oldAuthMethod === Application::AUTH_METHOD_OAUTH && key_exists('authorization_method', $values) &&
+			$values['authorization_method'] === Application::AUTH_METHOD_OIDC
 		);
 
 		// determines if we are switching from "oidc" to "oauth2" auth method
@@ -309,13 +304,14 @@ class ConfigController extends Controller {
 		}
 
 		$this->config->deleteAppValue(Application::APP_ID, 'oPOAuthTokenRevokeStatus');
+		$resetOpenProjectClient = ((key_exists('openproject_client_id', $values) && $values['openproject_client_id'] !== $oldClientId) ||
+						(key_exists('openproject_client_secret', $values) && $values['openproject_client_secret'] !== $oldClientSecret));
 		if (
 			// when the OP client information has changed
-			(!$runningFullResetWithOIDCAuth && ((key_exists('openproject_client_id', $values) && $values['openproject_client_id'] !== $oldClientId) ||
-						(key_exists('openproject_client_secret', $values) && $values['openproject_client_secret'] !== $oldClientSecret))) ||
+			(!$runningFullResetWithOIDCAuth && $resetOpenProjectClient) ||
 			// when the OP client information is reset
 			$runningFullResetWithOAuth2Auth ||
-			$runningOauth2Reset
+			$switchingOAuthToOIDC
 		) {
 			$this->userManager->callForAllUsers(function (IUser $user) use (
 				$oldOpenProjectOauthUrl, $oldClientId, $oldClientSecret
@@ -378,8 +374,7 @@ class ConfigController extends Controller {
 		}
 
 		// when switching from "oauth2" to "oidc" authorization method
-		if (key_exists('authorization_method', $values) &&
-			$values['authorization_method'] === Application::AUTH_METHOD_OIDC && $runningOauth2Reset) {
+		if ($switchingOAuthToOIDC) {
 			$this->resetOauth2Configs();
 		}
 
