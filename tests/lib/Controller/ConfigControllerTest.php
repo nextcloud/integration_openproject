@@ -2007,9 +2007,19 @@ class ConfigControllerTest extends TestCase {
 					'status',
 				],
 			],
-			"oauth to oidc" => [
+			"oauth to oidc: no existing oauth client" => [
 				"authMethod" => Application::AUTH_METHOD_OAUTH,
 				"oauthClientId" => 0,
+				'settings' => [
+					'authorization_method' => Application::AUTH_METHOD_OIDC,
+				],
+				'responseProps' => [
+					'status',
+				],
+			],
+			"oauth to oidc: existing oauth client" => [
+				"authMethod" => Application::AUTH_METHOD_OAUTH,
+				"oauthClientId" => 1,
 				'settings' => [
 					'authorization_method' => Application::AUTH_METHOD_OIDC,
 				],
@@ -2043,22 +2053,59 @@ class ConfigControllerTest extends TestCase {
 	 * @dataProvider updateIntegrationSuccessProvider
 	 */
 	public function testUpdateIntegrationSuccess(string $authMethod, int $oauthClientId, array $settings, array $responseProps): void {
+		$user = $this->createMock(IUser::class);
+		$user->method('getUID')->willReturn('testUser');
+
 		$userManagerMock = $this->createMock(IUserManager::class);
 		$userManagerMock->method('userExists')->willReturn(true);
+		$userManagerMock->method('callForAllUsers')
+			->willReturnCallback(function (callable $callback) use ($user) {
+				$callback($user);
+			});
+
 		$oauthMock = $this->createMock(OauthService::class);
 
+		$oldAuthMethod = $authMethod;
 		// change in authorization method
 		if (isset($settings['authorization_method'])) {
 			$authMethod = $settings['authorization_method'];
 		}
 
+		$configState = [
+			'authorization_method' => $oldAuthMethod,
+			'nc_oauth_client_id' => $oauthClientId,
+		];
+
+		$setAppValueCalls = [];
+		$deletedKeys = [];
+
 		$configMock = $this->createMock(IConfig::class);
-		$configMock
-			->method('getAppValue')
-			->willReturnMap([
-				[Application::APP_ID, 'authorization_method', '', $authMethod],
-				[Application::APP_ID, 'nc_oauth_client_id', '', $oauthClientId],
-			]);
+
+		$configMock->method('getAppValue')
+			->willReturnCallback(function ($app, $key, $default = '') use (&$configState) {
+				return $configState[$key] ?? $default;
+			});
+
+		$configMock->method('setAppValue')
+			->willReturnCallback(function ($app, $key, $value) use (&$configState, &$setAppValueCalls) {
+				$setAppValueCalls[] = [$app, $key, $value];
+				$configState[$key] = $value;
+				return true;
+			});
+
+		$configMock->method('deleteAppValue')
+			->willReturnCallback(function ($app, $key) use (&$configState, &$deletedKeys) {
+				$deletedKeys[] = $key;
+				unset($configState[$key]);
+				return true;
+			});
+
+		$deletedUserValues = [];
+		$configMock->method('deleteUserValue')
+			->willReturnCallback(function ($uid, $app, $key) use (&$deletedUserValues) {
+				$deletedUserValues[] = [$uid, $app, $key];
+				return true;
+			});
 
 		if ($authMethod === Application::AUTH_METHOD_OAUTH) {
 			if ($oauthClientId) {
@@ -2121,6 +2168,22 @@ class ConfigControllerTest extends TestCase {
 		$data = $response->getData();
 		$this->assertEquals(Http::STATUS_OK, $response->getStatus());
 		$this->assertArrayHasKey('status', $data);
+
+		if ($oldAuthMethod === Application::AUTH_METHOD_OAUTH
+			&& isset($settings['authorization_method'])
+			&& $settings['authorization_method'] === Application::AUTH_METHOD_OIDC) {
+			$this->assertContains([Application::APP_ID, 'openproject_client_id', ''], $setAppValueCalls);
+			$this->assertContains([Application::APP_ID, 'openproject_client_secret', ''], $setAppValueCalls);
+			$this->assertContains('nc_oauth_client_id', $deletedKeys);
+
+			$expectedDeletedKeys = ['token', 'login', 'user_id', 'user_name', 'refresh_token', 'token_expires_at'];
+			foreach ($expectedDeletedKeys as $key) {
+				$this->assertContains(
+					['testUser', Application::APP_ID, $key],
+					$deletedUserValues
+				);
+			}
+		}
 
 		foreach ($responseProps as $prop) {
 			$this->assertArrayHasKey($prop, $data);
