@@ -29,6 +29,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ### Removed
 
+- Remove access token revocation and let OpenProject handle it [#1153](https://github.com/nextcloud/integration_openproject/pull/1153)
+
 ## 2.11.4 - 2026-07-13
 
 ### Fixed
