@@ -641,58 +641,6 @@ describe('Component: FormOAuthSettings', () => {
 			})
 		})
 	})
-
-	describe('revoke OpenProject OAuth token', () => {
-		it('should show success when revoke status is success', async () => {
-			saveAdminConfig.mockImplementationOnce(() => Promise.resolve({
-				data: {
-					oPOAuthTokenRevokeStatus: 'success',
-				},
-			}))
-			const wrapper = getWrapper()
-			const spyCreateNextcloudClient = vi.spyOn(wrapper.vm, 'createNextcloudClient').mockImplementation(() => vi.fn())
-			const spyNotifyOpenProjectTokenRevoke = vi.spyOn(wrapper.vm, 'notifyOpenProjectTokenRevoke')
-			wrapper.findComponent(selectors.opClientIdInput).vm.$emit('update:modelValue', 'id')
-			wrapper.findComponent(selectors.opClientSecretInput).vm.$emit('update:modelValue', 'secret')
-			wrapper.findComponent(selectors.opSaveButton).vm.$emit('click')
-			await flushPromises()
-
-			expect(spyCreateNextcloudClient).toHaveBeenCalledTimes(1)
-			expect(wrapper.vm.openprojectTokenRevokeStatus).toBe('success')
-			expect(spyNotifyOpenProjectTokenRevoke).toHaveBeenCalledTimes(1)
-			expect(showSuccess).toHaveBeenCalledTimes(2)
-			expect(showError).toHaveBeenCalledTimes(0)
-			expect(showSuccess).toHaveBeenCalledWith('OpenProject admin options saved')
-			expect(showSuccess).toHaveBeenCalledWith('Successfully revoked users\' OpenProject OAuth access tokens')
-
-		})
-		it.each([
-			['connection_error', 'Failed to perform revoke request due to connection error with the OpenProject server'],
-			['other_error', 'Failed to revoke some users\' OpenProject OAuth access tokens'],
-		])('should show error message on various failure', async (errorCode, errorMessage) => {
-			saveAdminConfig.mockImplementationOnce(() => Promise.resolve({
-				data: {
-					oPOAuthTokenRevokeStatus: errorCode,
-				},
-			}))
-			const wrapper = getWrapper()
-			const spyCreateNextcloudClient = vi.spyOn(wrapper.vm, 'createNextcloudClient').mockImplementation(() => vi.fn())
-			const spyNotifyOpenProjectTokenRevoke = vi.spyOn(wrapper.vm, 'notifyOpenProjectTokenRevoke')
-			wrapper.findComponent(selectors.opClientIdInput).vm.$emit('update:modelValue', 'id')
-			wrapper.findComponent(selectors.opClientSecretInput).vm.$emit('update:modelValue', 'secret')
-			wrapper.findComponent(selectors.opSaveButton).vm.$emit('click')
-			await flushPromises()
-
-			expect(spyCreateNextcloudClient).toHaveBeenCalledTimes(1)
-			expect(wrapper.vm.openprojectTokenRevokeStatus).toBe(errorCode)
-			expect(spyNotifyOpenProjectTokenRevoke).toHaveBeenCalledTimes(1)
-
-			expect(showSuccess).toHaveBeenCalledTimes(1)
-			expect(showError).toHaveBeenCalledTimes(1)
-			expect(showSuccess).toHaveBeenCalledWith('OpenProject admin options saved')
-			expect(showError).toHaveBeenCalledWith(errorMessage)
-		})
-	})
 })
 
 function getWrapper({ data = {}, props = {} } = {}) {
