@@ -245,6 +245,10 @@ class ConfigController extends Controller {
 			$oldAuthMethod === Application::AUTH_METHOD_OAUTH && key_exists('authorization_method', $values) &&
 			$values['authorization_method'] === Application::AUTH_METHOD_OIDC
 		);
+		$switchingOIDCToOAuth = (
+			$oldAuthMethod === Application::AUTH_METHOD_OIDC && key_exists('authorization_method', $values) &&
+			$values['authorization_method'] === Application::AUTH_METHOD_OAUTH
+		);
 
 		// determines if we are switching from "oidc" to "oauth2" auth method
 		$runningOIDCReset = false;
@@ -304,18 +308,17 @@ class ConfigController extends Controller {
 		}
 
 		$resetOpenProjectClient = ((key_exists('openproject_client_id', $values) && $values['openproject_client_id'] !== $oldClientId) ||
-						(key_exists('openproject_client_secret', $values) && $values['openproject_client_secret'] !== $oldClientSecret));
-		if (
-			// when the OP client information has changed
-			(!$runningFullResetWithOIDCAuth && $resetOpenProjectClient) ||
-			// when the OP client information is reset
-			$runningFullResetWithOAuth2Auth ||
-			$switchingOAuthToOIDC
-		) {
+			(key_exists('openproject_client_secret', $values) && $values['openproject_client_secret'] !== $oldClientSecret));
+
+		if ($resetOpenProjectClient || $runningFullResetWithOAuth2Auth || $switchingOAuthToOIDC) {
 			$this->userManager->callForAllUsers(function (IUser $user) {
 				$this->clearUserInfo($user->getUID());
 			});
-		} elseif ($runningFullResetWithOIDCAuth || $runningOIDCReset) {
+
+			if ($switchingOAuthToOIDC || $runningFullResetWithOAuth2Auth) {
+				$this->resetOauth2Configs();
+			}
+		} elseif ($runningFullResetWithOIDCAuth || $runningOIDCReset || $switchingOIDCToOAuth) {
 			$this->resetOIDCConfigs();
 			$this->userManager->callForAllUsers(function (IUser $user) {
 				$this->clearUserInfo($user->getUID());
@@ -333,17 +336,6 @@ class ConfigController extends Controller {
 			// for other cases when api has key 'setup_app_password' and 'setup_project_folder' we set it to false
 			// assuming user has either fully set the integration or partially without project folder/app password
 			$this->config->setAppValue(Application::APP_ID, 'fresh_project_folder_setup', "0");
-		}
-
-		// when switching from "oauth2" to "oidc" authorization method
-		if ($switchingOAuthToOIDC) {
-			$this->resetOauth2Configs();
-		}
-
-		// when switching from "oidc" to "oauth2" authorization method
-		if (key_exists('authorization_method', $values) &&
-			$values['authorization_method'] === Application::AUTH_METHOD_OAUTH && $runningOIDCReset) {
-			$this->resetOIDCConfigs();
 		}
 
 		return [
