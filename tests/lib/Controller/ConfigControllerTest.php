@@ -805,7 +805,7 @@ class ConfigControllerTest extends TestCase {
 					->expects($this->once())
 					->method('deleteClient')
 					->with(123);
-			} 
+			}
 		} else {
 			$oauthServiceMock->expects($this->never())->method('setClientRedirectUri');
 		}
