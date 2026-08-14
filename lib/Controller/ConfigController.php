@@ -313,7 +313,7 @@ class ConfigController extends Controller {
 				$this->clearUserInfo($user->getUID());
 			});
 
-			if ($switchingOAuthToOIDC || $runningFullResetWithOAuth2Auth) {
+			if ($switchingOAuthToOIDC) {
 				$this->resetOauth2Configs();
 			}
 		} elseif ($runningFullResetWithOIDCAuth || $runningOIDCReset || $switchingOIDCToOAuth) {
