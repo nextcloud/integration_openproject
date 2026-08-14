@@ -3496,6 +3496,28 @@ class OpenProjectAPIServiceTest extends TestCase {
 			[
 				'config' => [
 					'openproject_instance_url' => 'http://op.local',
+					'authorization_method' => '',
+					'openproject_client_id' => 'clientID',
+					'openproject_client_secret' => 'clientSecret',
+					'fresh_project_folder_setup' => false,
+					'nc_oauth_client_id' => 'ncClientID',
+				],
+				'completeSetup' => true,
+			],
+			[
+				'config' => [
+					'openproject_instance_url' => 'http://op.local',
+					'authorization_method' => 'false auth method',
+					'openproject_client_id' => 'clientID',
+					'openproject_client_secret' => 'clientSecret',
+					'fresh_project_folder_setup' => false,
+					'nc_oauth_client_id' => 'ncClientID',
+				],
+				'completeSetup' => false,
+			],
+			[
+				'config' => [
+					'openproject_instance_url' => 'http://op.local',
 					'authorization_method' => Application::AUTH_METHOD_OIDC,
 					'sso_provider_type' => Application::NEXTCLOUD_HUB_OIDC_PROVIDER_TYPE,
 					'oidc_provider' => 'Nextcloud',
@@ -3508,7 +3530,8 @@ class OpenProjectAPIServiceTest extends TestCase {
 				'config' => [
 					'authorization_method' => '',
 				],
-				'completeSetup' => false,],
+				'completeSetup' => false,
+			],
 		];
 	}
 
