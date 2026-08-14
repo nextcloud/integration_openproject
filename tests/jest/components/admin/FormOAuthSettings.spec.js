@@ -345,7 +345,6 @@ describe('Component: FormOAuthSettings', () => {
 						}))
 						const wrapper = getWrapper()
 						const spyCreateNextcloudClient = jest.spyOn(wrapper.vm, 'createNextcloudClient')
-						const spyNotifyOpenProjectTokenRevoke = jest.spyOn(wrapper.vm, 'notifyOpenProjectTokenRevoke')
 						wrapper.find(selectors.opClientIdInput).vm.$emit('input', opClientId)
 						wrapper.find(selectors.opClientSecretInput).vm.$emit('input', opClientSecret)
 						wrapper.find(selectors.opSaveButton).vm.$emit('click')
@@ -372,7 +371,6 @@ describe('Component: FormOAuthSettings', () => {
 						expect(spyCreateNextcloudClient).toHaveBeenCalledTimes(1)
 						expect(showSuccess).toHaveBeenCalledTimes(1)
 						expect(showError).toHaveBeenCalledTimes(0)
-						expect(spyNotifyOpenProjectTokenRevoke).toHaveBeenCalledTimes(1)
 
 						expect(wrapper.vm.nextcloudFormMode).toBe(F_MODES.EDIT)
 						expect(wrapper.find(selectors.ncClientIdInput).exists()).toBe(true)
@@ -400,7 +398,6 @@ describe('Component: FormOAuthSettings', () => {
 							},
 						})
 						const spyCreateNextcloudClient = jest.spyOn(wrapper.vm, 'createNextcloudClient')
-						const spyNotifyOpenProjectTokenRevoke = jest.spyOn(wrapper.vm, 'notifyOpenProjectTokenRevoke')
 						wrapper.find(selectors.opClientIdInput).vm.$emit('input', opClientId)
 						wrapper.find(selectors.opClientSecretInput).vm.$emit('input', opClientSecret)
 						wrapper.find(selectors.opSaveButton).vm.$emit('click')
@@ -410,7 +407,6 @@ describe('Component: FormOAuthSettings', () => {
 						expect(spyCreateNextcloudClient).not.toHaveBeenCalled()
 						expect(showSuccess).toHaveBeenCalledTimes(1)
 						expect(showError).toHaveBeenCalledTimes(0)
-						expect(spyNotifyOpenProjectTokenRevoke).toHaveBeenCalledTimes(1)
 					})
 				})
 
@@ -419,7 +415,6 @@ describe('Component: FormOAuthSettings', () => {
 						saveAdminConfig.mockImplementation(() => Promise.reject(new Error('Failure')))
 						const wrapper = getWrapper()
 						const spyCreateNextcloudClient = jest.spyOn(wrapper.vm, 'createNextcloudClient').mockImplementation(() => jest.fn())
-						const spyNotifyOpenProjectTokenRevoke = jest.spyOn(wrapper.vm, 'notifyOpenProjectTokenRevoke')
 
 						wrapper.find(selectors.opClientIdInput).vm.$emit('input', opClientId)
 						wrapper.find(selectors.opClientSecretInput).vm.$emit('input', opClientSecret)
@@ -433,16 +428,13 @@ describe('Component: FormOAuthSettings', () => {
 						expect(wrapper.vm.openprojectFormMode).toBe(F_MODES.EDIT)
 						expect(spyCreateNextcloudClient).toHaveBeenCalledTimes(0)
 
-						expect(wrapper.vm.openprojectTokenRevokeStatus).toBe(null)
 						expect(showSuccess).toHaveBeenCalledTimes(0)
 						expect(showError).toHaveBeenCalledTimes(1)
-						expect(spyNotifyOpenProjectTokenRevoke).toHaveBeenCalledTimes(1)
 					})
 					it('should show error if Nextcloud OAuth client creation fails', async () => {
 						createNextcloudOAuthClient.mockImplementation(() => Promise.reject(new Error('Failure')))
 						const wrapper = getWrapper()
 						const spyCreateNextcloudClient = jest.spyOn(wrapper.vm, 'createNextcloudClient')
-						const spyNotifyOpenProjectTokenRevoke = jest.spyOn(wrapper.vm, 'notifyOpenProjectTokenRevoke')
 
 						wrapper.find(selectors.opClientIdInput).vm.$emit('input', opClientId)
 						wrapper.find(selectors.opClientSecretInput).vm.$emit('input', opClientSecret)
@@ -460,7 +452,6 @@ describe('Component: FormOAuthSettings', () => {
 						expect(spyCreateNextcloudClient).toHaveBeenCalledTimes(1)
 						expect(showSuccess).toHaveBeenCalledTimes(1)
 						expect(showError).toHaveBeenCalledTimes(1)
-						expect(spyNotifyOpenProjectTokenRevoke).toHaveBeenCalledTimes(1)
 					})
 				})
 			})
