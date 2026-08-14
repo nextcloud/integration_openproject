@@ -7,10 +7,8 @@
 
 namespace OCA\OpenProject\Controller;
 
-use GuzzleHttp\Exception\ConnectException;
 use OCA\OAuth2\Controller\SettingsController;
 use OCA\OpenProject\AppInfo\Application;
-use OCA\OpenProject\Exception\OpenprojectErrorException;
 use OCA\OpenProject\Service\OauthService;
 use OCA\OpenProject\Service\OpenProjectAPIService;
 use OCA\OpenProject\Service\SettingsService;
@@ -28,7 +26,6 @@ use OCP\IUserManager;
 use OCP\Security\ISecureRandom;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
-use Psr\Http\Message\RequestInterface;
 use Psr\Log\LoggerInterface;
 
 class ConfigControllerTest extends TestCase {
