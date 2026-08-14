@@ -789,7 +789,15 @@ class ConfigControllerTest extends TestCase {
 				$oauthSettingsControllerMock
 					->expects($this->never())
 					->method('deleteClient');
-			} else { // delete the client
+			} elseif ($updateNCOAuthClient === 'delete') { // delete the client
+				$oauthServiceMock
+					->expects($this->never())
+					->method('setClientRedirectUri');
+				$oauthSettingsControllerMock
+					->expects($this->exactly(2))
+					->method('deleteClient')
+					->with(123);
+			} else {
 				$oauthServiceMock
 					->expects($this->never())
 					->method('setClientRedirectUri');
@@ -797,7 +805,7 @@ class ConfigControllerTest extends TestCase {
 					->expects($this->once())
 					->method('deleteClient')
 					->with(123);
-			}
+			} 
 		} else {
 			$oauthServiceMock->expects($this->never())->method('setClientRedirectUri');
 		}
