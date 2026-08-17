@@ -605,3 +605,57 @@ Feature: setup the integration with OAuth method
     # user "OpenProject" cannot make api request using the old app password
     When user "OpenProject" sends a "PROPFIND" request to "/remote.php/webdav" using old app password
     Then the HTTP status code should be "401"
+
+
+  Scenario: update settings with project folder
+    Given the administrator has set up the integration with the following settings:
+      """
+      {
+        "values": {
+          "openproject_instance_url": "http://some-host.de",
+          "openproject_client_id": "client-id",
+          "openproject_client_secret": "client-secret",
+          "default_enable_navigation": false,
+          "default_enable_unified_search": false,
+          "setup_project_folder": true,
+          "setup_app_password": true
+        }
+      }
+      """
+  	And the administrator has reset the integration setup
+  	When the administrator sends a PATCH request to the "setup" endpoint with this data:
+      """
+      {
+        "values": {
+		  "openproject_instance_url": "http://some-host.de",
+          "openproject_client_id": "client-id",
+          "openproject_client_secret": "client-secret",
+          "setup_project_folder": false,
+          "setup_app_password": true
+        }
+      }
+      """
+	Then the HTTP status code should be "200"
+	And the data of the response should match
+      """
+      {
+        "type": "object",
+        "required": [
+          "status",
+          "nextcloud_oauth_client_name",
+          "openproject_redirect_uri",
+          "nextcloud_client_id",
+          "openproject_user_app_password"
+        ],
+        "properties": {
+          "status": {"const": true},
+          "nextcloud_oauth_client_name": {"const": "OpenProject client"},
+          "openproject_redirect_uri": {"pattern": "^http:\/\/.*\/oauth_clients\/[A-Za-z0-9]+\/callback$"},
+          "nextcloud_client_id": {"pattern": "[A-Za-z0-9]+"},
+          "openproject_user_app_password": {"pattern": "[A-Za-z0-9]+"}
+        },
+        "not": {
+          "required": ["openproject_revocation_status"]
+        }
+      }
+      """
