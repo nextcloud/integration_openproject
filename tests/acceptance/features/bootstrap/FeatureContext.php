@@ -1268,6 +1268,18 @@ class FeatureContext implements Context {
 	}
 
 	/**
+	 * @Given the administrator has reset the integration setup
+	 *
+	 * @return void
+	 */
+	public function theAdministratorHasResetTheIntegrationSetup(): void {
+		$this->sendRequestsToAppEndpoint(
+			$this->adminUsername, $this->adminPassword, 'DELETE', 'setup'
+		);
+		$this->theHTTPStatusCodeShouldBe(200);
+	}
+
+	/**
 	 * @When /^the administrator sends a (PATCH|POST|DELETE) request to the "([^"]*)" endpoint$/
 	 *
 	 * @return void
