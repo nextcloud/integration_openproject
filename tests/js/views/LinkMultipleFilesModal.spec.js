@@ -426,7 +426,7 @@ describe('LinkMultipleFilesModal.vue', () => {
 					isAdminConfigOk: false,
 				})
 				await wrapper.vm.setFileInfos(multipleFileInfo)
-				await expect(axios.get).toBeCalledTimes(0)
+				expect(axios.get).toBeCalledTimes(0)
 			})
 		})
 

@@ -42,7 +42,7 @@ const getSelectedFilesInfo = (files) => {
 	return fileInfos
 }
 
-// registering file context menu to open OpenProject sidebar.
+// registering file context menu to open OpenProject sidebar
 const singleFileAction = {
 	id: `${APP_ID}-single`,
 	displayName: () => t(APP_ID, 'OpenProject'),
@@ -76,7 +76,7 @@ const singleFileAction = {
 registerFileAction(singleFileAction)
 
 // registering file context menu and batch action
-// to open modal for linking OpenProject work package.
+// to open modal for linking OpenProject work package
 const multipleFileAction = {
 	id: `${APP_ID}-multiple`,
 	displayName: () => t(APP_ID, 'Link to work package'),

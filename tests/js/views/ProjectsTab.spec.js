@@ -513,7 +513,7 @@ describe('ProjectsTab.vue', () => {
 				fileInfo: { id: 1234 },
 			})
 			await flushPromises()
-			await expect(wrapper.find(workPackageUnlinkSelector).exists()).toBeTruthy()
+			expect(wrapper.find(workPackageUnlinkSelector).exists()).toBeTruthy()
 			await wrapper.find(workPackageUnlinkSelector).trigger('click')
 			await flushPromises()
 			expect(OC.dialogs.confirmDestructive).toHaveBeenCalledTimes(1)

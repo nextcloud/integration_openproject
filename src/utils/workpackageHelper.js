@@ -157,7 +157,7 @@ export const workpackageHelper = {
 				}
 				break
 			} finally {
-				// INFO: Emit a fresh snapshot so each chunk update is observed by Vue reactivity.
+				// INFO: Emit a fresh snapshot so each chunk update is observed by Vue reactivity
 				const chunkInfoSnapshot = { ...chunkingInformation }
 				if (isRemaining) {
 					component.setChunkedInformations(chunkInfoSnapshot)
