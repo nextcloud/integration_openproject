@@ -1248,7 +1248,9 @@ class OpenProjectAPIService {
 	}
 
 	public function isServerSideEncryptionEnabled(): bool {
-		$isEncryptionForHomeStorageEnabled = $this->config->getAppValue('encryption', 'encryptHomeStorage', '0') === '1';
+		// home storage encryption is enabled by default
+		// when the default encryption module is enabled.
+		$isEncryptionForHomeStorageEnabled = $this->config->getAppValue('encryption', 'encryptHomeStorage', '1') === '1';
 		return (
 			$this->appManager->isInstalled('encryption') &&
 			$this->encryptionManager->isEnabled() &&
