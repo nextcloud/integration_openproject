@@ -985,7 +985,7 @@ class OpenProjectAPIService {
 	public static function isAdminConfigOk(IConfig $config): bool {
 		$authMethod = $config->getAppValue(Application::APP_ID, 'authorization_method');
 
-		if ($authMethod === Application::AUTH_METHOD_OAUTH) {
+		if (!$authMethod || $authMethod === Application::AUTH_METHOD_OAUTH) {
 			return self::isAdminConfigOkForOauth2($config);
 		}
 

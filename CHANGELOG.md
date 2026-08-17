@@ -22,6 +22,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 - Fix: Default OIDC provider name not set while updating to Nextcloud Hub setup [#1126](https://github.com/nextcloud/integration_openproject/pull/1126)
 - Fix: User shown connected in webUI after converting existing OAuth to SSO via setup endpoint [#1132](https://github.com/nextcloud/integration_openproject/pull/1132)
+- Fix: Incorrect setup status while configuring integration with existing project folder [#1142](https://github.com/nextcloud/integration_openproject/pull/1142)
 
 ### Changed
 
