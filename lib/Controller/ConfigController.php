@@ -12,8 +12,8 @@ use GuzzleHttp\Exception\ConnectException;
 use GuzzleHttp\Exception\GuzzleException;
 use InvalidArgumentException;
 use OC\User\NoUserException;
-use OCA\OAuth2\Controller\SettingsController;
 use OCA\OAuth2\Exceptions\ClientNotFoundException;
+use OCA\OAuth2\Service\ClientService;
 use OCA\OpenProject\AppInfo\Application;
 use OCA\OpenProject\Exception\OpenprojectErrorException;
 use OCA\OpenProject\Exception\OpenprojectGroupfolderSetupConflictException;
@@ -71,11 +71,6 @@ class ConfigController extends Controller {
 	 */
 	private $oauthService;
 
-	/**
-	 * @var SettingsController
-	 */
-	private $oauthSettingsController;
-
 	private SettingsService $settingsService;
 
 	public function __construct(
@@ -88,7 +83,7 @@ class ConfigController extends Controller {
 		OpenProjectAPIService $openprojectAPIService,
 		LoggerInterface $logger,
 		OauthService $oauthService,
-		SettingsController $oauthSettingsController,
+		private readonly ClientService $clientService,
 		SettingsService $settingsService,
 		?string $userId
 	) {
@@ -101,7 +96,6 @@ class ConfigController extends Controller {
 		$this->logger = $logger;
 		$this->userId = $userId;
 		$this->oauthService = $oauthService;
-		$this->oauthSettingsController = $oauthSettingsController;
 		$this->settingsService = $settingsService;
 	}
 
@@ -583,7 +577,7 @@ class ConfigController extends Controller {
 		if ($oauthClientInternalId !== '') {
 			$id = (int) $oauthClientInternalId;
 			try {
-				$this->oauthSettingsController->deleteClient($id);
+				$this->clientService->deleteClient($id);
 			} catch (ClientNotFoundException $e) {
 			}
 			$this->config->deleteAppValue(Application::APP_ID, 'nc_oauth_client_id');

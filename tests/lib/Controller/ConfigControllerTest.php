@@ -8,7 +8,10 @@
 namespace OCA\OpenProject\Controller;
 
 use GuzzleHttp\Exception\ConnectException;
-use OCA\OAuth2\Controller\SettingsController;
+use OC\Authentication\Token\IProvider;
+use OCA\OAuth2\Db\AccessTokenMapper;
+use OCA\OAuth2\Db\ClientMapper;
+use OCA\OAuth2\Service\ClientService;
 use OCA\OpenProject\AppInfo\Application;
 use OCA\OpenProject\Exception\OpenprojectErrorException;
 use OCA\OpenProject\Service\OauthService;
@@ -25,6 +28,7 @@ use OCP\IRequest;
 use OCP\IURLGenerator;
 use OCP\IUser;
 use OCP\IUserManager;
+use OCP\Security\ICrypto;
 use OCP\Security\ISecureRandom;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
@@ -127,6 +131,28 @@ class ConfigControllerTest extends TestCase {
 	}
 
 	/**
+	 * @param ClientMapper|null $clientMapper
+	 * @param IUserManager|null $userManager
+	 * @param AccessTokenMapper|null $accessTokenMapper
+	 *
+	 * @return ClientService
+	 */
+	public function getClientService(
+		ClientMapper $clientMapper = null,
+		AccessTokenMapper $accessTokenMapper = null,
+	): ClientService {
+		return new ClientService(
+			$this->createMock(ISecureRandom::class),
+			$this->createMock(ICrypto::class),
+			$clientMapper ?? $this->createMock(ClientMapper::class),
+			$this->createMock(IUserManager::class),
+			$this->createMock(IProvider::class),
+			$this->createMock(LoggerInterface::class),
+			$accessTokenMapper ?? $this->createMock(AccessTokenMapper::class),
+		);
+	}
+
+	/**
 	 * Format has to be [<string> => <object|string>] with the first being the constructor parameter name and the second one the mock.
 	 * Example: ['config' => $createdMockObject]
 	 * @param array<string, object|string> $constructParams specific mocks for the constructor of OpenProjectAPIService
@@ -144,7 +170,7 @@ class ConfigControllerTest extends TestCase {
 			'openprojectAPIService' => $this->createMock(OpenProjectAPIService::class),
 			'loggerInterface' => $this->createMock(LoggerInterface::class),
 			'oauthService' => $this->createMock(OauthService::class),
-			'settingsController' => $this->createMock(SettingsController::class),
+			'clientService' => $this->getClientService(),
 			'settingsService' => $this->getSettingsService(),
 			'userId' => 'testUser'
 		];
@@ -768,9 +794,7 @@ class ConfigControllerTest extends TestCase {
 
 		$configMock = $this->getMockBuilder(IConfig::class)->getMock();
 		$oauthServiceMock = $this->createMock(OauthService::class);
-		$oauthSettingsControllerMock = $this->getMockBuilder(SettingsController::class)
-			->disableOriginalConstructor()
-			->getMock();
+
 		$configMock
 			->method('getAppValue')
 			->willReturnMap([
@@ -788,23 +812,31 @@ class ConfigControllerTest extends TestCase {
 				[$testUser, Application::APP_ID, 'token', '', 'testtoken'],
 			]);
 
+		$clientService = $this->getClientService();
 		if ($updateNCOAuthClient) {
 			if ($updateNCOAuthClient === 'change') {
 				$oauthServiceMock
 					->expects($this->once())
 					->method('setClientRedirectUri')
 					->with(123, $credsToUpdate['openproject_instance_url']);
-				$oauthSettingsControllerMock
-					->expects($this->never())
-					->method('deleteClient');
+
+				$clientMapperMock = $this->createMock(ClientMapper::class);
+				$clientMapperMock->expects($this->never())->method('getByUid');
+				$clientMapperMock->expects($this->never())->method('delete');
+				$accessTokenMapperMock = $this->createMock(AccessTokenMapper::class);
+				$accessTokenMapperMock->expects($this->never())->method('deleteByClientId');
+				$clientService = $this->getClientService($clientMapperMock, $accessTokenMapperMock);
 			} else { // delete the client
 				$oauthServiceMock
 					->expects($this->never())
 					->method('setClientRedirectUri');
-				$oauthSettingsControllerMock
-					->expects($this->once())
-					->method('deleteClient')
-					->with(123);
+
+				$clientMapperMock = $this->createMock(ClientMapper::class);
+				$clientMapperMock->expects($this->once())->method('getByUid');
+				$clientMapperMock->expects($this->once())->method('delete');
+				$accessTokenMapperMock = $this->createMock(AccessTokenMapper::class);
+				$accessTokenMapperMock->expects($this->once())->method('deleteByClientId');
+				$clientService = $this->getClientService($clientMapperMock, $accessTokenMapperMock);
 			}
 		} else {
 			$oauthServiceMock->expects($this->never())->method('setClientRedirectUri');
@@ -845,7 +877,7 @@ class ConfigControllerTest extends TestCase {
 			'userManager' => $userManager,
 			'openprojectAPIService' => $apiService,
 			'oauthService' => $oauthServiceMock,
-			'settingsController' => $oauthSettingsControllerMock,
+			'clientService' => $clientService,
 			'userId' => 'test101'
 		]);
 		$configController = new ConfigController(...$constructArgs);
@@ -984,7 +1016,6 @@ class ConfigControllerTest extends TestCase {
 			->getMock();
 		$configMock = $this->getMockBuilder(IConfig::class)->getMock();
 		$oauthServiceMock = $this->createMock(OauthService::class);
-		$oauthSettingsControllerMock = $this->createMock('OCA\OAuth2\Controller\SettingsController');
 
 		if ($mode === "reset") {
 			$this->expectMethodCalls($configMock, 'deleteAppValue', [
@@ -1060,7 +1091,6 @@ class ConfigControllerTest extends TestCase {
 			'userManager' => $userManager,
 			'openprojectAPIService' => $apiService,
 			'oauthService' => $oauthServiceMock,
-			'settingsController' => $oauthSettingsControllerMock,
 			'userId' => 'test101'
 		]);
 		$configController = new ConfigController(...$constructArgs);
@@ -1118,7 +1148,6 @@ class ConfigControllerTest extends TestCase {
 			->getMock();
 		$configMock = $this->getMockBuilder(IConfig::class)->getMock();
 		$oauthServiceMock = $this->createMock(OauthService::class);
-		$oauthSettingsControllerMock = $this->createMock('OCA\OAuth2\Controller\SettingsController');
 		$loggerInterfaceMock = $this->createMock(LoggerInterface::class);
 
 		$this->expectMethodCalls($configMock, 'getAppValue', [
@@ -1196,7 +1225,6 @@ class ConfigControllerTest extends TestCase {
 			'openprojectAPIService' => $apiService,
 			'loggerInterface' => $loggerInterfaceMock,
 			'oauthService' => $oauthServiceMock,
-			'settingsController' => $oauthSettingsControllerMock,
 			'userId' => 'admin'
 		]);
 		$configController = new ConfigController(...$constructArgs);
@@ -1228,7 +1256,6 @@ class ConfigControllerTest extends TestCase {
 			->getMock();
 		$configMock = $this->getMockBuilder(IConfig::class)->getMock();
 		$oauthServiceMock = $this->createMock(OauthService::class);
-		$oauthSettingsControllerMock = $this->createMock('OCA\OAuth2\Controller\SettingsController');
 		$loggerInterfaceMock = $this->createMock(LoggerInterface::class);
 
 		$configMock
@@ -1256,7 +1283,6 @@ class ConfigControllerTest extends TestCase {
 			'openprojectAPIService' => $apiService,
 			'loggerInterface' => $loggerInterfaceMock,
 			'oauthService' => $oauthServiceMock,
-			'settingsController' => $oauthSettingsControllerMock,
 			'userId' => 'admin'
 		]);
 		$configController = new ConfigController(...$constructArgs);
@@ -1476,9 +1502,6 @@ class ConfigControllerTest extends TestCase {
 		$userManager = $this->checkForUsersCountBeforeTest();
 		$configMock = $this->getMockBuilder(IConfig::class)->getMock();
 		$oauthServiceMock = $this->createMock(OauthService::class);
-		$oauthSettingsControllerMock = $this->getMockBuilder(SettingsController::class)
-			->disableOriginalConstructor()
-			->getMock();
 		$configMock
 			->method('getAppValue')
 			->willReturnMap([
@@ -1504,7 +1527,6 @@ class ConfigControllerTest extends TestCase {
 			'userManager' => $userManager,
 			'openprojectAPIService' => $apiService,
 			'oauthService' => $oauthServiceMock,
-			'settingsController' => $oauthSettingsControllerMock,
 			'userId' => 'test101'
 		]);
 		$configController = new ConfigController(...$constructArgs);
@@ -1563,9 +1585,6 @@ class ConfigControllerTest extends TestCase {
 
 		$configMock = $this->createMock(IConfig::class);
 		$oauthServiceMock = $this->createMock(OauthService::class);
-		$oauthSettingsControllerMock = $this->getMockBuilder(SettingsController::class)
-			->disableOriginalConstructor()
-			->getMock();
 		$this->expectMethodCalls($configMock, 'getAppValue', [
 			[['integration_openproject', 'openproject_instance_url', ''], $oldCreds['openproject_instance_url']],
 			[['integration_openproject', 'authorization_method', ''], $oldCreds['authorization_method']],
@@ -1578,14 +1597,7 @@ class ConfigControllerTest extends TestCase {
 			[['integration_openproject', 'openproject_client_secret', ''], $credsToUpdate['openproject_client_secret']],
 			[['integration_openproject', 'openproject_instance_url', ''], $credsToUpdate['openproject_instance_url']],
 		]);
-		$oauthSettingsControllerMock
-			->expects($this->once())
-			->method('deleteClient')
-			->with(123);
-		$oauthSettingsControllerMock
-			->expects($this->once())
-			->method('deleteClient')
-			->with(123);
+
 		$configMock
 			->expects($this->exactly(12))
 			->method('deleteUserValue')
@@ -1604,6 +1616,13 @@ class ConfigControllerTest extends TestCase {
 				[$this->user1->getUID(), 'integration_openproject', 'token_expires_at', null],
 			]);
 
+		$clientMapperMock = $this->createMock(ClientMapper::class);
+		$clientMapperMock->expects($this->once())->method('getByUid');
+		$clientMapperMock->expects($this->once())->method('delete');
+		$accessTokenMapperMock = $this->createMock(AccessTokenMapper::class);
+		$accessTokenMapperMock->expects($this->once())->method('deleteByClientId');
+		$clientService = $this->getClientService($clientMapperMock, $accessTokenMapperMock);
+
 		$apiService = $this->getMockBuilder(OpenProjectAPIService::class)
 			->disableOriginalConstructor()
 			->getMock();
@@ -1613,7 +1632,7 @@ class ConfigControllerTest extends TestCase {
 			'userManager' => $userManager,
 			'openprojectAPIService' => $apiService,
 			'oauthService' => $oauthServiceMock,
-			'settingsController' => $oauthSettingsControllerMock,
+			'clientService' => $clientService,
 			'userId' => 'test101'
 		]);
 		$configController = new ConfigController(...$constructArgs);
@@ -1674,9 +1693,6 @@ class ConfigControllerTest extends TestCase {
 		$this->user1 = $userManager->createUser($testUser, $testUser);
 		$configMock = $this->getMockBuilder(IConfig::class)->getMock();
 		$oauthServiceMock = $this->createMock(OauthService::class);
-		$oauthSettingsControllerMock = $this->getMockBuilder(SettingsController::class)
-			->disableOriginalConstructor()
-			->getMock();
 
 		$this->expectMethodCalls($configMock, 'getAppValue', [
 			[['integration_openproject', 'openproject_instance_url', ''], $oldConfig['openproject_instance_url']],
@@ -1714,7 +1730,6 @@ class ConfigControllerTest extends TestCase {
 			'userManager' => $userManager,
 			'openprojectAPIService' => $apiService,
 			'oauthService' => $oauthServiceMock,
-			'settingsController' => $oauthSettingsControllerMock,
 			'userId' => $testUser,
 		]);
 
