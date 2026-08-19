@@ -42,15 +42,50 @@ class OauthServiceTest extends TestCase {
 	/**
 	 * @return Client
 	 */
-	protected function getClient(int $clientId): Client {
+	protected function getClient(int $clientDbId): Client {
 		$client = new Client();
-		$client->setId($clientId);
-		$client->setName('Test Client');
-		$client->setRedirectUri('https://example.com/callback');
-		$client->setClientIdentifier('randomString');
-		$client->setSecret('randomString');
+		$name = 'Test Client';
+		$redirectUri = 'https://example.com/callback';
+		$clientId = 'randomString';
+		$clientSecret = 'randomString';
 
+		$this->setClientProperty($client, 'id', $clientDbId);
+		$this->setClientProperty($client, 'name', $name);
+		$this->setClientProperty($client, 'redirectUri', $redirectUri);
+		$this->setClientProperty($client, 'clientIdentifier', $clientId);
+		$this->setClientProperty($client, 'secret', $clientSecret);
 		return $client;
+	}
+
+	/**
+	 * @param Client $client
+	 * @param string $property
+	 * @param string|int $value
+	 *
+	 * @return Client
+	 */
+	protected function setClientProperty(Client $client, string $property, string|int $value): Client {
+		$fn = 'set' . ucfirst($property);
+		if (\method_exists($client, $fn)) {
+			$client->$fn($value);
+		} else {
+			$client->{$property} = $value;
+		}
+		return $client;
+	}
+
+	/**
+	 * @param Client $client
+	 * @param string $property
+	 *
+	 * @return string|int
+	 */
+	protected function getClientProperty(Client $client, string $property): string|int {
+		$fn = 'get' . ucfirst($property);
+		if (\method_exists($client, $fn)) {
+			return $client->$fn();
+		}
+		return $client->{$property};
 	}
 
 	/**
@@ -61,23 +96,25 @@ class OauthServiceTest extends TestCase {
 		$testClient = $this->getClient($clientId);
 		$expectedClient = [
 			'id' => $clientId,
-			'nextcloud_oauth_client_name' => $testClient->getName(),
-			'openproject_redirect_uri' => $testClient->getRedirectUri(),
-			'nextcloud_client_id' => $testClient->getClientIdentifier(),
-			'nextcloud_client_secret' => $testClient->getSecret(),
+			'nextcloud_oauth_client_name' => $this->getClientProperty($testClient, 'name'),
+			'openproject_redirect_uri' => $this->getClientProperty($testClient, 'redirectUri'),
+			'nextcloud_client_id' => $this->getClientProperty($testClient, 'clientIdentifier'),
+			'nextcloud_client_secret' => $this->getClientProperty($testClient, 'secret'),
 		];
 
 		$clientMapperMock = $this->createMock(ClientMapper::class);
 		$clientMapperMock->expects($this->once())->method('insert')
 			->with($this->isInstanceOf(Client::class))
 			->willReturnCallback(function ($client) use ($clientId) {
-				$client->setId($clientId);
-				return $client;
+				return $this->setClientProperty($client, 'id', $clientId);
 			});
 
 		$oauthService = $this->getOauthServiceMock($clientMapperMock);
 
-		$clientInfo = $oauthService->createNcOauthClient($testClient->getName(), $testClient->getRedirectUri());
+		$clientInfo = $oauthService->createNcOauthClient(
+			(string)$this->getClientProperty($testClient, 'name'),
+			(string)$this->getClientProperty($testClient, 'redirectUri')
+		);
 		$this->assertSame($expectedClient, $clientInfo);
 	}
 
@@ -89,9 +126,9 @@ class OauthServiceTest extends TestCase {
 		$client = $this->getClient($clientId);
 		$expectedClient = [
 			'id' => $clientId,
-			'nextcloud_oauth_client_name' => $client->getName(),
-			'openproject_redirect_uri' => $client->getRedirectUri(),
-			'nextcloud_client_id' => $client->getClientIdentifier(),
+			'nextcloud_oauth_client_name' => $this->getClientProperty($client, 'name'),
+			'openproject_redirect_uri' => $this->getClientProperty($client, 'redirectUri'),
+			'nextcloud_client_id' => $this->getClientProperty($client, 'clientIdentifier'),
 		];
 
 		$clientMapperMock = $this->createMock(ClientMapper::class);
@@ -138,7 +175,10 @@ class OauthServiceTest extends TestCase {
 
 		$oauthService = $this->getOauthServiceMock($clientMapperMock);
 
-		$result = $oauthService->setClientRedirectUri($clientId, $client->getRedirectUri());
+		$result = $oauthService->setClientRedirectUri(
+			$clientId,
+			(string)$this->getClientProperty($client, 'redirectUri'),
+		);
 		$this->assertTrue($result);
 	}
 
@@ -157,7 +197,10 @@ class OauthServiceTest extends TestCase {
 
 		$oauthService = $this->getOauthServiceMock($clientMapperMock);
 
-		$result = $oauthService->setClientRedirectUri($clientId, $client->getRedirectUri());
+		$result = $oauthService->setClientRedirectUri(
+			$clientId,
+			(string)$this->getClientProperty($client, 'redirectUri'),
+		);
 		$this->assertFalse($result);
 	}
 }
