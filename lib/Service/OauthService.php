@@ -120,7 +120,7 @@ class OauthService {
 		// In NC35, OAuth2 Client class changed to attribute-based entity.
 		// NOTE: we can remove setClientProperty and getClientProperty methods
 		// once we drop support for NC34 and below.
-		if (\method_exists($client, $fn)) {
+		if (\method_exists(Client::class, 'addType')) {
 			$client->$fn($value);
 		} else {
 			$client->{$property} = $value;
@@ -140,7 +140,7 @@ class OauthService {
 		// In NC35, OAuth2 Client class changed to attribute-based entity.
 		// NOTE: we can remove setClientProperty and getClientProperty methods
 		// once we drop support for NC34 and below.
-		if (\method_exists($client, $fn)) {
+		if (\method_exists(Client::class, 'addType')) {
 			return $client->$fn();
 		}
 		return $client->{$property};

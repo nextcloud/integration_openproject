@@ -66,7 +66,7 @@ class OauthServiceTest extends TestCase {
 	 */
 	protected function setClientProperty(Client $client, string $property, string|int $value): Client {
 		$fn = 'set' . ucfirst($property);
-		if (\method_exists($client, $fn)) {
+		if (\method_exists(Client::class, 'addType')) {
 			$client->$fn($value);
 		} else {
 			$client->{$property} = $value;
@@ -82,7 +82,7 @@ class OauthServiceTest extends TestCase {
 	 */
 	protected function getClientProperty(Client $client, string $property): string|int {
 		$fn = 'get' . ucfirst($property);
-		if (\method_exists($client, $fn)) {
+		if (\method_exists(Client::class, 'addType')) {
 			return $client->$fn();
 		}
 		return $client->{$property};
