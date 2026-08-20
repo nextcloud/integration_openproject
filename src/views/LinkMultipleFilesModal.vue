@@ -6,7 +6,7 @@
 	<div class="multiple-link-modal-container">
 		<NcModal
 			v-if="show"
-			:can-close="isError"
+			:no-close="noCloseModal"
 			@close="closeRequestModal">
 			<div class="multiple-link-modal-content">
 				<NcLoadingIcon v-if="isLoading" class="loading-spinner" :size="60" />
@@ -80,7 +80,6 @@ import { loadState } from '@nextcloud/initial-state'
 import AlertCircleOutline from 'vue-material-design-icons/AlertCircleOutline.vue'
 import AutoRenewIcon from 'vue-material-design-icons/Autorenew.vue'
 import FileLinkIcon from 'vue-material-design-icons/FileLink.vue'
-import { translate as t } from '@nextcloud/l10n'
 
 import {
 	checkOauthConnectionResult,
@@ -148,8 +147,8 @@ export default {
 		getError() {
 			return this.chunkingInformation?.error
 		},
-		isError() {
-			return this.chunkingInformation?.error !== false
+		noCloseModal() {
+			return this.chunkingInformation?.error === true
 		},
 	},
 

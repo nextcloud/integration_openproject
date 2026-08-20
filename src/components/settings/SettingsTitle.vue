@@ -14,7 +14,6 @@
 </template>
 
 <script>
-import { translate as t } from '@nextcloud/l10n'
 import OpenProjectIcon from '../icons/OpenProjectIcon.vue'
 import dompurify from 'dompurify'
 

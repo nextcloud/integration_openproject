@@ -23,7 +23,7 @@
 					<WorkPackage :id="'workpackage-'+ workpackage.id"
 						:workpackage="workpackage"
 						class="linked-workpackages--workpackage--item"
-						@click.native="routeToTheWorkPackage(workpackage.id, workpackage.projectId)" />
+						@click="routeToTheWorkPackage(workpackage.id, workpackage.projectId)" />
 					<NcActions>
 						<NcActionButton class="linked-workpackages--workpackage--unlinkactionbutton"
 							@click="unlink(workpackage.id, fileInfo.id)">
@@ -57,7 +57,6 @@ import axios from '@nextcloud/axios'
 
 import { generateOcsUrl } from '@nextcloud/router'
 import { showSuccess, showError } from '@nextcloud/dialogs'
-import { translate as t } from '@nextcloud/l10n'
 import { loadState } from '@nextcloud/initial-state'
 import { workpackageHelper } from '../utils/workpackageHelper.js'
 import { STATE, WORKPACKAGES_SEARCH_ORIGIN, AUTH_METHOD, checkOauthConnectionResult } from '../utils.js'
@@ -157,12 +156,13 @@ export default {
 		onSaved(data) {
 			this.workpackages.unshift(data)
 			this.$nextTick(() => {
-				const workpackage = document.getElementById('workpackage-' + data.id)
-				const topElementToScroll = this.$el.getElementsByClassName('existing-relations')[0]
+				const workpackage = this.$el.querySelector('#workpackage-' + data.id)
+				const topElementToScroll = this.$el.querySelector('.existing-relations')
 				workpackage.classList.add('workpackage-transition')
 				topElementToScroll.scrollIntoView({
 					behavior: 'smooth',
 				})
+
 				setTimeout(() => {
 					workpackage.classList.remove('workpackage-transition')
 				}, 3000)

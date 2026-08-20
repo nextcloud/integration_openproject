@@ -1,0 +1,80 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`FormHeading.vue > is complete prop > should hide the checkmark icon and show the index if not complete 1`] = `
+<div
+  class="form-heading"
+  data-v-665ce85f=""
+>
+  <div
+    class="index index-light-mode"
+    data-v-665ce85f=""
+  >
+    1
+  </div>
+  <div
+    class="title"
+    data-v-665ce85f=""
+  >
+    Some Field Title
+  </div>
+</div>
+`;
+
+exports[`FormHeading.vue > is complete prop > should show checkmark icon, add green title and hide the index if complete 1`] = `
+<div
+  class="form-heading"
+  data-v-665ce85f=""
+>
+  <div
+    class="complete"
+    data-v-665ce85f=""
+  >
+    <span
+      aria-hidden="true"
+      class="inner-icon material-design-icon check-bold-icon inner-icon"
+      data-v-665ce85f=""
+      role="img"
+    >
+      <svg
+        class="material-design-icon__svg"
+        fill="currentColor"
+        height="12"
+        viewBox="0 0 24 24"
+        width="12"
+      >
+        <path
+          d="M9,20.42L2.79,14.21L5.62,11.38L9,14.77L18.88,4.88L21.71,7.71L9,20.42Z"
+        >
+          <!--v-if-->
+        </path>
+      </svg>
+    </span>
+  </div>
+  <div
+    class="title green-text"
+    data-v-665ce85f=""
+  >
+    Some Field Title
+  </div>
+</div>
+`;
+
+exports[`FormHeading.vue > is disabled prop > should add disabled class to the form heading 1`] = `
+<div
+  class="form-heading disabled"
+  data-v-665ce85f=""
+>
+  <div
+    class="index index-light-mode"
+    data-v-665ce85f=""
+  >
+    1
+  </div>
+  <div
+    class="title"
+    data-v-665ce85f=""
+  >
+    Some Field Title
+  </div>
+</div>
+`;

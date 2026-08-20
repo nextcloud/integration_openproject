@@ -3,7 +3,7 @@
   - SPDX-License-Identifier: AGPL-3.0-or-later
 -->
 <template>
-	<NcNoteCard class="note-card" type="error">
+	<NcNoteCard class="note-card" variant="error">
 		<p class="note-card--title">
 			<b>{{ errorTitle }}</b>
 		</p>

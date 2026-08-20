@@ -1,0 +1,121 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`LinkMultipleFilesModal.vue > fetch workpackages > multiple files selected > sets the "error" state if the admin config is not okay 1`] = `
+<div
+  class="multiple-link-modal-container"
+  data-v-e8917462=""
+>
+  <nc-modal-stub
+    additionaltrapelements=""
+    closebuttonoutside="false"
+    closeonclickoutside="false"
+    container="body"
+    dark="false"
+    data-v-e8917462=""
+    disableswipe="false"
+    enableslideshow="false"
+    hasnext="false"
+    hasprevious="false"
+    inlineactions="0"
+    labelid=""
+    lightbackdrop="false"
+    name=""
+    noclose="false"
+    outtransition="false"
+    show="true"
+    size="normal"
+    slideshowdelay="5000"
+    slideshowpaused="false"
+    spreadnavigation="false"
+  >
+    <div
+      class="multiple-link-modal-content"
+      data-v-e8917462=""
+    >
+      <div
+        class="multiple-link-modal-inside-content"
+        data-v-e8917462=""
+      >
+        <h2
+          data-v-e8917462=""
+        >
+          Link to work package
+        </h2>
+        <!--v-if-->
+        <empty-content-stub
+          authmethod="[object Object]"
+          dashboard="false"
+          data-v-e8917462=""
+          errormessage=""
+          fileinfo="[object Object]"
+          id="openproject-empty-content"
+          isadminconfigok="false"
+          ismultipleworkpackagelinking="true"
+          issmartpicker="false"
+          state="error"
+        />
+      </div>
+    </div>
+  </nc-modal-stub>
+</div>
+`;
+
+exports[`LinkMultipleFilesModal.vue > fetch workpackages > single file selected > sets the "error" state if the admin config is not okay 1`] = `
+<div
+  class="multiple-link-modal-container"
+  data-v-e8917462=""
+>
+  <nc-modal-stub
+    additionaltrapelements=""
+    closebuttonoutside="false"
+    closeonclickoutside="false"
+    container="body"
+    dark="false"
+    data-v-e8917462=""
+    disableswipe="false"
+    enableslideshow="false"
+    hasnext="false"
+    hasprevious="false"
+    inlineactions="0"
+    labelid=""
+    lightbackdrop="false"
+    name=""
+    noclose="false"
+    outtransition="false"
+    show="true"
+    size="normal"
+    slideshowdelay="5000"
+    slideshowpaused="false"
+    spreadnavigation="false"
+  >
+    <div
+      class="multiple-link-modal-content"
+      data-v-e8917462=""
+    >
+      <div
+        class="multiple-link-modal-inside-content"
+        data-v-e8917462=""
+      >
+        <h2
+          data-v-e8917462=""
+        >
+          Link to work package
+        </h2>
+        <!--v-if-->
+        <empty-content-stub
+          authmethod="[object Object]"
+          dashboard="false"
+          data-v-e8917462=""
+          errormessage=""
+          fileinfo="[object Object]"
+          id="openproject-empty-content"
+          isadminconfigok="false"
+          ismultipleworkpackagelinking="true"
+          issmartpicker="false"
+          state="error"
+        />
+      </div>
+    </div>
+  </nc-modal-stub>
+</div>
+`;

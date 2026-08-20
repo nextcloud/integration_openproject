@@ -36,13 +36,13 @@ SPDX-FileCopyrightText = "2021-2025 Nextcloud GmbH and Nextcloud contributors, 2
 SPDX-License-Identifier = "AGPL-3.0-or-later"
 
 [[annotations]]
-path = "tests/jest/**/__snapshots__/*.snap"
+path = "tests/js/**/__snapshots__/*.snap"
 precedence = "aggregate"
 SPDX-FileCopyrightText = "2022-2025 Jankari Tech Pvt. Ltd., 2022-2023 Nextcloud GmbH and Nextcloud contributors"
 SPDX-License-Identifier = "AGPL-3.0-or-later"
 
 [[annotations]]
-path = "tests/jest/fixtures/*.json"
+path = "tests/js/fixtures/*.json"
 precedence = "aggregate"
 SPDX-FileCopyrightText = "2022-2024 Jankari Tech Pvt. Ltd."
 SPDX-License-Identifier = "AGPL-3.0-or-later"

@@ -29,16 +29,16 @@
 				<div class="auth-method--options">
 					<NcCheckboxRadioSwitch
 						id="oauth-auth-method"
+						v-model="selectedAuthMethod"
 						class="radio-check"
-						:checked.sync="selectedAuthMethod"
 						:value="authMethodType.OAUTH2"
 						type="radio">
 						{{ authMethodLabel.OAUTH2 }}
 					</NcCheckboxRadioSwitch>
 					<NcCheckboxRadioSwitch
 						id="sso-auth-method"
+						v-model="selectedAuthMethod"
 						class="radio-check"
-						:checked.sync="selectedAuthMethod"
 						:value="authMethodType.OIDC"
 						:disabled="!hasEnabledSupportedUserOidcApp"
 						type="radio">
@@ -75,12 +75,12 @@
 				</NcButton>
 				<NcButton v-if="isEditMode"
 					data-test-id="save-auth-method"
-					type="primary"
+					variant="primary"
 					:disabled="disableSave"
 					@click="saveSettings">
 					<template #icon>
 						<NcLoadingIcon v-if="loading" class="loading-spinner" :size="20" />
-						<CheckBoldIcon v-else fill-color="#FFFFFF" :size="20" />
+						<CheckBoldIcon v-else :size="20" />
 					</template>
 					{{ t('integration_openproject', 'Save') }}
 				</NcButton>
@@ -131,6 +131,7 @@ export default {
 			default: null,
 		},
 	},
+	emits: ['formcomplete'],
 	data() {
 		return {
 			formMode: F_MODES.EDIT,

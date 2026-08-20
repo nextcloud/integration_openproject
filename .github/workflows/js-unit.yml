@@ -78,7 +78,7 @@ jobs:
         uses: romeovs/lcov-reporter-action@dda1c9b1fa1622b225e9acd87a248751dbcc6ada
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
-          lcov-file: ./coverage/jest/lcov.info
+          lcov-file: ./coverage/js/lcov.info
           delete-old-comments: true
           title: 'JS Code Coverage'
 
@@ -87,4 +87,4 @@ jobs:
         uses: VeryGoodOpenSource/very_good_coverage@3b475421464c564c0714d92ce02742bd81fa9eda
         with:
           min_coverage: '59'
-          path: './coverage/jest/lcov.info'
+          path: './coverage/js/lcov.info'

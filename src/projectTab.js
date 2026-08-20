@@ -4,22 +4,27 @@
  * SPDX-License-Identifier: AGPL-3.0-or-later
  */
 
-import Vue from 'vue'
-import vueCustomElement from 'vue-custom-element'
+import { defineCustomElement } from 'vue'
 import { registerSidebarTab } from '@nextcloud/files'
+import { translate as t } from '@nextcloud/l10n'
 
-import './bootstrap.js'
+import { setupGlobalProperties } from './setup.js'
 import OpenProjectSvgIcon from '../img/app-dark.svg'
 import ProjectsTab from './views/ProjectsTab.vue'
+import APP_ID from './constants/appID.js'
 
-Vue.use(vueCustomElement)
-
-const tagName = 'integration_openproject-files-sidebar-tab'
+const tagName = `${APP_ID}-files-sidebar-tab`
+const SidebarTabElement = defineCustomElement(ProjectsTab, {
+	shadowRoot: false,
+	configureApp(app) {
+		setupGlobalProperties(app)
+	},
+})
 
 registerSidebarTab({
-	id: 'integration_openproject',
+	id: APP_ID,
 	order: 50,
-	displayName: t('integration_openproject', 'OpenProject'),
+	displayName: t(APP_ID, 'OpenProject'),
 	iconSvgInline: OpenProjectSvgIcon,
 	enabled() {
 		return true
@@ -30,8 +35,6 @@ registerSidebarTab({
 			// element already defined
 			return
 		}
-		Vue.customElement(tagName, ProjectsTab, {
-			shadow: false,
-		})
+		window.customElements.define(tagName, SidebarTabElement)
 	},
 })

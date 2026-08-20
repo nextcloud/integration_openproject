@@ -6,7 +6,7 @@
 <template>
 	<NcModal
 		class="create-workpackage-modal"
-		:can-close="true"
+		:no-close="false"
 		:out-transition="true"
 		@close="closeModal">
 		<div>
@@ -23,13 +23,13 @@
 					:placeholder="t('integration_openproject', 'Select a project')"
 					:options="mappedNodes"
 					:filterable="true"
-					:close-on-select="true"
+					:keep-open="false"
 					:clear-search-on-blur="() => true"
 					:append-to-body="false"
-					:value="getSelectedProject"
+					:modelValue="getSelectedProject"
 					:no-drop="noDropAvailableProjectDropDown"
 					:loading="isStateLoading"
-					@input="onClearProject"
+					@update:modelValue="onClearProject"
 					@search="asyncFindProjects"
 					@option:selected="onSelectProject">
 					<template #option="{ label, relation, counter }">
@@ -49,14 +49,15 @@
 				<div class="create-workpackage-form--label">
 					{{ t('integration_openproject', 'Subject *') }}
 				</div>
-				<NcTextField :value.sync="subject"
+				<NcTextField
+					v-model="subject"
 					class="create-workpackage-form--subject"
 					input-class="workpackage-subject"
 					:placeholder="t('integration_openproject', 'Work package subject')"
 					:class="{'subject-error': error}"
 					:label-outside="true"
 					type="text"
-					@update:value="onSubjectChange" />
+					@update:modelValue="onSubjectChange" />
 				<p v-if="error.error && error.attribute === 'subject'" class="validation-error">
 					{{ error.message }}
 				</p>
@@ -73,12 +74,12 @@
 							input-id="createWorkPackageTypeInput"
 							:options="allowedTypes"
 							:filterable="true"
-							:close-on-select="true"
+							:keep-open="false"
 							:clearable="false"
 							:clear-search-on-blur="() => true"
 							:append-to-body="false"
 							:placeholder="t('integration_openproject', 'Select project type')"
-							:value="getSelectedProjectType"
+							:modelValue="getSelectedProjectType"
 							@option:selected="onSelectType">
 							<template #option="option">
 								{{ option.label }}
@@ -104,12 +105,12 @@
 							input-id="createWorkPackageStatusInput"
 							:options="allowedStatues"
 							:filterable="true"
-							:close-on-select="true"
+							:keep-open="false"
 							:clearable="false"
 							:clear-search-on-blur="() => true"
 							:append-to-body="false"
 							:placeholder="t('integration_openproject', 'Select project status')"
-							:value="getSelectedProjectStatus"
+							:modelValue="getSelectedProjectStatus"
 							@option:selected="onSelectStatus">
 							<template #option="option">
 								{{ option.label }}
@@ -132,11 +133,11 @@
 					:placeholder="t('integration_openproject', 'Select a user or group')"
 					:options="availableAssignees"
 					:filterable="true"
-					:close-on-select="true"
+					:keep-open="false"
 					:clear-search-on-blur="() => true"
 					:append-to-body="false"
-					:value="getSelectedProjectAssignee"
-					@input="onClearAssignee"
+					:modelValue="getSelectedProjectAssignee"
+					@update:modelValue="onClearAssignee"
 					@option:selected="onSelectAssignee">
 					<template #option="option">
 						{{ option.label }}
@@ -148,7 +149,10 @@
 				<div class="create-workpackage-form--label">
 					{{ t('integration_openproject', 'Description') }}
 				</div>
-				<textarea v-model="description.raw" class="create-workpackage-form--description" :placeholder="t('integration_openproject', 'Work package description')" />
+				<textarea
+					v-model="description.raw"
+					class="create-workpackage-form--description"
+					:placeholder="t('integration_openproject', 'Work package description')" />
 				<div class="create-workpackage-form--button">
 					<NcButton class="create-workpackage-form--button--cancel" @click="closeModal">
 						{{ t("integration_openproject", "Cancel") }}
@@ -167,7 +171,6 @@ import { generateOcsUrl } from '@nextcloud/router'
 import axios from '@nextcloud/axios'
 import dompurify from 'dompurify'
 import { loadState } from '@nextcloud/initial-state'
-import { translate as t } from '@nextcloud/l10n'
 import { STATE } from '../utils.js'
 import debounce from 'lodash/debounce.js'
 import { messages } from '../constants/messages.js'
@@ -232,6 +235,7 @@ export default {
 		NcModal,
 		NcTextField,
 	},
+	emits: ['close-create-work-package-modal', 'create-work-package'],
 	data: () => ({
 		openProjectUrl: loadState('integration_openproject', 'openproject-url'),
 		availableProjects: [],
@@ -347,8 +351,9 @@ export default {
 			// when the modal opens the dropdown for selecting project gains focus automatically
 			// this is a workaround to prevent that by bluring the focus and the enabling the dropDown that was
 			// disabled initially in data
-			if (this.$refs?.createWorkPackageProjectInput && this.isFetchingProjectsFromOpenProjectWithQuery === false) {
-				document.getElementById(`${this.$refs?.createWorkPackageProjectInput?.inputId}`).blur()
+			const createWorkPackageProjectInput = this.$refs?.createWorkPackageProjectInput
+			if (createWorkPackageProjectInput && this.isFetchingProjectsFromOpenProjectWithQuery === false) {
+				document.getElementById(`${createWorkPackageProjectInput.inputId}`)?.blur()
 				this.noDropAvailableProjectDropDown = false
 			}
 			return mappedNodes
