@@ -1,0 +1,81 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`EmptyContent.vue > content title > shows the correct empty message depending on states if the admin config is okay 1`] = `
+<div
+  class="empty-content--message"
+  data-v-f42315f7=""
+>
+  <div
+    class="empty-content--message--title"
+    data-v-f42315f7=""
+  >
+    No connection with OpenProject
+  </div>
+  <!--v-if-->
+</div>
+`;
+
+exports[`EmptyContent.vue > content title > shows the correct empty message depending on states if the admin config is okay 2`] = `
+<div
+  class="empty-content--message"
+  data-v-f42315f7=""
+>
+  <div
+    class="empty-content--message--title"
+    data-v-f42315f7=""
+  >
+    Unexpected Error
+  </div>
+  <!--v-if-->
+</div>
+`;
+
+exports[`EmptyContent.vue > content title > shows the correct empty message depending on states if the admin config is okay 3`] = `
+<div
+  class="empty-content--message"
+  data-v-f42315f7=""
+>
+  <div
+    class="empty-content--message--title"
+    data-v-f42315f7=""
+  >
+    Error connecting to OpenProject
+  </div>
+  <!--v-if-->
+</div>
+`;
+
+exports[`EmptyContent.vue > content title > shows the correct empty message depending on states if the admin config is okay 4`] = `
+<div
+  class="empty-content--message"
+  data-v-f42315f7=""
+>
+  <div
+    class="empty-content--message--title"
+    data-v-f42315f7=""
+  >
+    Could not fetch work packages from OpenProject
+  </div>
+  <!--v-if-->
+</div>
+`;
+
+exports[`EmptyContent.vue > content title > shows the correct empty message depending on states if the admin config is okay 5`] = `
+<div
+  class="empty-content--message"
+  data-v-f42315f7=""
+>
+  <div
+    class="empty-content--message--title"
+    data-v-f42315f7=""
+  >
+    No OpenProject links yet
+  </div>
+  <div
+    class="empty-content--message--sub-title"
+    data-v-f42315f7=""
+  >
+    To add a link, use the search bar above to find the desired work package
+  </div>
+</div>
+`;

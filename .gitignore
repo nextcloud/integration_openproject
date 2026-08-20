@@ -3,6 +3,7 @@
 # SPDX-FileCopyrightText: 2022 OpenProject GmbH
 # SPDX-License-Identifier: AGPL-3.0-or-later
 js/
+!tests/js/
 .code-workspace
 .DS_Store
 .idea/

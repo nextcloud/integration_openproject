@@ -1,0 +1,173 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`WorkPackage.vue > new work package id > shows work packages information 1`] = `
+<div
+  class="workpackage"
+  data-v-95f0386b=""
+>
+  <div
+    class="row"
+    data-v-95f0386b=""
+  >
+    <div
+      class="row__status"
+      data-v-95f0386b=""
+      style="background-color: blue; border: 0px;"
+    >
+      <div
+        class="row__status__title"
+        data-v-95f0386b=""
+        style="color: rgb(255, 255, 255);"
+      >
+        in-progress
+      </div>
+    </div>
+    <div
+      class="row__workpackage"
+      data-v-95f0386b=""
+    >
+      WP-1 - test
+    </div>
+  </div>
+  <div
+    class="row"
+    data-v-95f0386b=""
+  >
+    <div
+      class="row__subject"
+      data-v-95f0386b=""
+    >
+      <span
+        class="row__subject__type"
+        data-v-95f0386b=""
+        style="color: red; -webkit-text-stroke: unset;"
+      >
+        task
+      </span>
+       Organize work-packages
+    </div>
+  </div>
+  <div
+    class="row"
+    data-v-95f0386b=""
+  >
+    <div
+      class="row__assignee"
+      data-v-95f0386b=""
+    >
+      <div
+        class="row__assignee__avatar"
+        data-v-95f0386b=""
+      >
+        <nc-avatar-stub
+          class="item-avatar"
+          data-v-95f0386b=""
+          disablemenu="false"
+          disabletooltip="false"
+          displayname="test"
+          hidestatus="false"
+          isguest="false"
+          isnouser="false"
+          menucontainer="body"
+          noplaceholder="false"
+          size="23"
+          url="/server/index.php/apps/integration_openproject/avatar?userId=1&userName=System"
+          verbosestatus="false"
+        />
+      </div>
+      <div
+        class="row__assignee__assignee"
+        data-v-95f0386b=""
+      >
+        test
+      </div>
+    </div>
+  </div>
+</div>
+`;
+
+exports[`WorkPackage.vue > old work package id > shows work packages information 1`] = `
+<div
+  class="workpackage"
+  data-v-95f0386b=""
+>
+  <div
+    class="row"
+    data-v-95f0386b=""
+  >
+    <div
+      class="row__status"
+      data-v-95f0386b=""
+      style="background-color: blue; border: 0px;"
+    >
+      <div
+        class="row__status__title"
+        data-v-95f0386b=""
+        style="color: rgb(255, 255, 255);"
+      >
+        in-progress
+      </div>
+    </div>
+    <div
+      class="row__workpackage"
+      data-v-95f0386b=""
+    >
+      #1 - test
+    </div>
+  </div>
+  <div
+    class="row"
+    data-v-95f0386b=""
+  >
+    <div
+      class="row__subject"
+      data-v-95f0386b=""
+    >
+      <span
+        class="row__subject__type"
+        data-v-95f0386b=""
+        style="color: red; -webkit-text-stroke: unset;"
+      >
+        task
+      </span>
+       Organize work-packages
+    </div>
+  </div>
+  <div
+    class="row"
+    data-v-95f0386b=""
+  >
+    <div
+      class="row__assignee"
+      data-v-95f0386b=""
+    >
+      <div
+        class="row__assignee__avatar"
+        data-v-95f0386b=""
+      >
+        <nc-avatar-stub
+          class="item-avatar"
+          data-v-95f0386b=""
+          disablemenu="false"
+          disabletooltip="false"
+          displayname="test"
+          hidestatus="false"
+          isguest="false"
+          isnouser="false"
+          menucontainer="body"
+          noplaceholder="false"
+          size="23"
+          url="/server/index.php/apps/integration_openproject/avatar?userId=1&userName=System"
+          verbosestatus="false"
+        />
+      </div>
+      <div
+        class="row__assignee__assignee"
+        data-v-95f0386b=""
+      >
+        test
+      </div>
+    </div>
+  </div>
+</div>
+`;

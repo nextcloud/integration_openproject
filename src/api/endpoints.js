@@ -5,9 +5,11 @@
 
 import { generateUrl } from '@nextcloud/router'
 
+import APP_ID from '../constants/appID.js'
+
 export default {
-	validateOPInstance: generateUrl('/apps/integration_openproject/is-valid-op-instance'),
-	adminConfig: generateUrl('/apps/integration_openproject/admin-config'),
-	nextcloudOAuth: generateUrl('/apps/integration_openproject/nc-oauth'),
-	projectFolderStatus: generateUrl('/apps/integration_openproject/project-folder-status'),
+	validateOPInstance: generateUrl(`/apps/${APP_ID}/is-valid-op-instance`),
+	adminConfig: generateUrl(`/apps/${APP_ID}/admin-config`),
+	nextcloudOAuth: generateUrl(`/apps/${APP_ID}/nc-oauth`),
+	projectFolderStatus: generateUrl(`/apps/${APP_ID}/project-folder-status`),
 }

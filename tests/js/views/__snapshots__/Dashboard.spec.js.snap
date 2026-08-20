@@ -1,0 +1,83 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`Dashboard.vue > auth method: OAUTH2 > admin config is ok > connected to OP > should show the notification items 1`] = `
+[
+  {
+    "avatarUrl": "http://localhost:3000//ocs/v2.php/apps/integration_openproject/api/v1/avatar?userId=8&userName=Admin%20de%20DEV%20user",
+    "avatarUsername": "Admin de DEV userz",
+    "id": "17",
+    "mainText": "(6) Create wireframes for new landing page",
+    "overlayIconUrl": "",
+    "subText": "Scrum project - accountable, commented, mentioned, Date alert",
+    "targetUrl": "http://openproject.org/notifications/details/17/activity/",
+  },
+  {
+    "avatarUrl": "http://localhost:3000//ocs/v2.php/apps/integration_openproject/api/v1/avatar?userId=9&userName=Artur%20Neumann",
+    "avatarUsername": "Artur Neumannz",
+    "id": "18",
+    "mainText": "(1) Contact form",
+    "overlayIconUrl": "",
+    "subText": "Scrum project - mentioned",
+    "targetUrl": "http://openproject.org/notifications/details/18/activity/",
+  },
+  {
+    "avatarUrl": "http://localhost:3000//ocs/v2.php/apps/integration_openproject/api/v1/avatar?userName=",
+    "avatarUsername": "undefinedz",
+    "id": "24",
+    "mainText": "(1) Choose a content management system",
+    "overlayIconUrl": "",
+    "subText": "Demo project - Date alert",
+    "targetUrl": "http://openproject.org/notifications/details/24/activity/",
+  },
+  {
+    "avatarUrl": "http://localhost:3000//ocs/v2.php/apps/integration_openproject/api/v1/avatar?userId=8&userName=Admin%20de%20DEV%20user",
+    "avatarUsername": "Admin de DEV userz",
+    "id": "36",
+    "mainText": "(2) write a software",
+    "overlayIconUrl": "",
+    "subText": "Dev-large - assignee, watcher",
+    "targetUrl": "http://openproject.org/notifications/details/36/activity/",
+  },
+]
+`;
+
+exports[`Dashboard.vue > auth method: OIDC > OIDC user > admin config is ok > connected to OP > should show the notification items 1`] = `
+[
+  {
+    "avatarUrl": "http://localhost:3000//ocs/v2.php/apps/integration_openproject/api/v1/avatar?userId=8&userName=Admin%20de%20DEV%20user",
+    "avatarUsername": "Admin de DEV userz",
+    "id": "17",
+    "mainText": "(6) Create wireframes for new landing page",
+    "overlayIconUrl": "",
+    "subText": "Scrum project - accountable, commented, mentioned, Date alert",
+    "targetUrl": "http://openproject.org/notifications/details/17/activity/",
+  },
+  {
+    "avatarUrl": "http://localhost:3000//ocs/v2.php/apps/integration_openproject/api/v1/avatar?userId=9&userName=Artur%20Neumann",
+    "avatarUsername": "Artur Neumannz",
+    "id": "18",
+    "mainText": "(1) Contact form",
+    "overlayIconUrl": "",
+    "subText": "Scrum project - mentioned",
+    "targetUrl": "http://openproject.org/notifications/details/18/activity/",
+  },
+  {
+    "avatarUrl": "http://localhost:3000//ocs/v2.php/apps/integration_openproject/api/v1/avatar?userName=",
+    "avatarUsername": "undefinedz",
+    "id": "24",
+    "mainText": "(1) Choose a content management system",
+    "overlayIconUrl": "",
+    "subText": "Demo project - Date alert",
+    "targetUrl": "http://openproject.org/notifications/details/24/activity/",
+  },
+  {
+    "avatarUrl": "http://localhost:3000//ocs/v2.php/apps/integration_openproject/api/v1/avatar?userId=8&userName=Admin%20de%20DEV%20user",
+    "avatarUsername": "Admin de DEV userz",
+    "id": "36",
+    "mainText": "(2) write a software",
+    "overlayIconUrl": "",
+    "subText": "Dev-large - assignee, watcher",
+    "targetUrl": "http://openproject.org/notifications/details/36/activity/",
+  },
+]
+`;

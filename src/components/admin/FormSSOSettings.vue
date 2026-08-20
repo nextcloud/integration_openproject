@@ -34,7 +34,7 @@
 						{{ t('integration_openproject', 'OIDC Provider Type') }} *
 					</p>
 					<NcCheckboxRadioSwitch
-						:checked.sync="currentForm.sso_provider_type"
+						v-model="currentForm.sso_provider_type"
 						:disabled="!hasEnabledSupportedUserOidcApp || !hasEnabledSupportedOIDCApp"
 						:value="ssoProviderType.nextcloudHub"
 						type="radio">
@@ -47,7 +47,7 @@
 							:disabled="disableNCHubUnsupportedHint" />
 					</div>
 					<NcCheckboxRadioSwitch
-						:checked.sync="currentForm.sso_provider_type"
+						v-model="currentForm.sso_provider_type"
 						:disabled="!hasEnabledSupportedUserOidcApp"
 						:value="ssoProviderType.external"
 						type="radio">
@@ -68,9 +68,9 @@
 						:disabled="!hasEnabledSupportedUserOidcApp"
 						:placeholder="t('integration_openproject', 'Select an OIDC provider')"
 						:options="ssoProviders"
-						:value="currentForm.oidc_provider"
+						:modelValue="currentForm.oidc_provider"
 						:filterable="true"
-						:close-on-select="true"
+						:keep-open="false"
 						:clear-search-on-blur="() => false"
 						:append-to-body="false"
 						:label-outside="true"
@@ -90,8 +90,8 @@
 						{{ messages.tokenExchangeHintText }}
 					</p>
 					<NcCheckboxRadioSwitch
-						type="switch"
-						:checked.sync="currentForm.token_exchange">
+						v-model="currentForm.token_exchange"
+						type="switch">
 						<b>{{ messages.enableTokenExchange }}</b>
 					</NcCheckboxRadioSwitch>
 				</div>
@@ -132,12 +132,12 @@
 				</NcButton>
 				<NcButton v-if="showSaveButton"
 					data-test-id="save-sso-settings"
-					type="primary"
+					variant="primary"
 					:disabled="disableSaveSSOSettings"
 					@click="saveSettings">
 					<template #icon>
 						<NcLoadingIcon v-if="loading" class="loading-spinner" :size="20" />
-						<CheckBoldIcon v-else fill-color="#FFFFFF" :size="20" />
+						<CheckBoldIcon v-else :size="20" />
 					</template>
 					{{ t('integration_openproject', 'Save') }}
 				</NcButton>
@@ -204,6 +204,7 @@ export default {
 			default: false,
 		},
 	},
+	emits: ['formcomplete'],
 	data() {
 		return {
 			formMode: F_MODES.NEW,

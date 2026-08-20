@@ -49,7 +49,10 @@
 					</div>
 				</div>
 				<div v-else class="project-folder-form">
-					<NcCheckboxRadioSwitch type="switch" :checked.sync="currentProjectFolderState" @update:checked="changeProjectFolderState">
+					<NcCheckboxRadioSwitch
+						v-model="currentProjectFolderState"
+						type="switch"
+						@update:modelValue="changeProjectFolderState">
 						<b>{{ t('integration_openproject', 'Automatically managed folders') }}</b>
 					</NcCheckboxRadioSwitch>
 					<div v-if="!currentProjectFolderState" class="complete-without-groupfolders">
@@ -59,11 +62,11 @@
 							}}
 						</p>
 						<div class="form-actions">
-							<NcButton type="primary"
+							<NcButton variant="primary"
 								data-test-id="complete-without-project-folder-form-btn"
 								@click="saveProjectFolder()">
 								<template #icon>
-									<CheckBoldIcon fill-color="#FFFFFF" :size="20" />
+									<CheckBoldIcon :size="20" />
 								</template>
 								{{
 									folderSetupButtonLabel
@@ -89,14 +92,14 @@
 						</p>
 						<div class="form-actions">
 							<NcButton
-								type="primary"
+								variant="primary"
 								:disabled="showTeamfolderAppError"
 								data-test-id="complete-with-project-folders-form-btn"
 								@click="saveProjectFolder()">
 								<template #icon>
 									<NcLoadingIcon v-if="loading" class="loading-spinner" :size="20" />
-									<RestoreIcon v-else-if="retryProjectFolderSetup" fill-color="#FFFFFF" :size="20" />
-									<CheckBoldIcon v-else fill-color="#FFFFFF" :size="20" />
+									<RestoreIcon v-else-if="retryProjectFolderSetup" :size="20" />
+									<CheckBoldIcon v-else :size="20" />
 								</template>
 								{{ folderSetupButtonLabel }}
 							</NcButton>
@@ -128,12 +131,12 @@
 				value="" />
 			<div class="form-actions">
 				<NcButton v-if="isAppPasswordFormInEditMode"
-					type="primary"
+					variant="primary"
 					:disabled="!appPassword"
 					data-test-id="submit-op-system-password-form-btn"
 					@click="setAppPasswordFormToViewMode">
 					<template #icon>
-						<CheckBoldIcon fill-color="#FFFFFF" :size="20" />
+						<CheckBoldIcon :size="20" />
 					</template>
 					{{ t('integration_openproject', 'Done, complete setup') }}
 				</NcButton>
@@ -201,6 +204,7 @@ export default {
 			required: true,
 		},
 	},
+	emits: ['formcomplete'],
 	data() {
 		return {
 			loading: false,

@@ -3,17 +3,17 @@
  * SPDX-License-Identifier: AGPL-3.0-or-later
  */
 
-import Vue from 'vue'
-import './bootstrap.js'
+import { createApp } from 'vue'
+import { setupGlobalProperties } from './setup.js'
 import Dashboard from './views/Dashboard.vue'
 
 document.addEventListener('DOMContentLoaded', function() {
-
 	OCA.Dashboard.register('openproject_notifications', (el, { widget }) => {
-		const View = Vue.extend(Dashboard)
-		new View({
-			propsData: { title: widget.title },
-		}).$mount(el)
+		const app = createApp(Dashboard, {
+			title: widget.title,
+		})
+		setupGlobalProperties(app)
+		app.mount(el)
 	})
 
 })

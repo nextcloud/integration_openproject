@@ -10,7 +10,6 @@
 			input-id="searchInput"
 			:placeholder="placeholder"
 			:options="setOptionForSearch"
-			:user-select="true"
 			:append-to-body="false"
 			label="displayName"
 			:loading="isStateLoading"
@@ -65,7 +64,6 @@ import WorkPackage from './WorkPackage.vue'
 import { showError, showSuccess } from '@nextcloud/dialogs'
 import { workpackageHelper } from '../../utils/workpackageHelper.js'
 import { NO_OPTION_TEXT_STATE, STATE, WORKPACKAGES_SEARCH_ORIGIN } from '../../utils.js'
-import { translate as t } from '@nextcloud/l10n'
 import Plus from 'vue-material-design-icons/Plus.vue'
 import CreateWorkPackageModal from '../../views/CreateWorkPackageModal.vue'
 
@@ -104,6 +102,7 @@ export default {
 			default: false,
 		},
 	},
+	emits: ['submit', 'close'],
 	data: () => ({
 		state: STATE.OK,
 		searchResults: [],
@@ -175,6 +174,12 @@ export default {
 		},
 	},
 	methods: {
+		focusWorkPackageSearchInput() {
+			const workPackageSelect = this.$refs.workPackageSelect
+			if (workPackageSelect) {
+				document.getElementById(workPackageSelect.inputId).focus()
+			}
+		},
 		async onCreateWorkPackageEvent(data) {
 			this.isCreateWorkpackageModalVisible = false
 			if (
@@ -283,7 +288,7 @@ export default {
 				try {
 					if (this.isStateLoading) {
 						if (this.isSmartPicker) {
-						   workPackage = await workpackageHelper.getAdditionalMetaData(workPackage)
+							workPackage = await workpackageHelper.getAdditionalMetaData(workPackage)
 							this.searchResults.push(workPackage)
 						} else {
 							workPackage.fileId = fileId

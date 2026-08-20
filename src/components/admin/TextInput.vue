@@ -12,7 +12,7 @@
 			<input
 				ref="textInput"
 				:disabled="disabled"
-				:value="value"
+				:value="modelValue"
 				:type="type"
 				:readonly="readOnly"
 				:class="{
@@ -21,7 +21,7 @@
 				}"
 				:placeholder="placeHolder"
 				@click="$emit('click', $event)"
-				@input="$emit('input', $event.target.value)"
+				@input="$emit('update:modelValue', $event.target.value)"
 				@change="$emit('change', $event.target.value)"
 				@focus="$emit('focus', $event)"
 				@blur="$emit('blur', $event)">
@@ -54,7 +54,6 @@
 	</div>
 </template>
 <script>
-import { translate as t } from '@nextcloud/l10n'
 import { showSuccess } from '@nextcloud/dialogs'
 import { NcButton, NcPopover } from '@nextcloud/vue'
 import ClippyIcon from '../icons/ClippyIcon.vue'
@@ -70,7 +69,7 @@ export default {
 		NcPopover,
 	},
 	props: {
-		value: {
+		modelValue: {
 			default: '',
 			type: String,
 		},
@@ -115,6 +114,7 @@ export default {
 			type: Boolean,
 		},
 	},
+  emits: ['click', 'update:modelValue', 'change', 'focus', 'blur'],
 	data: () => ({
 		isCopied: false,
 	}),
@@ -125,7 +125,7 @@ export default {
 			} else return this.label
 		},
 		isInputFieldEmpty() {
-			return !this.value
+			return !this.modelValue
 		},
 		showCopyButton() {
 			return (this.withCopyBtn && navigator.clipboard)
@@ -148,9 +148,12 @@ export default {
 		},
 	},
 	methods: {
+		focusInputField() {
+			this.$refs.textInput?.focus()
+		},
 		copyValue() {
 			const that = this
-			navigator.clipboard.writeText(this.value)
+			navigator.clipboard.writeText(this.modelValue)
 			showSuccess(t('integration_openproject', 'Copied to the clipboard'), {
 				timeout: COPY_TIMEOUT,
 			})

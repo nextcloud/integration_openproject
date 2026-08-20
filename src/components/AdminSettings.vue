@@ -51,7 +51,7 @@
 			}"
 			@formcomplete="markFormComplete" />
 		<NcButton id="reset-all-app-settings-btn"
-			type="error"
+			variant="error"
 			:disabled="!resettableForm"
 			@click="resetIntegrationSetup">
 			<template #icon>
@@ -65,18 +65,20 @@
 				{{ t('integration_openproject', 'A new user will receive these defaults and they will be applied to the integration app till the user changes them.') }}
 			</p>
 			<br>
-			<CheckBox v-model="state.default_enable_navigation"
+			<CheckBox
+				v-model="state.default_enable_navigation"
 				input-id="default-prefs--link"
 				:label="t('integration_openproject', 'Enable navigation link')"
-				@input="setDefaultConfig">
+				@update:modelValue="setDefaultConfig">
 				<template #hint>
 					<p class="user-setting-description" v-html="userSettingDescription.NAVIGATION_LINK_DESCRIPTION" /> <!-- eslint-disable-line vue/no-v-html -->
 				</template>
 			</CheckBox>
-			<CheckBox v-model="state.default_enable_unified_search"
+			<CheckBox
+				v-model="state.default_enable_unified_search"
 				input-id="default-prefs--u-search"
 				:label="t('integration_openproject', 'Enable unified search for tickets')"
-				@input="setDefaultConfig">
+				@update:modelValue="setDefaultConfig">
 				<template #hint>
 					<p class="user-setting-description" v-html="userSettingDescription.UNIFIED_SEARCH_DESCRIPTION" /> <!-- eslint-disable-line vue/no-v-html -->
 				</template>
@@ -90,7 +92,7 @@ import axios from '@nextcloud/axios'
 import { loadState } from '@nextcloud/initial-state'
 import { generateUrl } from '@nextcloud/router'
 import { showSuccess, showError } from '@nextcloud/dialogs'
-import { NcButton, NcNoteCard } from '@nextcloud/vue'
+import { NcButton, NcNoteCard, isDarkTheme } from '@nextcloud/vue'
 import RestoreIcon from 'vue-material-design-icons/Restore.vue'
 import dompurify from 'dompurify'
 import CheckBox from '../components/settings/CheckBox.vue'
@@ -125,7 +127,7 @@ export default {
 		return {
 			form: structuredClone(ADMIN_SETTINGS_FORM),
 			state: loadState('integration_openproject', 'admin-settings-config'),
-			isDarkTheme: null,
+			isDarkTheme,
 			isAllTermsOfServiceSignedForUserOpenProject: true,
 			userSettingDescription: USER_SETTINGS,
 			SSO_PROVIDER_TYPE,
@@ -181,8 +183,8 @@ export default {
 		isSetupComplete() {
 			return (this.isServerHostFormComplete
 				&& this.isAuthorizationMethodFormComplete
-				 && this.isAuthorizationSettingFormComplete
-				 && this.isProjectFolderFormComplete
+				&& this.isAuthorizationSettingFormComplete
+				&& this.isProjectFolderFormComplete
 			)
 		},
 		getAdminAuditAppName() {
@@ -198,9 +200,6 @@ export default {
 	},
 	created() {
 		this.init()
-	},
-	mounted() {
-		this.isDarkTheme = window.getComputedStyle(this.$el).getPropertyValue('--background-invert-if-dark') === 'invert(100%)'
 	},
 	methods: {
 		init() {

@@ -54,12 +54,12 @@
 					<NcButton
 						v-else
 						data-test-id="submit-op-oauth-btn"
-						type="primary"
+						variant="primary"
 						:disabled="disableOpenProjectFormSave"
 						@click="saveOpenProjectClient">
 						<template #icon>
 							<NcLoadingIcon v-if="loading" class="loading-spinner" :size="20" />
-							<CheckBoldIcon v-else fill-color="#FFFFFF" :size="20" />
+							<CheckBoldIcon v-else :size="20" />
 						</template>
 						{{ t('integration_openproject', 'Save') }}
 					</NcButton>
@@ -129,12 +129,12 @@
 					</NcButton>
 					<NcButton
 						v-else
-						type="primary"
+						variant="primary"
 						:disabled="disableNextcloudFormSave"
 						data-test-id="submit-nc-oauth-btn"
 						@click="setNextcloudFromToViewMode">
 						<template #icon>
-							<CheckBoldIcon fill-color="#FFFFFF" :size="20" />
+							<CheckBoldIcon :size="20" />
 						</template>
 						{{ t('integration_openproject', 'Yes, I have copied these values') }}
 					</NcButton>
@@ -180,6 +180,7 @@ export default {
 			default: false,
 		},
 	},
+	emits: ['formcomplete'],
 	data() {
 		return {
 			openprojectFormMode: F_MODES.NEW,
