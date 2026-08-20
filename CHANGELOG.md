@@ -28,6 +28,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ### Changed
 
 - Update npm dependencies [#1123](https://github.com/nextcloud/integration_openproject/pull/1123)
+- Make OAuth2 Client class usage compatible with older Nextcloud versions [#1148](https://github.com/nextcloud/integration_openproject/pull/1148)
 
 ### Removed
 

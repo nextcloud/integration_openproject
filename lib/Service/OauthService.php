@@ -49,20 +49,24 @@ class OauthService {
 	 */
 	public function createNcOauthClient(string $name, string $redirectUri): array {
 		$clientId = $this->secureRandom->generate(64, self::validChars);
+		$clientSecret = $this->secureRandom->generate(64, self::validChars);
+		$hashedClientSecret = bin2hex($this->crypto->calculateHMAC($clientSecret));
+		$redirectUri = sprintf($redirectUri, $clientId);
+
 		$client = new Client();
-		$client->setName($name);
-		$client->setRedirectUri(sprintf($redirectUri, $clientId));
-		$secret = $this->secureRandom->generate(64, self::validChars);
-		$client->setSecret(bin2hex($this->crypto->calculateHMAC($secret)));
-		$client->setClientIdentifier($clientId);
+		$this->setClientProperty($client, 'name', $name);
+		$this->setClientProperty($client, 'redirectUri', $redirectUri);
+		$this->setClientProperty($client, 'clientIdentifier', $clientId);
+		$this->setClientProperty($client, 'secret', $hashedClientSecret);
+
 		$client = $this->clientMapper->insert($client);
 
 		return [
-			'id' => $client->getId(),
-			'nextcloud_oauth_client_name' => $client->getName(),
-			'openproject_redirect_uri' => $client->getRedirectUri(),
-			'nextcloud_client_id' => $client->getClientIdentifier(),
-			'nextcloud_client_secret' => $secret,
+			'id' => $this->getClientProperty($client, 'id'),
+			'nextcloud_oauth_client_name' => $this->getClientProperty($client, 'name'),
+			'openproject_redirect_uri' => $this->getClientProperty($client, 'redirectUri'),
+			'nextcloud_client_id' => $this->getClientProperty($client, 'clientIdentifier'),
+			'nextcloud_client_secret' => $clientSecret,
 		];
 	}
 
@@ -74,10 +78,10 @@ class OauthService {
 		try {
 			$client = $this->clientMapper->getByUid($id);
 			return [
-				'id' => $client->getId(),
-				'nextcloud_oauth_client_name' => $client->getName(),
-				'openproject_redirect_uri' => $client->getRedirectUri(),
-				'nextcloud_client_id' => $client->getClientIdentifier()
+				'id' => $this->getClientProperty($client, 'id'),
+				'nextcloud_oauth_client_name' => $this->getClientProperty($client, 'name'),
+				'openproject_redirect_uri' => $this->getClientProperty($client, 'redirectUri'),
+				'nextcloud_client_id' => $this->getClientProperty($client, 'clientIdentifier')
 			];
 		} catch (ClientNotFoundException $e) {
 			return null;
@@ -92,13 +96,53 @@ class OauthService {
 	public function setClientRedirectUri(int $id, string $opUrl): bool {
 		try {
 			$client = $this->clientMapper->getByUid($id);
-			$clientId = $client->getClientIdentifier();
+			$clientId = $this->getClientProperty($client, 'clientIdentifier');
+
 			$redirectUri = rtrim($opUrl, '/') .'/oauth_clients/'.$clientId.'/callback';
-			$client->setRedirectUri($redirectUri);
+			$client = $this->setClientProperty($client, 'redirectUri', $redirectUri);
+
 			$this->clientMapper->update($client);
 			return true;
 		} catch (ClientNotFoundException $e) {
 			return false;
 		}
+	}
+
+	/**
+	 * @param Client $client
+	 * @param string $property
+	 * @param string|int $value
+	 *
+	 * @return Client
+	 */
+	public function setClientProperty(Client $client, string $property, string|int $value): Client {
+		$fn = 'set' . ucfirst($property);
+		// In NC35, OAuth2 Client class changed to attribute-based entity.
+		// NOTE: we can remove setClientProperty and getClientProperty methods
+		// once we drop support for NC34 and below.
+		if (\method_exists(Client::class, 'addType')) {
+			$client->$fn($value);
+		} else {
+			$client->{$property} = $value;
+		}
+
+		return $client;
+	}
+
+	/**
+	 * @param Client $client
+	 * @param string $property
+	 *
+	 * @return string|int
+	 */
+	public function getClientProperty(Client $client, string $property): string|int {
+		$fn = 'get' . ucfirst($property);
+		// In NC35, OAuth2 Client class changed to attribute-based entity.
+		// NOTE: we can remove setClientProperty and getClientProperty methods
+		// once we drop support for NC34 and below.
+		if (\method_exists(Client::class, 'addType')) {
+			return $client->$fn();
+		}
+		return $client->{$property};
 	}
 }
