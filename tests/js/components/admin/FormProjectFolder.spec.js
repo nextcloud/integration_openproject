@@ -307,10 +307,16 @@ describe('Component: FormProjectFolder', () => {
 			describe('fresh setup', () => {
 				let wrapper
 				beforeEach(async () => {
-					wrapper = getWrapper({ props: defaultProps })
+					const props = structuredClone(defaultProps)
+					props.formState.openprojectOauth.complete = false
+					wrapper = getWrapper({ props })
+					await nextTick()
 				})
 
 				it('should show enabled form fields', async () => {
+					await wrapper.setProps(defaultProps)
+					await nextTick()
+
 					expect(wrapper.vm.folderFormMode).toBe(F_MODES.EDIT)
 					expect(wrapper.vm.passwordFormMode).toBe(F_MODES.DISABLE)
 					expect(wrapper.emitted().formcomplete).toBeUndefined()
@@ -335,6 +341,9 @@ describe('Component: FormProjectFolder', () => {
 					expect(wrapper.find(selectors.appPasswordFormContainer).exists()).toBe(false)
 				})
 				it('should show disabled form fields if project folder is disabled', async () => {
+					await wrapper.setProps(defaultProps)
+					await nextTick()
+
 					const projectFolderSetupSwitch = wrapper.findComponent(selectors.projectFolderSetupSwitch)
 					projectFolderSetupSwitch.vm.$emit('update:modelValue', false)
 					await flushPromises()
@@ -348,6 +357,11 @@ describe('Component: FormProjectFolder', () => {
 				})
 
 				describe('on save: disabled project folder', () => {
+					beforeEach(async () => {
+						await wrapper.setProps(defaultProps)
+						await nextTick()
+					})
+
 					it('should set status "Inactive"', async () => {
 						const spySetAppPasswordFormToEditMode = vi.spyOn(wrapper.vm, 'setAppPasswordFormToEditMode')
 						const projectFolderSetupSwitch = wrapper.findComponent(selectors.projectFolderSetupSwitch)
@@ -447,6 +461,11 @@ describe('Component: FormProjectFolder', () => {
 				})
 
 				describe('on save: enabled project folder', () => {
+					beforeEach(async () => {
+						await wrapper.setProps(defaultProps)
+						await nextTick()
+					})
+
 					describe('upon success', () => {
 						beforeEach(() => {
 							const props = structuredClone(defaultProps)
