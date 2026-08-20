@@ -15,6 +15,16 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ### Added
 
+### Fixed
+
+### Changed
+
+### Removed
+
+## 2.12.0-20260820-nightly
+
+### Added
+
 - Show new OpenProject work package display ID if available [#1071](https://github.com/nextcloud/integration_openproject/pull/1071)
 - Improve integration setup error messages [#1118](https://github.com/nextcloud/integration_openproject/pull/1118)
 
@@ -25,8 +35,6 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - Fix: Incorrect setup status while configuring integration with existing project folder [#1145](https://github.com/nextcloud/integration_openproject/pull/1145)
 - Fix: No encryption warning for project folder when the server-side encryption is enabled [#1147](https://github.com/nextcloud/integration_openproject/pull/1147)
 - Fix: Project folder form header in disabled mode even when the form fields are visible [#1155](https://github.com/nextcloud/integration_openproject/pull/1155)
-
-### Changed
 
 ### Removed
 
