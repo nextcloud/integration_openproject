@@ -24,6 +24,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - Fix: User shown connected in webUI after converting existing OAuth to SSO via setup endpoint [#1141](https://github.com/nextcloud/integration_openproject/pull/1141)
 - Fix: Incorrect setup status while configuring integration with existing project folder [#1145](https://github.com/nextcloud/integration_openproject/pull/1145)
 - Fix: No encryption warning for project folder when the server-side encryption is enabled [#1147](https://github.com/nextcloud/integration_openproject/pull/1147)
+- Fix: Project folder form header in disabled mode even when the form fields are visible [#1155](https://github.com/nextcloud/integration_openproject/pull/1155)
 
 ### Changed
 
