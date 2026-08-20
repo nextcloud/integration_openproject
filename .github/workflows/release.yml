@@ -18,10 +18,7 @@ jobs:
       - name: Setup NodeJS
         uses: actions/setup-node@6044e13b5dc448c55e2357c09f80417699197238
         with:
-          node-version: 20
-
-      - name: Setup npm
-        run: npm i -g npm
+          node-version-file: package.json
 
       - name: Setup PHP
         uses: shivammathur/setup-php@a4e22b60bbb9c1021113f2860347b0759f66fe5d
