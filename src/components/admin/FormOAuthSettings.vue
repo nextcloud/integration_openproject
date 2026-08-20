@@ -190,7 +190,6 @@ export default {
 			openprojectFormOrder: ADMIN_SETTINGS_FORM.openprojectOauth.order.toString(),
 			nextcloudFormOrder: ADMIN_SETTINGS_FORM.nextcloudOauth.order.toString(),
 			loading: false,
-			openprojectTokenRevokeStatus: null,
 			// state that holds the current changed form values
 			currentOpenProjectForm: {
 				clientId: this.oauthSettings.openproject_client_id || '',
@@ -301,30 +300,6 @@ export default {
 		setNextcloudFormToEditMode() {
 			this.setNextcloudFormMode(F_MODES.EDIT)
 		},
-		notifyOpenProjectTokenRevoke() {
-			switch (this.openprojectTokenRevokeStatus) {
-			case 'connection_error':
-				showError(
-					t(
-						'integration_openproject',
-						'Failed to perform revoke request due to connection error with the OpenProject server',
-					),
-				)
-				break
-			case 'other_error':
-				showError(
-					t('integration_openproject', "Failed to revoke some users' OpenProject OAuth access tokens"),
-				)
-				break
-			case 'success':
-				showSuccess(
-					t('integration_openproject', "Successfully revoked users' OpenProject OAuth access tokens"),
-				)
-				break
-			default:
-				break
-			}
-		},
 		async createNextcloudClient() {
 			try {
 				const response = await createNextcloudOAuthClient()
@@ -342,11 +317,10 @@ export default {
 		async saveOpenProjectClient() {
 			this.loading = true
 			try {
-				const response = await saveAdminConfig({
+				await saveAdminConfig({
 					openproject_client_id: this.currentOpenProjectForm.clientId,
 					openproject_client_secret: this.currentOpenProjectForm.clientSecret,
 				})
-				this.openprojectTokenRevokeStatus = response?.data?.oPOAuthTokenRevokeStatus
 				this.savedOpenProjectForm = structuredClone(this.currentOpenProjectForm)
 				this.setOpenProjectFromToViewMode()
 				this.$emit('formcomplete', this.markOpenProjectFormComplete)
@@ -357,12 +331,10 @@ export default {
 					await this.createNextcloudClient()
 				}
 			} catch (error) {
-				this.openprojectTokenRevokeStatus = null
 				const errorMessage = error?.response?.data?.error || error?.message
 				const message = t('integration_openproject', 'Failed to save OpenProject admin options')
 				showError(message + ': ' + errorMessage)
 			}
-			this.notifyOpenProjectTokenRevoke()
 			this.loading = false
 		},
 		resetOpenProjectClient() {
