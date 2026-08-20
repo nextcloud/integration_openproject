@@ -7,10 +7,8 @@
 
 namespace OCA\OpenProject\Controller;
 
-use GuzzleHttp\Exception\ConnectException;
 use OCA\OAuth2\Controller\SettingsController;
 use OCA\OpenProject\AppInfo\Application;
-use OCA\OpenProject\Exception\OpenprojectErrorException;
 use OCA\OpenProject\Service\OauthService;
 use OCA\OpenProject\Service\OpenProjectAPIService;
 use OCA\OpenProject\Service\SettingsService;
@@ -28,7 +26,6 @@ use OCP\IUserManager;
 use OCP\Security\ISecureRandom;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
-use Psr\Http\Message\RequestInterface;
 use Psr\Log\LoggerInterface;
 
 class ConfigControllerTest extends TestCase {
@@ -523,7 +520,6 @@ class ConfigControllerTest extends TestCase {
 				[Application::APP_ID, 'openproject_client_id', '', $credsToUpdate['openproject_client_id']],
 				[Application::APP_ID, 'openproject_client_secret', '', $credsToUpdate['openproject_client_secret']],
 				[Application::APP_ID, 'nc_oauth_client_id', '', '123'],
-				[Application::APP_ID, 'oPOAuthTokenRevokeStatus', '', ''],
 			]);
 		$apiService = $this->getMockBuilder(OpenProjectAPIService::class)
 			->disableOriginalConstructor()
@@ -541,7 +537,6 @@ class ConfigControllerTest extends TestCase {
 		$this->assertSame(
 			[
 				'status' => $adminConfigStatus,
-				'oPOAuthTokenRevokeStatus' => '',
 				"oPUserAppPassword" => null
 			],
 			$result->getData()
@@ -619,7 +614,6 @@ class ConfigControllerTest extends TestCase {
 				[Application::APP_ID, 'oidc_provider', '', $credsToUpdate['oidc_provider']],
 				[Application::APP_ID, 'sso_provider_type', '', Application::NEXTCLOUD_HUB_OIDC_PROVIDER_TYPE],
 				[Application::APP_ID, 'targeted_audience_client_id', '', $credsToUpdate['targeted_audience_client_id']],
-				[Application::APP_ID, 'oPOAuthTokenRevokeStatus', '', ''],
 			]);
 
 		
@@ -639,7 +633,6 @@ class ConfigControllerTest extends TestCase {
 		$this->assertSame(
 			[
 				'status' => $adminConfigStatus,
-				'oPOAuthTokenRevokeStatus' => '',
 				"oPUserAppPassword" => null
 			],
 			$result->getData()
@@ -779,7 +772,6 @@ class ConfigControllerTest extends TestCase {
 				[Application::APP_ID, 'openproject_client_id', '', $oldCreds['openproject_client_id']],
 				[Application::APP_ID, 'openproject_client_secret', '', $oldCreds['openproject_client_secret']],
 				[Application::APP_ID, 'nc_oauth_client_id', '', '123'],
-				[Application::APP_ID, 'oPOAuthTokenRevokeStatus', '', ''],
 			]);
 		$configMock
 			->method('getUserValue')
@@ -797,7 +789,7 @@ class ConfigControllerTest extends TestCase {
 				$oauthSettingsControllerMock
 					->expects($this->never())
 					->method('deleteClient');
-			} else { // delete the client
+			} else {
 				$oauthServiceMock
 					->expects($this->never())
 					->method('setClientRedirectUri');
@@ -907,369 +899,6 @@ class ConfigControllerTest extends TestCase {
 		);
 		return $userManager;
 	}
-
-	/**
-	 * @return array<mixed>
-	 */
-	public function oPOAuthTokenRevokeDataProvider() {
-		return [
-			[
-				'oldConfig' => [
-					'authorization_method' => Application::AUTH_METHOD_OAUTH,
-					'openproject_client_id' => 'op_client',
-					'openproject_client_secret' => 'op_client_secret',
-					'nc_oauth_client_id' => 'nc_client',
-				],
-				'newConfig' => [
-					'authorization_method' => null,
-					'openproject_client_id' => null,
-					'openproject_client_secret' => null,
-					'openproject_instance_url' => null,
-					'default_enable_navigation' => false,
-					'default_enable_unified_search' => false,
-				],
-				'configStatus' => false,
-				'mode' => 'reset',
-			],
-			[
-				'oldConfig' => [
-					'authorization_method' => Application::AUTH_METHOD_OAUTH,
-					'openproject_client_id' => 'op_client',
-					'openproject_client_secret' => 'op_client_secret',
-					'nc_oauth_client_id' => 'nc_client',
-				],
-				'newConfig' => [
-					'authorization_method' => Application::AUTH_METHOD_OAUTH,
-					'openproject_client_id' => 'client_id_changed',
-					'openproject_client_secret' => 'client_secret_changed',
-					'openproject_instance_url' => 'http://localhost:3000',
-					'default_enable_navigation' => true,
-					'default_enable_unified_search' => true,
-				],
-				'configStatus' => true,
-				'mode' => 'change',
-			]
-		];
-	}
-
-	/**
-	 * @param array<mixed> $oldConfig
-	 * @param array<mixed> $newConfig
-	 * @param bool $adminConfigStatus
-	 * @param string $mode
-	 *
-	 * @return void
-	 * @throws OpenprojectErrorException
-	 * @dataProvider oPOAuthTokenRevokeDataProvider
-	 */
-	public function testSetAdminConfigForOPOAuthTokenRevoke(array $oldConfig, array $newConfig, bool $adminConfigStatus, string $mode) {
-		$oldAdminConfig = [
-			'openproject_instance_url' => 'http://localhost:3000',
-			'default_enable_navigation' => true,
-			'default_enable_unified_search' => true,
-		];
-		$oldAdminConfig = array_merge($oldAdminConfig, $oldConfig);
-		$testUser = 'test101';
-		$userTokens = [
-			'admin' => 'admin_token',
-			$testUser => 'user_token',
-		];
-
-		$userManager = $this->checkForUsersCountBeforeTest();
-		$this->user1 = $userManager->createUser($testUser, $testUser);
-
-		$apiService = $this
-			->getMockBuilder(OpenProjectAPIService::class)
-			->disableOriginalConstructor()
-			->getMock();
-		$configMock = $this->getMockBuilder(IConfig::class)->getMock();
-		$oauthServiceMock = $this->createMock(OauthService::class);
-		$oauthSettingsControllerMock = $this->createMock('OCA\OAuth2\Controller\SettingsController');
-
-		if ($mode === "reset") {
-			$this->expectMethodCalls($configMock, 'deleteAppValue', [
-				[[Application::APP_ID, 'nc_oauth_client_id'], null],
-				[[Application::APP_ID, 'oPOAuthTokenRevokeStatus'], null],
-				[[Application::APP_ID, 'oPOAuthTokenRevokeStatus'], null],
-			], true);
-		} else {
-			$this->expectMethodCalls($configMock, 'deleteAppValue', [
-				[[Application::APP_ID, 'oPOAuthTokenRevokeStatus'], null],
-				[[Application::APP_ID, 'oPOAuthTokenRevokeStatus'], null],
-			], true);
-		}
-
-		$configMock
-			->method('getAppValue')
-			->willReturnMap([
-				[Application::APP_ID, 'openproject_instance_url', '', $oldAdminConfig['openproject_instance_url']],
-				[Application::APP_ID, 'authorization_method', '', $oldAdminConfig['authorization_method']],
-				[Application::APP_ID, 'openproject_client_id', '', $oldAdminConfig['openproject_client_id']],
-				[Application::APP_ID, 'openproject_client_secret', '', $oldAdminConfig['openproject_client_secret']],
-				[Application::APP_ID, 'nc_oauth_client_id', '', $oldAdminConfig['nc_oauth_client_id']],
-				[Application::APP_ID, 'oPOAuthTokenRevokeStatus', '', ''],
-			]);
-
-		$configMock
-			->method('setAppValue')
-			->willReturnMap([
-				[Application::APP_ID, 'authorization_method', $newConfig['authorization_method'], null],
-				[Application::APP_ID, 'openproject_client_id', $newConfig['openproject_client_id'], null],
-				[Application::APP_ID, 'openproject_client_secret', $newConfig['openproject_client_secret'], null],
-				[Application::APP_ID, 'openproject_instance_url', $newConfig['openproject_instance_url'], null],
-				[Application::APP_ID, 'default_enable_navigation', $newConfig['default_enable_navigation'], null],
-				[Application::APP_ID, 'default_enable_unified_search', $newConfig['default_enable_unified_search'], null],
-				[Application::APP_ID, 'oPOAuthTokenRevokeStatus', 'success', null]
-			]);
-
-		$configMock
-			->method('getUserValue')
-			->willReturnMap([
-				['admin', Application::APP_ID, 'token', '', $userTokens['admin']],
-				[$testUser, Application::APP_ID, 'token', '', $userTokens[$testUser]],
-			]);
-
-		$apiService
-			->expects($this->exactly(2))
-			->method('revokeUserOAuthToken')
-			->willReturnMap([
-				[$oldAdminConfig['openproject_instance_url'], $userTokens['admin'], $oldAdminConfig['openproject_client_id'], $oldAdminConfig['openproject_client_secret'], true],
-				[$oldAdminConfig['openproject_instance_url'], $userTokens[$testUser], $oldAdminConfig['openproject_client_id'], $oldAdminConfig['openproject_client_secret'], true],
-			]);
-
-		$configMock
-			->expects($this->exactly(12))
-			->method("deleteUserValue")
-			->willReturnMap([
-				['admin', Application::APP_ID, 'token', null],
-				['admin', Application::APP_ID, 'login', null],
-				['admin', Application::APP_ID, 'user_id', null],
-				['admin', Application::APP_ID, 'user_name', null],
-				['admin', Application::APP_ID, 'refresh_token', null],
-				['admin', Application::APP_ID, 'token_expires_at', null],
-				[$testUser, Application::APP_ID, 'token', null],
-				[$testUser, Application::APP_ID, 'login', null],
-				[$testUser, Application::APP_ID, 'user_id', null],
-				[$testUser, Application::APP_ID, 'user_name', null],
-				[$testUser, Application::APP_ID, 'refresh_token', null],
-				[$testUser, Application::APP_ID, 'token_expires_at', null],
-			]);
-
-		$constructArgs = $this->getConfigControllerConstructArgs([
-			'config' => $configMock,
-			'userManager' => $userManager,
-			'openprojectAPIService' => $apiService,
-			'oauthService' => $oauthServiceMock,
-			'settingsController' => $oauthSettingsControllerMock,
-			'userId' => 'test101'
-		]);
-		$configController = new ConfigController(...$constructArgs);
-
-		$result = $configController->setAdminConfig($newConfig);
-		$this->assertEquals(Http::STATUS_OK, $result->getStatus());
-		$data = $result->getData();
-		$this->assertArrayHasKey('status', $data);
-		$this->assertArrayHasKey('oPOAuthTokenRevokeStatus', $data);
-		$this->assertArrayHasKey('oPUserAppPassword', $data);
-	}
-
-	/**
-	 * @return array<mixed>
-	 */
-	public function oPOAuthTokenRevokeErrorDataProvider() {
-		$connectException = new ConnectException('Connection error', $this->createMock(RequestInterface::class));
-		$opException = new OpenprojectErrorException('Other error');
-		return [
-			["connection_error", $connectException, ['Error: Connection error', ['app' => 'integration_openproject']]],
-			["other_error", $opException, ['Error: Other error', ['app' => 'integration_openproject']]]
-		];
-	}
-
-
-	/**
-	 * @param string $errorCode
-	 * @param ConnectException|OpenprojectErrorException $exception
-	 * @param array<mixed> $errMessage
-	 *
-	 * @return void
-	 * @dataProvider oPOAuthTokenRevokeErrorDataProvider
-	 * @throws OpenprojectErrorException
-	 */
-	public function testOPOAuthTokenRevokeErrors($errorCode, $exception, $errMessage) {
-		$oldAdminConfig = [
-			'authorization_method' => Application::AUTH_METHOD_OAUTH,
-			'openproject_client_id' => 'some_old_client_id',
-			'openproject_client_secret' => 'some_old_client_secret',
-			'openproject_instance_url' => 'http://localhost:3000',
-		];
-		$newAdminConfig = [
-			'authorization_method' => '',
-			'openproject_client_id' => '',
-			'openproject_client_secret' => '',
-			'openproject_instance_url' => '',
-		];
-		$userTokens = [
-			'admin' => 'admin_token',
-		];
-		$userManager = $this->checkForUsersCountBeforeTest();
-		$apiService = $this
-			->getMockBuilder(OpenProjectAPIService::class)
-			->disableOriginalConstructor()
-			->getMock();
-		$configMock = $this->getMockBuilder(IConfig::class)->getMock();
-		$oauthServiceMock = $this->createMock(OauthService::class);
-		$oauthSettingsControllerMock = $this->createMock('OCA\OAuth2\Controller\SettingsController');
-		$loggerInterfaceMock = $this->createMock(LoggerInterface::class);
-
-		$this->expectMethodCalls($configMock, 'getAppValue', [
-			[[Application::APP_ID, 'openproject_instance_url', ''], $oldAdminConfig['openproject_instance_url']],
-			[[Application::APP_ID, 'authorization_method', ''], $oldAdminConfig['authorization_method']],
-			[[Application::APP_ID, 'openproject_client_id', ''], $oldAdminConfig['openproject_client_id']],
-			[[Application::APP_ID, 'openproject_client_secret', ''], $oldAdminConfig['openproject_client_secret']],
-			[[Application::APP_ID, 'nc_oauth_client_id', ''], ''],
-			[[Application::APP_ID, 'oPOAuthTokenRevokeStatus', ''], $errorCode],
-			[[Application::APP_ID, 'authorization_method', ''], Application::AUTH_METHOD_OAUTH],
-			[[Application::APP_ID, 'openproject_instance_url', ''], $newAdminConfig['openproject_instance_url']],
-			[[Application::APP_ID, 'fresh_project_folder_setup', ''], false],
-			[[Application::APP_ID, 'openproject_client_id', ''], $newAdminConfig['openproject_client_id']],
-			[[Application::APP_ID, 'openproject_client_secret', ''], $newAdminConfig['openproject_client_secret']],
-			[[Application::APP_ID, 'openproject_instance_url', ''], $newAdminConfig['openproject_instance_url']],
-		]);
-
-		$configMock
-			->expects($this->exactly(6))
-			->method('setAppValue')
-			->willReturnMap([
-				[Application::APP_ID, 'authorization_method', $newAdminConfig['authorization_method'], null],
-				[Application::APP_ID, 'openproject_client_id', $newAdminConfig['openproject_client_id'], null],
-				[Application::APP_ID, 'openproject_client_secret', $newAdminConfig['openproject_client_secret'], null],
-				[Application::APP_ID, 'openproject_instance_url', $newAdminConfig['openproject_instance_url'], null],
-				[Application::APP_ID, 'oPOAuthTokenRevokeStatus', $errorCode, null],
-				[Application::APP_ID, 'fresh_project_folder_setup', false, null],
-			]);
-
-		$configMock
-			->method('getUserValue')
-			->willReturnMap([
-				['admin', Application::APP_ID, 'token', '', $userTokens['admin']],
-			]);
-
-		$loggerInterfaceMock
-			->method("error")
-			->with(
-				$errMessage[0],
-				$errMessage[1]
-			);
-
-		$apiService
-			->expects($this->exactly(1))
-			->method('revokeUserOAuthToken')
-			->with(
-				'admin',
-				$oldAdminConfig['openproject_instance_url'],
-				$userTokens['admin'],
-				$oldAdminConfig['openproject_client_id'],
-				$oldAdminConfig['openproject_client_secret']
-			)
-			->willThrowException($exception);
-
-		$configMock
-			->expects($this->exactly(6))
-			->method("deleteUserValue")
-			->willReturnMap([
-				['admin', Application::APP_ID, 'token', null],
-				['admin', Application::APP_ID, 'login', null],
-				['admin', Application::APP_ID, 'user_id', null],
-				['admin', Application::APP_ID, 'user_name', null],
-				['admin', Application::APP_ID, 'refresh_token', null],
-				['admin', Application::APP_ID, 'token_expires_at', null],
-			]);
-
-		$this->expectMethodCalls($configMock, 'deleteAppValue', [
-			[[Application::APP_ID, 'oPOAuthTokenRevokeStatus'], null],
-			[[Application::APP_ID, 'oPOAuthTokenRevokeStatus'], null],
-		], true);
-
-		$constructArgs = $this->getConfigControllerConstructArgs([
-			'config' => $configMock,
-			'userManager' => $userManager,
-			'openprojectAPIService' => $apiService,
-			'loggerInterface' => $loggerInterfaceMock,
-			'oauthService' => $oauthServiceMock,
-			'settingsController' => $oauthSettingsControllerMock,
-			'userId' => 'admin'
-		]);
-		$configController = new ConfigController(...$constructArgs);
-
-		$result = $configController->setAdminConfig($newAdminConfig);
-		$this->assertEquals(Http::STATUS_OK, $result->getStatus());
-		$data = $result->getData();
-		$this->assertArrayHasKey('status', $data);
-		$this->assertEquals(false, $data['status']);
-		$this->assertArrayHasKey('oPOAuthTokenRevokeStatus', $data);
-		$this->assertEquals($errorCode, $data['oPOAuthTokenRevokeStatus']);
-	}
-
-	/**
-	 * @return void
-	 */
-	public function testOPOAuthTokenRevokeDoesNotOccurIfNoOPOAuthClientHasChanged() {
-		$oldAdminConfig = [
-			'authorization_method' => Application::AUTH_METHOD_OAUTH,
-			'openproject_client_id' => 'some_old_client_id',
-			'openproject_client_secret' => 'some_old_client_secret',
-			'openproject_instance_url' => 'http://localhost:3000',
-		];
-		$newAdminConfig = $oldAdminConfig;
-		$userManager = $this->checkForUsersCountBeforeTest();
-		$apiService = $this
-			->getMockBuilder(OpenProjectAPIService::class)
-			->disableOriginalConstructor()
-			->getMock();
-		$configMock = $this->getMockBuilder(IConfig::class)->getMock();
-		$oauthServiceMock = $this->createMock(OauthService::class);
-		$oauthSettingsControllerMock = $this->createMock('OCA\OAuth2\Controller\SettingsController');
-		$loggerInterfaceMock = $this->createMock(LoggerInterface::class);
-
-		$configMock
-			->method('getAppValue')
-			->willReturnMap([
-				[Application::APP_ID, 'openproject_instance_url', '', $oldAdminConfig['openproject_instance_url']],
-				[Application::APP_ID, 'authorization_method', '', $oldAdminConfig['authorization_method']],
-				[Application::APP_ID, 'openproject_client_id', '', $oldAdminConfig['openproject_client_id']],
-				[Application::APP_ID, 'openproject_client_secret', '', $oldAdminConfig['openproject_client_secret']],
-				[Application::APP_ID, 'oPOAuthTokenRevokeStatus', '', ''],
-			]);
-
-		$configMock
-			->expects($this->exactly(2))
-			->method('deleteAppValue')
-			->with(Application::APP_ID, 'oPOAuthTokenRevokeStatus');
-
-		$apiService
-			->expects($this->exactly(0))
-			->method('revokeUserOAuthToken');
-
-		$constructArgs = $this->getConfigControllerConstructArgs([
-			'config' => $configMock,
-			'userManager' => $userManager,
-			'openprojectAPIService' => $apiService,
-			'loggerInterface' => $loggerInterfaceMock,
-			'oauthService' => $oauthServiceMock,
-			'settingsController' => $oauthSettingsControllerMock,
-			'userId' => 'admin'
-		]);
-		$configController = new ConfigController(...$constructArgs);
-
-		$result = $configController->setAdminConfig($newAdminConfig);
-		$this->assertEquals(Http::STATUS_OK, $result->getStatus());
-		$data = $result->getData();
-		$this->assertArrayHasKey('status', $data);
-		$this->assertEquals(false, $data['status']);
-		$this->assertArrayHasKey('oPOAuthTokenRevokeStatus', $data);
-		$this->assertEquals("", $data['oPOAuthTokenRevokeStatus']);
-	}
-
 
 	public function testSetupIntegrationProjectFoldersSetUp():void {
 		$service = $this->getMockBuilder(OpenProjectAPIService::class)
@@ -1487,7 +1116,6 @@ class ConfigControllerTest extends TestCase {
 				['integration_openproject', 'oidc_provider', '', $oldCreds['oidc_provider']],
 				['integration_openproject', 'targeted_audience_client_id', '', $oldCreds['targeted_audience_client_id']],
 				['integration_openproject', 'nc_oauth_client_id', '', '123'],
-				['integration_openproject', 'oPOAuthTokenRevokeStatus', '', ''],
 				['integration_openproject', 'authorization_method', '', Application::AUTH_METHOD_OIDC],
 				['integration_openproject', 'oidc_provider', '', $credsToUpdate['oidc_provider']],
 				['integration_openproject', 'targeted_audience_client_id', '', $credsToUpdate['targeted_audience_client_id']],
@@ -1572,7 +1200,6 @@ class ConfigControllerTest extends TestCase {
 			[['integration_openproject', 'openproject_client_id', ''], $oldCreds['openproject_client_id']],
 			[['integration_openproject', 'openproject_client_secret', ''], $oldCreds['openproject_client_secret']],
 			[['integration_openproject', 'nc_oauth_client_id', ''], '123'],
-			[['integration_openproject', 'oPOAuthTokenRevokeStatus', ''], '123'],
 			[['integration_openproject', 'authorization_method', ''], Application::AUTH_METHOD_OAUTH],
 			[['integration_openproject', 'openproject_client_id', ''], $credsToUpdate['openproject_client_id']],
 			[['integration_openproject', 'openproject_client_secret', ''], $credsToUpdate['openproject_client_secret']],
@@ -1683,7 +1310,6 @@ class ConfigControllerTest extends TestCase {
 			[['integration_openproject', 'authorization_method', ''], $oldConfig['authorization_method']],
 			[['integration_openproject', 'oidc_provider', ''], $oldConfig['oidc_provider']],
 			[['integration_openproject', 'targeted_audience_client_id', ''], $oldConfig['targeted_audience_client_id']],
-			[['integration_openproject', 'oPOAuthTokenRevokeStatus', ''], ''],
 			[['integration_openproject', 'authorization_method', ''], $newConfig['authorization_method']],
 			[['integration_openproject', 'oidc_provider', ''], $newConfig['oidc_provider']],
 			[['integration_openproject', 'targeted_audience_client_id', ''], $newConfig['targeted_audience_client_id']],
