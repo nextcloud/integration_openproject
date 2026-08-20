@@ -38,7 +38,7 @@ concurrency:
   cancel-in-progress: true
 
 env:
-  NEXTCLOUD_VERSIONS: ${{ inputs.nextcloud_versions || '33 34 master' }}
+  NEXTCLOUD_VERSIONS: ${{ inputs.nextcloud_versions || '33 34' }}
   PHP_VERSIONS: ${{ inputs.php_versions || '8.3 8.4 8.5' }}
   DEFAULT_PHP_VERSION: '8.4'
   DEFAULT_DATABASE: 'mysql'
