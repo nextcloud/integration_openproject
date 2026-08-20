@@ -1,7 +1,7 @@
 # SPDX-FileCopyrightText: 2026 Jankari Tech Pvt. Ltd.
 # SPDX-License-Identifier: AGPL-3.0-or-later
 
-name: Nightly CI (Release 3.1)
+name: Nightly CI (Release 3.2)
 
 # workflow can be scheduled ONLY from DEFAULT branch
 # > This event will only trigger a workflow run if the workflow file is on the default branch.
@@ -15,7 +15,7 @@ jobs:
     uses: ./.github/workflows/nightly-shared.yaml
     secrets: inherit
     with:
-      branch: release/3.1
+      branch: release/3.2
       nextcloud_versions: '33 34'
       php_versions: '8.3 8.4 8.5'
       app_upgrade_nc_versions: '33 34'

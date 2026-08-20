@@ -15,6 +15,16 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ### Added
 
+### Fixed
+
+### Changed
+
+### Removed
+
+## 3.2.0-20260820-nightly
+
+### Added
+
 - Show new OpenProject work package display ID if available [#1071](https://github.com/nextcloud/integration_openproject/pull/1071)
 - Improve integration setup error messages [#1118](https://github.com/nextcloud/integration_openproject/pull/1118)
 
