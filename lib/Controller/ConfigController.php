@@ -8,14 +8,12 @@
 
 namespace OCA\OpenProject\Controller;
 
-use GuzzleHttp\Exception\ConnectException;
 use GuzzleHttp\Exception\GuzzleException;
 use InvalidArgumentException;
 use OC\User\NoUserException;
 use OCA\OAuth2\Controller\SettingsController;
 use OCA\OAuth2\Exceptions\ClientNotFoundException;
 use OCA\OpenProject\AppInfo\Application;
-use OCA\OpenProject\Exception\OpenprojectErrorException;
 use OCA\OpenProject\Exception\OpenprojectGroupfolderSetupConflictException;
 use OCA\OpenProject\Service\OauthService;
 use OCA\OpenProject\Service\OpenProjectAPIService;
@@ -245,6 +243,10 @@ class ConfigController extends Controller {
 			$oldAuthMethod === Application::AUTH_METHOD_OAUTH && key_exists('authorization_method', $values) &&
 			$values['authorization_method'] === Application::AUTH_METHOD_OIDC
 		);
+		$switchingOIDCToOAuth = (
+			$oldAuthMethod === Application::AUTH_METHOD_OIDC && key_exists('authorization_method', $values) &&
+			$values['authorization_method'] === Application::AUTH_METHOD_OAUTH
+		);
 
 		// determines if we are switching from "oidc" to "oauth2" auth method
 		$runningOIDCReset = false;
@@ -303,57 +305,18 @@ class ConfigController extends Controller {
 			}
 		}
 
-		$this->config->deleteAppValue(Application::APP_ID, 'oPOAuthTokenRevokeStatus');
 		$resetOpenProjectClient = ((key_exists('openproject_client_id', $values) && $values['openproject_client_id'] !== $oldClientId) ||
-						(key_exists('openproject_client_secret', $values) && $values['openproject_client_secret'] !== $oldClientSecret));
-		if (
-			// when the OP client information has changed
-			(!$runningFullResetWithOIDCAuth && $resetOpenProjectClient) ||
-			// when the OP client information is reset
-			$runningFullResetWithOAuth2Auth ||
-			$switchingOAuthToOIDC
-		) {
-			$this->userManager->callForAllUsers(function (IUser $user) use (
-				$oldOpenProjectOauthUrl, $oldClientId, $oldClientSecret
-			) {
-				$userUID = $user->getUID();
-				$accessToken = $this->config->getUserValue($userUID, Application::APP_ID, 'token', '');
+			(key_exists('openproject_client_secret', $values) && $values['openproject_client_secret'] !== $oldClientSecret));
 
-				// revoke is possible only when the user has the access token stored in the database
-				// plus, for a successful revoke, the old OP client information is also needed
-				// there may be cases where the software only have host url saved but not the client information
-				// in this case, the token is not revoked and just cleared if present in the database
-				if ($accessToken && $oldOpenProjectOauthUrl && $oldClientId && $oldClientSecret) {
-					try {
-						$this->openprojectAPIService->revokeUserOAuthToken(
-							$userUID,
-							$oldOpenProjectOauthUrl,
-							$accessToken,
-							$oldClientId,
-							$oldClientSecret
-						);
-						if (
-							$this->config->getAppValue(Application::APP_ID, 'oPOAuthTokenRevokeStatus', '') === ''
-						) {
-							$this->config->setAppValue(Application::APP_ID, 'oPOAuthTokenRevokeStatus', 'success');
-						}
-					} catch (ConnectException $e) {
-						$this->config->setAppValue(Application::APP_ID, 'oPOAuthTokenRevokeStatus', 'connection_error');
-						$this->logger->error(
-							'Error: ' . $e->getMessage(),
-							['app' => Application::APP_ID]
-						);
-					} catch (OpenprojectErrorException $e) {
-						$this->config->setAppValue(Application::APP_ID, 'oPOAuthTokenRevokeStatus', 'other_error');
-						$this->logger->error(
-							'Error: ' . $e->getMessage(),
-							['app' => Application::APP_ID]
-						);
-					}
-				}
-				$this->clearUserInfo($userUID);
+		if ($resetOpenProjectClient || $runningFullResetWithOAuth2Auth || $switchingOAuthToOIDC) {
+			$this->userManager->callForAllUsers(function (IUser $user) {
+				$this->clearUserInfo($user->getUID());
 			});
-		} elseif ($runningFullResetWithOIDCAuth || $runningOIDCReset) {
+
+			if ($switchingOAuthToOIDC) {
+				$this->resetOauth2Configs();
+			}
+		} elseif ($runningFullResetWithOIDCAuth || $runningOIDCReset || $switchingOIDCToOAuth) {
 			$this->resetOIDCConfigs();
 			$this->userManager->callForAllUsers(function (IUser $user) {
 				$this->clearUserInfo($user->getUID());
@@ -373,25 +336,8 @@ class ConfigController extends Controller {
 			$this->config->setAppValue(Application::APP_ID, 'fresh_project_folder_setup', "0");
 		}
 
-		// when switching from "oauth2" to "oidc" authorization method
-		if ($switchingOAuthToOIDC) {
-			$this->resetOauth2Configs();
-		}
-
-		// when switching from "oidc" to "oauth2" authorization method
-		if (key_exists('authorization_method', $values) &&
-			$values['authorization_method'] === Application::AUTH_METHOD_OAUTH && $runningOIDCReset) {
-			$this->resetOIDCConfigs();
-		}
-
-		// if the revoke has failed at least once, the last status is stored in the database
-		// this is not a neat way to give proper information about the revoke status
-		// TODO: find way to report every user's revoke status
-		$oPOAuthTokenRevokeStatus = $this->config->getAppValue(Application::APP_ID, 'oPOAuthTokenRevokeStatus', '');
-		$this->config->deleteAppValue(Application::APP_ID, 'oPOAuthTokenRevokeStatus');
 		return [
 			"status" => OpenProjectAPIService::isAdminConfigOk($this->config),
-			"oPOAuthTokenRevokeStatus" => $oPOAuthTokenRevokeStatus,
 			"oPUserAppPassword" => $appPassword,
 		];
 	}
@@ -654,9 +600,6 @@ class ConfigController extends Controller {
 				$response['status'] = OpenProjectAPIService::isAdminConfigOk($this->config);
 			}
 
-			if ($setup['oPOAuthTokenRevokeStatus']) {
-				$response['openproject_revocation_status'] = $setup['oPOAuthTokenRevokeStatus'];
-			}
 			if ($setup['oPUserAppPassword']) {
 				$response['openproject_user_app_password'] = $setup['oPUserAppPassword'];
 			}
@@ -716,9 +659,6 @@ class ConfigController extends Controller {
 				$response['status'] = OpenProjectAPIService::isAdminConfigOk($this->config);
 			}
 
-			if ($setup['oPOAuthTokenRevokeStatus']) {
-				$response['openproject_revocation_status'] = $setup['oPOAuthTokenRevokeStatus'];
-			}
 			if ($setup['oPUserAppPassword']) {
 				$response['openproject_user_app_password'] = $setup['oPUserAppPassword'];
 			}
@@ -752,11 +692,8 @@ class ConfigController extends Controller {
 	 */
 	public function resetIntegration(): DataResponse {
 		try {
-			$status = $this->setIntegrationConfig($this->settingsService->getDefaultSettings());
+			$this->setIntegrationConfig($this->settingsService->getDefaultSettings());
 			$result = ["status" => true];
-			if ($status['oPOAuthTokenRevokeStatus'] !== '') {
-				$result['openproject_revocation_status'] = $status['oPOAuthTokenRevokeStatus'];
-			}
 			return new DataResponse($result);
 		} catch (\Exception $e) {
 			return new DataResponse([
