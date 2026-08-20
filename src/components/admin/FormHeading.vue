@@ -7,16 +7,16 @@
 	<div class="form-heading"
 		:class="{'disabled': isDisabled}">
 		<div v-if="isProjectFolderSetupHeading && isSetupCompleteWithoutProjectFolders" class="setup-complete-without-project-folders">
-			<MinusThickIcon :fill-color="isDarkTheme ? '#000000' : '#FFFFFF'" :size="12" />
+			<MinusThickIcon class="inner-icon-minus" :size="12" />
 		</div>
 		<div v-else-if="hasError" class="project-folder-setup-error">
-			<ExclamationThickIcon fill-color="#FFFFFF" :size="12" />
+			<ExclamationThickIcon class="inner-icon" :size="12" />
 		</div>
 		<div v-else-if="showEncryptionWarningForGroupFolders" class="project-folder-setup-warning">
-			<ExclamationThickIcon fill-color="#FFFFFF" :size="12" />
+			<ExclamationThickIcon class="inner-icon" :size="12" />
 		</div>
 		<div v-else-if="isComplete" class="complete">
-			<CheckBoldIcon fill-color="#FFFFFF" :size="12" />
+			<CheckBoldIcon class="inner-icon" :size="12" />
 		</div>
 		<div v-else
 			class="index"
@@ -94,6 +94,14 @@ export default {
 	justify-content: start;
 	align-items: center;
 	padding: 15px 0;
+
+	.inner-icon {
+		color: var(--color-primary-text);
+	}
+
+	.inner-icon-minus {
+		filter: invert(100%);
+	}
 
 	.green-text {
 		color: var(--color-text-success,var(--color-success));

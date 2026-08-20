@@ -28,6 +28,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ### Changed
 
 - Update npm dependencies [#1123](https://github.com/nextcloud/integration_openproject/pull/1123)
+- Migrate to Vue 3 and @nextcloud/vue v9 [#1136](https://github.com/nextcloud/integration_openproject/pull/1136)
 
 ### Removed
 

@@ -39,7 +39,6 @@ import { generateUrl } from '@nextcloud/router'
 import axios from '@nextcloud/axios'
 import AlertCircleOutline from 'vue-material-design-icons/AlertCircleOutline.vue'
 import { showError, showSuccess } from '@nextcloud/dialogs'
-import { translate as t } from '@nextcloud/l10n'
 
 export default {
 	name: 'TermsOfServiceUnsigned',

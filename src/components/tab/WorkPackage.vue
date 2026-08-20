@@ -188,7 +188,6 @@ export default {
 					rgb[i] = +rgb[i]
 				}
 				rgb[3] = 1
-				// eslint-disable-next-line no-cond-assign
 			} else if (rgbaMatch !== null) {
 				rgb = rgbaMatch.slice(1, 5)
 				for (i = _j = 0; _j <= 3; i = ++_j) {

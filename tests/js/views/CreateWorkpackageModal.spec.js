@@ -1,0 +1,1027 @@
+/* jshint esversion: 8 */
+
+/**
+ * SPDX-FileCopyrightText: 2023-2024 Jankari Tech Pvt. Ltd.
+ * SPDX-License-Identifier: AGPL-3.0-or-later
+ */
+
+import { mount } from '@vue/test-utils'
+import { nextTick } from 'vue'
+import { describe, expect, it, beforeEach, afterEach, vi } from 'vitest'
+import flushPromises from 'flush-promises'
+import util from 'util'
+import axios from '@nextcloud/axios'
+import { generateOcsUrl } from '@nextcloud/router'
+
+import availableProjectsResponse from '../fixtures/openprojectAvailableProjectResponse.json'
+import availableProjectsResponseAfterSearch from '../fixtures/openprojectAvailableProjectResponseAfterSearch.json'
+import availableProjectsOption from '../fixtures/availableProjectOptions.json'
+import workpackageFormValidationProjectSelected from '../fixtures/workpackageFormValidationProjectSelectedResponse.json'
+import workpackageFormValidationTypeChanged from '../fixtures/workpackageFormValidationTypeChanged.json'
+import availableProjectAssignees from '../fixtures/availableProjectAssigneesResponse.json'
+import workpackageCreatedResponse from '../fixtures/workPackageSuccessfulCreationResponse.json'
+import requiredTypeResponse from '../fixtures/formValidationResponseRequiredType.json'
+import CreateWorkPackageModal from '../../../src/views/CreateWorkPackageModal.vue'
+import { messages } from '../../../src/constants/messages.js'
+import { toMatchSerializedSnapshot } from '../utils.js'
+
+vi.mock(import('@nextcloud/dialogs'), () => ({
+	getLanguage: vi.fn(() => ''),
+	showError: vi.fn(),
+	showSuccess: vi.fn(),
+}))
+vi.mock(import('@nextcloud/initial-state'), async (importOriginal) => {
+	const originalModule = await importOriginal()
+	return {
+		__esModule: true,
+		...originalModule,
+		default: vi.fn(),
+		loadState: vi.fn(() => {
+			return {
+				openproject_instance_url: 'https://openproject.example.com',
+				version: '32',
+			}
+		}),
+	}
+})
+
+// url
+const projectsUrl = generateOcsUrl('/apps/integration_openproject/api/v1/projects')
+const workPackageFormUrl = generateOcsUrl('/apps/integration_openproject/api/v1/projects/%s/work-packages/form')
+const availableAssigneesUrl = generateOcsUrl('/apps/integration_openproject/api/v1/projects/%s/available-assignees')
+const createWorkPackageUrl = generateOcsUrl('/apps/integration_openproject/api/v1/create/work-packages')
+
+describe('CreateWorkPackageModal.vue', () => {
+	const createWorkPackageSelector = '.create-workpackage-modal'
+	const projectSelectSelector = '[data-test-id="available-projects"]'
+	const firstProjectSelector = '[data-test-id="available-projects"] [role="listbox"] > li'
+	const firstTypeSelector = '[data-test-id="available-types"] [role="listbox"] > li'
+	const firstStatusSelector = '[data-test-id="available-statuses"] [role="listbox"] > li'
+	const firstAssigneeSelector = '[data-test-id="available-assignees"] [role="listbox"] > li'
+	const statusSelectSelector = '[data-test-id="available-statuses"]'
+	const typeSelectSelector = '[data-test-id="available-types"]'
+	const assigneesSelectSelector = '[data-test-id="available-assignees"]'
+	const projectInputField = '#createWorkPackageInput'
+	const projectOptionsSelector = '[data-test-id="available-projects"] .vs__dropdown-menu .vs__dropdown-option'
+	const typeOptionsSelector = '[data-test-id="available-types"] .vs__dropdown-menu .vs__dropdown-option'
+	const typeInputFieldSelector = '#createWorkPackageTypeInput'
+	const statusInputFieldSelector = '#createWorkPackageStatusInput'
+	const assigneeInputFieldSelector = '#createWorkPackageAssigneeInput'
+	const createWorkpackageButtonSelector = '.create-workpackage-form--button--create'
+	const validationErrorSelector = '.validation-error'
+	const validationErrorProjectSelector = '.multiple-error-project'
+	const validationErrorSubjectSelector = '.multiple-error-subject'
+	const validationErrorTypeSelector = '.type-error'
+	const projectClearButtonSelector = '[data-test-id="available-projects"] .vs__clear'
+	let wrapper = null
+
+	beforeEach(() => {
+		vi.spyOn(document, 'getElementById').mockReturnValue({
+			blur: vi.fn(), // Mock the blur function
+		})
+	})
+	afterEach(async () => {
+		wrapper?.unmount()
+	})
+
+	describe('workpackage creation form', () => {
+		let axiosSpy
+		afterEach(() => {
+			axiosSpy.mockRestore()
+		})
+
+		it('should display available projects in the project dropdown', async () => {
+			axiosSpy = vi.spyOn(axios, 'get')
+				.mockImplementationOnce(() => sendOCSResponse(availableProjectsResponse))
+			wrapper = mountWrapper()
+			expect(wrapper.find(createWorkPackageSelector).isVisible()).toBe(true)
+			expect(axiosSpy).toHaveBeenCalledWith(projectsUrl, {})
+			await wrapper.find(projectInputField).setValue(' ')
+			toMatchSerializedSnapshot(wrapper.find(projectSelectSelector).html())
+		})
+
+		it('should display projects even when parent project is unknown', async () => {
+			const projectsListSelector = 'transition-stub > ul > li'
+			const projectItemSelector = `${projectsListSelector}:nth-child(%s) > span`
+
+			axiosSpy = vi.spyOn(axios, 'get')
+				.mockImplementationOnce(() => sendOCSResponse({
+					4: {
+						name: 'Child Project',
+						id: 4,
+						identifier: 'child-project',
+						_links: {
+							self: {
+								href: '/api/v3/projects/4',
+								title: 'Child Project',
+							},
+							parent: {
+								href: 'urn:openproject-org:api:v3:undisclosed',
+								title: 'Undisclosed - The parent is invisible because of lacking permissions.',
+							},
+						},
+					},
+					5: {
+						name: 'Another Project',
+						id: 5,
+						identifier: 'another-project',
+						_links: {
+							self: {
+								href: '/api/v3/projects/5',
+								title: 'Another Project',
+							},
+							parent: {
+								href: '/api/v3/projects/1',
+								title: 'Parent Project',
+							},
+						},
+					},
+				}))
+			wrapper = mountWrapper()
+			expect(wrapper.find(createWorkPackageSelector).isVisible()).toBe(true)
+			expect(axiosSpy).toHaveBeenCalledWith(projectsUrl, {})
+			await wrapper.find(projectInputField).setValue(' ')
+			expect(wrapper.find(projectsListSelector).exists()).toBe(true)
+			expect(wrapper.find(util.format(projectItemSelector, 1)).text()).toBe('Another Project')
+			expect(wrapper.find(util.format(projectItemSelector, 2)).text()).toBe('Child Project')
+		})
+
+		describe('search projects with query', () => {
+			let axiosSpy, inputField
+			beforeEach(async () => {
+				axiosSpy = vi.spyOn(axios, 'get')
+					.mockImplementationOnce(() => sendOCSResponse(availableProjectsResponse))
+				wrapper = mountWrapper()
+				expect(wrapper.find(createWorkPackageSelector).isVisible()).toBe(true)
+				expect(axiosSpy).toHaveBeenCalledWith(projectsUrl, {})
+				inputField = wrapper.find(projectInputField)
+				await inputField.setValue('Sc')
+			})
+			it('should send a search query request when searched project is not found', async () => {
+				await inputField.setValue('Scw')
+				// for a search debounce request, minimum 500 ms wait is required
+				await new Promise(resolve => setTimeout(resolve, 500))
+				expect(axiosSpy).toHaveBeenCalledWith(projectsUrl,
+					{
+						params: {
+							searchQuery: 'Scw',
+						},
+					},
+				)
+			})
+
+			it('should show "No matching work projects found" when the searched project is not found', async () => {
+				const axiosSpyWithSearchQuery = vi.spyOn(axios, 'get')
+					.mockImplementationOnce(() => sendOCSResponse({}))
+				await inputField.setValue('Scw')
+				expect(wrapper.vm.isFetchingProjectsFromOpenProjectWithQuery).toBe(true)
+				// for a search debounce request, minimum 500 ms wait is required
+				await new Promise(resolve => setTimeout(resolve, 500))
+				expect(axiosSpyWithSearchQuery).toHaveBeenCalledWith(projectsUrl,
+					{
+						params: {
+							searchQuery: 'Scw',
+						},
+					},
+				)
+				const searchResult = wrapper.find(firstProjectSelector)
+				expect(searchResult.text()).toBe(messages.noMachingWorkProjectsFound)
+			})
+
+			it.each([
+				{
+					fieldName: 'type',
+					inputSelector: typeInputFieldSelector,
+					resultSelector: firstTypeSelector,
+				},
+				{
+					fieldName: 'status',
+					inputSelector: statusInputFieldSelector,
+					resultSelector: firstStatusSelector,
+				},
+				{
+					fieldName: 'assignee',
+					inputSelector: assigneeInputFieldSelector,
+					resultSelector: firstAssigneeSelector,
+				},
+			])('should show "Please select a project" on initial state when the $fieldName is not found', async ({ inputSelector, resultSelector }) => {
+				const inputField = wrapper.find(inputSelector)
+				await inputField.setValue(' ')
+				await inputField.trigger('focus')
+				const searchResult = wrapper.find(resultSelector)
+				expect(searchResult.text()).toBe(messages.pleaseSelectProject)
+			})
+
+			it('should auto clear project if there is "No matching work projects found"', async () => {
+				const axiosSpyWithSearchQuery = vi.spyOn(axios, 'get')
+					.mockImplementationOnce(() => sendOCSResponse({}))
+				await inputField.setValue('Scw')
+				expect(wrapper.vm.isFetchingProjectsFromOpenProjectWithQuery).toBe(true)
+
+				// for a search debounce request, minimum 500 ms wait is required
+				await new Promise(resolve => setTimeout(resolve, 500))
+				expect(axiosSpyWithSearchQuery).toHaveBeenCalledWith(projectsUrl,
+					{
+						params: {
+							searchQuery: 'Scw',
+						},
+					},
+				)
+				const searchResult = wrapper.find(firstProjectSelector)
+				expect(searchResult.text()).toBe(messages.noMachingWorkProjectsFound)
+				expect(inputField.element.value).toBe('Scw')
+
+				// Trigger blur event (user moves to another field)
+				await inputField.trigger('blur')
+				await nextTick()
+				expect(inputField.element.value).toBe('')
+			})
+
+			it('should fetch projects when not found in initial available projects', async () => {
+				const axiosSpyWithSearchQuery = vi.spyOn(axios, 'get')
+					.mockImplementationOnce(() => sendOCSResponse(availableProjectsResponseAfterSearch))
+				const inputField = wrapper.find(projectInputField)
+				await inputField.setValue('se')
+				// for a search debounce request, minimum 500 ms wait is required
+				await new Promise(resolve => setTimeout(resolve, 500))
+				expect(axiosSpyWithSearchQuery).toHaveBeenCalledWith(projectsUrl,
+					{
+						params: {
+							searchQuery: 'se',
+						},
+					},
+				)
+				const searchResult = wrapper.find(firstProjectSelector)
+				expect(searchResult.text()).toBe('searchedProject')
+			})
+
+			it('should set available projects to initially fetched projects when nothing searched', async () => {
+				await inputField.setValue(' ')
+				const searchResult = wrapper.findAll(projectOptionsSelector)
+				// the initially fetched available projects include 7 openproject projects
+				expect(searchResult).toHaveLength(7)
+			})
+		})
+
+		it('should set the available types, status and assignee when a project is selected', async () => {
+			const formValidationBody = {
+				body: {
+					_links: {
+						assignee: {
+							href: null,
+							title: null,
+						},
+						project: {
+							href: '/api/v3/projects/2',
+							title: 'Scrum project',
+						},
+						status: {
+							href: '/api/v3/statuses/1',
+							title: 'New',
+						},
+						type: {
+							href: '/api/v3/types/1',
+							title: 'Task',
+						},
+					},
+					subject: '',
+				},
+			}
+
+			vi.spyOn(axios, 'get')
+				.mockImplementationOnce(() => sendOCSResponse(availableProjectsResponse))
+			axiosSpy = vi.spyOn(axios, 'post')
+				.mockImplementationOnce(() => sendOCSResponse(workpackageFormValidationProjectSelected))
+			const assigneeAxiosSpy = vi.spyOn(axios, 'get')
+				.mockImplementationOnce(() => sendOCSResponse(availableProjectAssignees))
+			wrapper = mountWrapper({
+				noDropAvailableProjectDropDown: false,
+			})
+			wrapper.vm.mappedProjects = vi.fn(() => {
+				return availableProjectsOption
+			})
+			const inputField = wrapper.find(projectInputField)
+			await inputField.setValue('Scrum')
+			await wrapper.find(projectOptionsSelector).trigger('click')
+			await nextTick()
+			await nextTick()
+			expect(axiosSpy).toHaveBeenCalledWith(util.format(workPackageFormUrl, 2), formValidationBody)
+			expect(assigneeAxiosSpy).toHaveBeenCalledWith(util.format(availableAssigneesUrl, 2))
+			await nextTick()
+			await wrapper.find(typeInputFieldSelector).setValue(' ')
+			await nextTick()
+			toMatchSerializedSnapshot(wrapper.find(typeSelectSelector).html())
+			await wrapper.find(statusInputFieldSelector).setValue(' ')
+			await nextTick()
+			toMatchSerializedSnapshot(wrapper.find(statusSelectSelector).html())
+			await wrapper.find(assigneeInputFieldSelector).setValue(' ')
+			await nextTick()
+			toMatchSerializedSnapshot(wrapper.find(assigneesSelectSelector).html())
+		})
+
+		it('should send the form validation request when type is changed', async () => {
+			const formValidationBody = {
+				body: {
+					_links: {
+						assignee: {
+							href: null,
+							title: null,
+						},
+						project: {
+							href: '/api/v3/projects/2',
+							title: 'Scrum project',
+						},
+						status: {
+							href: '/api/v3/statuses/1',
+							title: 'New',
+						},
+						type: {
+							href: '/api/v3/types/2',
+							title: 'Milestone',
+						},
+					},
+					subject: '',
+				},
+			}
+			const allowedTypes = [
+				{
+					self: {
+						href: '/api/v3/types/1',
+						title: 'Task',
+					},
+					label: 'Task',
+				},
+				{
+					self: {
+						href: '/api/v3/types/2',
+						title: 'Milestone',
+					},
+					label: 'Milestone',
+				},
+				{
+					self: {
+						href: '/api/v3/types/3',
+						title: 'Phase',
+					},
+					label: 'Phase',
+				},
+				{
+					self: {
+						href: '/api/v3/types/5',
+						title: 'Epic',
+					},
+					label: 'Epic',
+				},
+				{
+					self: {
+						href: '/api/v3/types/6',
+						title: 'User story',
+					},
+					label: 'User story',
+				},
+				{
+					self: {
+						href: '/api/v3/types/7',
+						title: 'Bug',
+					},
+					label: 'Bug',
+				},
+			]
+			const availableStatusBefore = [
+				{
+					self: {
+						href: '/api/v3/statuses/1',
+						title: 'New',
+					},
+					label: 'New',
+				},
+				{
+					self: {
+						href: '/api/v3/statuses/7',
+						title: 'In progress',
+					},
+					label: 'In progress',
+				},
+				{
+					self: {
+						href: '/api/v3/statuses/12',
+						title: 'Closed',
+					},
+					label: 'Closed',
+				},
+				{
+					self: {
+						href: '/api/v3/statuses/13',
+						title: 'On hold',
+					},
+					label: 'On hold',
+				},
+				{
+					self: {
+						href: '/api/v3/statuses/14',
+						title: 'Rejected',
+					},
+					label: 'Rejected',
+				},
+			]
+			const axiosSpy = vi.spyOn(axios, 'post')
+				.mockImplementationOnce(() => sendOCSResponse(workpackageFormValidationTypeChanged))
+			wrapper = mountWrapper({
+				allowedStatues: availableStatusBefore,
+				allowedTypes,
+				project: {
+					self: {
+						href: '/api/v3/projects/2',
+						title: 'Scrum project',
+					},
+					label: '',
+					children: [],
+				},
+				projectId: 2,
+			})
+			wrapper.vm.mappedProjects = vi.fn(() => {
+				return availableProjectsOption
+			})
+			await wrapper.find(typeInputFieldSelector).setValue('Milest')
+			await wrapper.find(typeOptionsSelector).trigger('click')
+			await nextTick()
+			expect(axiosSpy).toHaveBeenCalledWith(util.format(workPackageFormUrl, 2), formValidationBody)
+			// one thing to note is the statues in snapshot should not match the statuses defined in variable availableStatusBefore
+			await wrapper.find(statusInputFieldSelector).setValue(' ')
+			toMatchSerializedSnapshot(wrapper.find(statusSelectSelector).html())
+		})
+
+		it.each([
+			['should show error if the subject is empty',
+				{
+					project: {
+						self: {
+							href: '/api/v3/projects/2',
+							title: 'Scrum project',
+						},
+						label: '',
+						children: [],
+					},
+					projectId: 2,
+					subject: '',
+					data: "{\"_type\":\"Error\",\"errorIdentifier\":\"urn:openproject-org:api:v3:errors:PropertyConstraintViolation\",\"message\":\"Subject can't be blank.\",\"_embedded\":{\"details\":{\"attribute\":\"subject\"}}}",
+					errorMessage: "Subject can't be blank.",
+				}],
+			['should show error if the project is empty',
+				{
+					project: {
+						self: {
+							href: null,
+							title: null,
+						},
+						label: '',
+						children: [],
+					},
+					projectId: null,
+					subject: 'this is a workpackage',
+					data: "{\"_type\":\"Error\",\"errorIdentifier\":\"urn:openproject-org:api:v3:errors:PropertyConstraintViolation\",\"message\":\"Project can't be blank.\",\"_embedded\":{\"details\":{\"attribute\":\"project\"}}}",
+					errorMessage: "Project can't be blank.",
+				}],
+		])('%s', async (name, expectedErrorDetails) => {
+			const createWorkpackageBody = {
+				body: {
+					_links: {
+						type: {
+							href: '/api/v3/types/1',
+							title: 'Task',
+						},
+						status: {
+							href: '/api/v3/statuses/1',
+							title: 'New',
+						},
+						assignee: {
+							href: null,
+							title: null,
+						},
+						project: expectedErrorDetails.project.self,
+					},
+					subject: expectedErrorDetails.subject,
+					description: {
+						format: 'markdown',
+						raw: '',
+						html: '',
+					},
+				},
+			}
+			vi.spyOn(axios, 'get')
+				.mockImplementationOnce(() => sendOCSResponse(availableProjectsResponse))
+			axiosSpy = vi.spyOn(axios, 'post')
+				.mockImplementationOnce(() => sendOCSResponse(expectedErrorDetails.data, 422))
+			wrapper = mountWrapper({
+				project: expectedErrorDetails.project,
+				projectId: expectedErrorDetails.projectId,
+				subject: expectedErrorDetails.subject,
+			})
+			await wrapper.find(createWorkpackageButtonSelector).trigger('click')
+			await nextTick()
+			expect(axiosSpy).toHaveBeenCalledWith(createWorkPackageUrl, createWorkpackageBody)
+			const error = wrapper.find(validationErrorSelector)
+			expect(error.isVisible()).toBe(true)
+			expect(error.text()).toBe(expectedErrorDetails.errorMessage)
+		})
+
+		it('should show error if both project and subject are empty', async () => {
+			const createWorkpackageBody = {
+				body: {
+					_links: {
+						type: {
+							href: '/api/v3/types/1',
+							title: 'Task',
+						},
+						status: {
+							href: '/api/v3/statuses/1',
+							title: 'New',
+						},
+						assignee: {
+							href: null,
+							title: null,
+						},
+						project: {
+							href: null,
+							title: null,
+						},
+					},
+					subject: '',
+					description: {
+						format: 'markdown',
+						raw: '',
+						html: '',
+					},
+				},
+			}
+			vi.spyOn(axios, 'get')
+				.mockImplementationOnce(() => sendOCSResponse(availableProjectsResponse))
+			axiosSpy = vi.spyOn(axios, 'post')
+				.mockImplementationOnce(() => sendOCSResponse("{\"_type\":\"Error\",\"errorIdentifier\":\"urn:openproject-org:api:v3:errors:MultipleErrors\",\"message\":\"Multiple field constraints have been violated.\",\"_embedded\":{\"errors\":[{\"_type\":\"Error\",\"errorIdentifier\":\"urn:openproject-org:api:v3:errors:PropertyConstraintViolation\",\"message\":\"Subject can't be blank.\",\"_embedded\":{\"details\":{\"attribute\":\"subject\"}}},{\"_type\":\"Error\",\"errorIdentifier\":\"urn:openproject-org:api:v3:errors:PropertyConstraintViolation\",\"message\":\"Project can't be blank.\",\"_embedded\":{\"details\":{\"attribute\":\"project\"}}}]}}", 422))
+			wrapper = mountWrapper()
+			await wrapper.find(createWorkpackageButtonSelector).trigger('click')
+			await nextTick()
+			expect(axiosSpy).toHaveBeenCalledWith(createWorkPackageUrl, createWorkpackageBody)
+			const projectError = wrapper.find(validationErrorProjectSelector)
+			expect(projectError.isVisible()).toBe(true)
+			expect(projectError.text()).toBe("Project can't be blank.")
+			const subjectError = wrapper.find(validationErrorSubjectSelector)
+			expect(subjectError.isVisible()).toBe(true)
+			expect(subjectError.text()).toBe("Subject can't be blank.")
+		})
+
+		it('should not change description template once edited (changed)', async () => {
+			vi.spyOn(axios, 'get')
+				.mockImplementationOnce(() => sendOCSResponse(availableProjectsResponse))
+			const axiosSpyWorkPackageValidationForm = vi.spyOn(axios, 'post')
+				.mockImplementationOnce(() => sendOCSResponse(workpackageFormValidationProjectSelected))
+			const assigneeAxiosSpy = vi.spyOn(axios, 'get')
+				.mockImplementationOnce(() => sendOCSResponse(availableProjectAssignees))
+
+			wrapper = mountWrapper({
+				project: {
+					self: {
+						href: '/api/v3/projects/4',
+						title: '[dev] Large',
+					},
+					label: '[dev] Large',
+					children: [],
+				},
+				type: {
+					self: {
+						href: '/api/v3/types/1',
+						title: 'Task',
+					},
+					label: 'Task',
+				},
+				status: {
+					self: {
+						href: '/api/v3/statuses/1',
+						title: 'New',
+					},
+					label: 'New',
+				},
+				subject: 'This is a workpackage',
+				description: {
+					format: 'markdown',
+					raw: 'New task template',
+					html: '',
+				},
+				previousDescriptionTemplate: 'New task template',
+				isDescriptionTemplateChanged: false,
+			})
+			// change the description template
+			await wrapper.setData({
+				description: {
+					format: 'markdown',
+					raw: 'New task template has been changed',
+					html: '',
+				},
+			})
+			// now switching to another project or validating form again should not change the value of the description since it was changed or edited
+			wrapper.vm.validateWorkPackageForm(2, true, true)
+			expect(axiosSpyWorkPackageValidationForm).toHaveBeenCalledTimes(1)
+			expect(assigneeAxiosSpy).toHaveBeenCalledTimes(1)
+			expect(wrapper.vm.description.raw).toBe('New task template has been changed')
+		})
+
+		it('should change description when template is not edited or (changed)', async () => {
+			vi.spyOn(axios, 'get')
+				.mockImplementationOnce(() => sendOCSResponse(availableProjectsResponse))
+			const axiosSpyWorkPackageValidationForm = vi.spyOn(axios, 'post')
+				.mockImplementationOnce(() => sendOCSResponse(workpackageFormValidationProjectSelected))
+			const assigneeAxiosSpy = vi.spyOn(axios, 'get')
+				.mockImplementationOnce(() => sendOCSResponse(availableProjectAssignees))
+
+			wrapper = mountWrapper({
+				project: {
+					self: {
+						href: '/api/v3/projects/4',
+						title: '[dev] Large',
+					},
+					label: '[dev] Large',
+					children: [],
+				},
+				type: {
+					self: {
+						href: '/api/v3/types/1',
+						title: 'Task',
+					},
+					label: 'Task',
+				},
+				status: {
+					self: {
+						href: '/api/v3/statuses/1',
+						title: 'New',
+					},
+					label: 'New',
+				},
+				subject: 'This is a workpackage',
+				description: {
+					format: 'markdown',
+					raw: 'Previous template',
+					html: '',
+				},
+				previousDescriptionTemplate: 'Previous template',
+				isDescriptionTemplateChanged: false,
+			})
+			wrapper.vm.validateWorkPackageForm(2, false, true)
+			expect(axiosSpyWorkPackageValidationForm).toHaveBeenCalledTimes(1)
+			expect(assigneeAxiosSpy).toHaveBeenCalledTimes(1)
+			await nextTick()
+			expect(wrapper.vm.description.raw).toBe('Default New task template')
+		})
+
+		it('should empty the type if that type is not available for the selected project', async () => {
+			vi.spyOn(axios, 'get')
+				.mockImplementationOnce(() => sendOCSResponse(availableProjectsResponse))
+			const axiosSpyWorkPackageValidationForm = vi.spyOn(axios, 'post')
+				.mockImplementationOnce(() => sendOCSResponse(workpackageFormValidationProjectSelected))
+			const assigneeAxiosSpy = vi.spyOn(axios, 'get')
+				.mockImplementationOnce(() => sendOCSResponse(availableProjectAssignees))
+
+			wrapper = mountWrapper({
+				project: {
+					self: {
+						href: '/api/v3/projects/4',
+						title: '[dev] Large',
+					},
+					label: '[dev] Large',
+					children: [],
+				},
+				type: {
+					self: {
+						href: '/api/v3/types/8',
+						title: 'TypeNotInResponse',
+					},
+					label: 'TypeNotInResponse',
+				},
+			})
+			// changing project
+			wrapper.vm.validateWorkPackageForm(2, true, true)
+			expect(axiosSpyWorkPackageValidationForm).toHaveBeenCalledTimes(1)
+			expect(assigneeAxiosSpy).toHaveBeenCalledTimes(1)
+			await nextTick()
+			expect(wrapper.vm.type.label).toBe('')
+		})
+
+		it('should empty the status if this status is not available for the selected type', async () => {
+			vi.spyOn(axios, 'get')
+				.mockImplementationOnce(() => sendOCSResponse(availableProjectsResponse))
+			const axiosSpyWorkPackageValidationForm = vi.spyOn(axios, 'post')
+				.mockImplementationOnce(() => sendOCSResponse(workpackageFormValidationProjectSelected))
+			const assigneeAxiosSpy = vi.spyOn(axios, 'get')
+				.mockImplementationOnce(() => sendOCSResponse(availableProjectAssignees))
+
+			wrapper = mountWrapper({
+				project: {
+					self: {
+						href: '/api/v3/projects/4',
+						title: '[dev] Large',
+					},
+					label: '[dev] Large',
+					children: [],
+				},
+				type: {
+					self: {
+						href: '/api/v3/types/7',
+						title: 'Bug',
+					},
+					label: 'Bug',
+				},
+				status: {
+					self: {
+						href: '/api/v3/status/8',
+						title: 'StatusNotInResponse',
+					},
+					label: 'StatusNotInResponse',
+				},
+			})
+			// changing project type
+			wrapper.vm.validateWorkPackageForm(4, false, true)
+			expect(axiosSpyWorkPackageValidationForm).toHaveBeenCalledTimes(1)
+			expect(assigneeAxiosSpy).toHaveBeenCalledTimes(1)
+			await nextTick()
+			expect(wrapper.vm.status.label).toBe('')
+		})
+
+		it.each([
+			{
+				fieldName: 'type',
+				inputSelector: typeInputFieldSelector,
+				resultSelector: firstTypeSelector,
+				expectedMessage: messages.noMachingTypeFound,
+			},
+			{
+				fieldName: 'status',
+				inputSelector: statusInputFieldSelector,
+				resultSelector: firstStatusSelector,
+				expectedMessage: messages.noMachingStausFound,
+			},
+			{
+				fieldName: 'assignee',
+				inputSelector: assigneeInputFieldSelector,
+				resultSelector: firstAssigneeSelector,
+				expectedMessage: messages.noMachingAssigneeFound,
+			},
+		])('should show $expectedMessage when project is set and there is no $fieldName found in search query', async ({ inputSelector, resultSelector, expectedMessage }) => {
+
+			wrapper = mountWrapper({
+				project: {
+					self: {
+						href: '/api/v3/projects/4',
+						title: 'Scrum project',
+					},
+					label: 'Scrum project',
+					children: [],
+				},
+			})
+
+			const input = wrapper.find(inputSelector)
+			await input.setValue('non-existent-search')
+			await input.trigger('focus')
+
+			const searchResult = wrapper.find(resultSelector)
+			expect(searchResult.text()).toBe(expectedMessage)
+		})
+	})
+
+	it('should emit an event if work package creation is successful', async () => {
+		const createWorkPackageBody = {
+			body: {
+				_links: {
+					type: {
+						href: '/api/v3/types/1',
+						title: 'Task',
+					},
+					status: {
+						href: '/api/v3/statuses/1',
+						title: 'New',
+					},
+					assignee: {
+						href: '/api/v3/users/15',
+						title: 'Second Admin',
+					},
+					project: {
+						href: '/api/v3/projects/2',
+						title: 'Scrum project',
+					},
+				},
+				subject: 'This is a workpackage',
+				description: {
+					format: 'markdown',
+					raw: 'description for workpackage',
+					html: '',
+				},
+			},
+		}
+		vi.spyOn(axios, 'get')
+			.mockImplementationOnce(() => sendOCSResponse(availableProjectsResponse))
+		const axiosSpy = vi.spyOn(axios, 'post')
+			.mockImplementationOnce(() => sendOCSResponse(workpackageCreatedResponse, 201))
+		wrapper = mountWrapper({
+			project: {
+				self: {
+					href: '/api/v3/projects/2',
+					title: 'Scrum project',
+				},
+				label: 'Scrum project',
+				children: [],
+			},
+			assignee: {
+				self: {
+					href: '/api/v3/users/15',
+					title: 'Second Admin',
+				},
+				label: 'Second Admin',
+			},
+			subject: 'This is a workpackage',
+			description: {
+				format: 'markdown',
+				raw: 'description for workpackage',
+				html: '',
+			},
+		})
+
+		await wrapper.find(createWorkpackageButtonSelector).trigger('click')
+		await nextTick()
+		expect(axiosSpy).toHaveBeenCalledWith(createWorkPackageUrl, createWorkPackageBody)
+		expect(wrapper.emitted('create-work-package')).toEqual([
+			[
+				{
+					openProjectEventName: 'work_package_creation_success',
+					openProjectEventPayload: workpackageCreatedResponse,
+				},
+			],
+		])
+	})
+
+	it('should display error when there is a required custom field', async () => {
+		const bodyFormValidation = {
+			body: {
+				_links: {
+					type: {
+						href: '/api/v3/types/9',
+						title: 'Required CF',
+					},
+					status: {
+						href: '/api/v3/statuses/1',
+						title: 'New',
+					},
+					assignee: {
+						href: null,
+						title: null,
+					},
+					project: {
+						href: '/api/v3/projects/4',
+						title: '[dev] Large',
+					},
+				},
+				subject: 'This is a workpackage',
+			},
+		}
+		const allowedTypes = [
+			{
+				self: {
+					href: '/api/v3/types/9',
+					title: 'Required CF',
+				},
+				label: 'Required CF',
+			},
+		]
+		vi.spyOn(axios, 'get')
+
+			.mockImplementationOnce(() => sendOCSResponse(availableProjectsResponse))
+		const axiosSpy = vi.spyOn(axios, 'post')
+			.mockImplementationOnce(() => sendOCSResponse(requiredTypeResponse))
+
+		wrapper = mountWrapper({
+			project: {
+				self: {
+					href: '/api/v3/projects/4',
+					title: '[dev] Large',
+				},
+				label: '[dev] Large',
+				children: [],
+			},
+			type: {
+				self: {
+					href: '/api/v3/types/9',
+					title: 'Required CF',
+				},
+				label: 'Required CF',
+			},
+			subject: 'This is a workpackage',
+			allowedTypes,
+			projectId: 2,
+			openProjectUrl: 'https://openproject.example.com',
+		})
+		await wrapper.find(typeInputFieldSelector).setValue('Required')
+		await wrapper.find(typeOptionsSelector).trigger('click')
+		await nextTick()
+		expect(axiosSpy).toHaveBeenCalledWith(util.format(workPackageFormUrl, 2), bodyFormValidation)
+		const typeError = wrapper.find(validationErrorTypeSelector)
+		expect(typeError.isVisible()).toBe(true)
+		expect(typeError.text()).toBe('This type has mandatory fields which cannot be filled here. Please, create work packages of this type directly in {htmlLink}.')
+	})
+
+	it('should emit an event when the modal is closed', async () => {
+		const wrapper = mountWrapper()
+		wrapper.vm.closeModal()
+		expect(wrapper.emitted('close-create-work-package-modal')).toBeTruthy()
+	})
+
+	it('should reset all values when the modal is closed', async () => {
+		const wrapper = mountWrapper()
+		await flushPromises()
+
+		wrapper.vm.closeModal()
+		expect(wrapper.vm.project.label).toBeNull()
+		expect(wrapper.vm.type.label).toBe('')
+		expect(wrapper.vm.status.label).toBe('')
+		expect(wrapper.vm.subject).toBe('')
+		expect(wrapper.vm.assignee.label).toBeNull()
+	})
+
+	it('should display an error when the project status is empty', async () => {
+		vi.spyOn(axios, 'get')
+			.mockImplementationOnce(() => sendOCSResponse(availableProjectsResponse))
+
+		wrapper = mountWrapper({
+			project: {
+				self: {
+					href: '/api/v3/projects/4',
+					title: '[dev] Large',
+				},
+				label: '[dev] Large',
+				children: [],
+			},
+			type: {
+				self: {
+					href: '/api/v3/types/9',
+					title: 'Required CF',
+				},
+				label: 'Required CF',
+			},
+			status: {
+				self: {
+					href: '/api/v3/statuses/1',
+					title: 'New',
+				},
+				label: '',
+			},
+			subject: 'This is a workpackage',
+			projectId: 2,
+			openProjectUrl: 'https://openproject.example.com',
+		})
+		await wrapper.find(createWorkpackageButtonSelector).trigger('click')
+		await nextTick()
+		await nextTick()
+		const error = wrapper.find(validationErrorSelector)
+		expect(error.isVisible()).toBe(true)
+		expect(error.text()).toBe('Status is not set to one of the allowed values.')
+	})
+
+	it('should be able to remove the selected project', async () => {
+		wrapper = mountWrapper({
+			project: {
+				self: {
+					href: '/api/v3/projects/2',
+					title: 'Scrum project',
+				},
+				label: 'Scrum project',
+				children: [],
+			},
+		})
+		expect(wrapper.vm.project.label).toBe('Scrum project')
+
+		const removeProjectButton = wrapper.find(projectClearButtonSelector)
+		await removeProjectButton.trigger('click')
+		await nextTick()
+
+		expect(wrapper.vm.project.label).toBeNull()
+	})
+})
+
+function sendOCSResponse(data, status = 200) {
+	return Promise.resolve({
+		status,
+		data: { ocs: { data } },
+	})
+}
+
+function mountWrapper(data = {}) {
+	return mount(CreateWorkPackageModal, {
+		global: {
+			mocks: {
+				t: (app, msg) => msg,
+			},
+			stubs: {
+				NcModal: true,
+			},
+		},
+		data: () => ({
+			...data,
+		}),
+	})
+}

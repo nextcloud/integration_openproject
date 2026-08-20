@@ -36,7 +36,6 @@ import LinkOffIcon from 'vue-material-design-icons/LinkOff.vue'
 import CheckIcon from 'vue-material-design-icons/Check.vue'
 import OpenProjectIcon from '../icons/OpenProjectIcon.vue'
 import { generateUrl } from '@nextcloud/router'
-import { translate as t } from '@nextcloud/l10n'
 import OAuthConnectButton from '../OAuthConnectButton.vue'
 import { AUTH_METHOD, STATE } from '../../utils.js'
 

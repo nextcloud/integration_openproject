@@ -31,7 +31,6 @@ import { NcDashboardWidget } from '@nextcloud/vue'
 import { showError, showSuccess } from '@nextcloud/dialogs'
 import { loadState } from '@nextcloud/initial-state'
 import { AUTH_METHOD, checkOauthConnectionResult, STATE } from '../utils.js'
-import { translate as t } from '@nextcloud/l10n'
 import EmptyContent from '../components/tab/EmptyContent.vue'
 import ErrorLabel from '../components/ErrorLabel.vue'
 import { messages } from '../constants/messages.js'
@@ -129,7 +128,7 @@ export default {
 		}
 	},
 
-	beforeDestroy() {
+	beforeUnmount() {
 		document.removeEventListener('visibilitychange', this.changeWindowVisibility)
 	},
 

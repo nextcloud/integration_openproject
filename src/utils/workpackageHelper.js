@@ -4,8 +4,11 @@
  */
 
 import { generateOcsUrl } from '@nextcloud/router'
+import { translate as t } from '@nextcloud/l10n'
 import axios from '@nextcloud/axios'
 import { showError, showSuccess } from '@nextcloud/dialogs'
+
+import APP_ID from '../constants/appID.js'
 
 let cachedStatusColors = {}
 let cachedTypeColors = {}
@@ -60,12 +63,12 @@ export const workpackageHelper = {
 		const userId = this.replaceHrefToGetId(workPackage._links.assignee.href)
 		const projectId = this.replaceHrefToGetId(workPackage._links.project.href)
 		const userName = workPackage._links.assignee.title
-		const avatarUrl = generateOcsUrl('/apps/integration_openproject/api/v1/avatar?')
+		const avatarUrl = generateOcsUrl(`/apps/${APP_ID}/api/v1/avatar?`)
 			+ 'userId=' + encodeURIComponent(userId)
 			+ '&userName=' + encodeURIComponent(userName)
 		let statusColor
 		if (cachedStatusColors[statusId] === undefined) {
-			statusColor = await this.getColorAttributes('/apps/integration_openproject/api/v1/statuses/', statusId)
+			statusColor = await this.getColorAttributes(`/apps/${APP_ID}/api/v1/statuses/`, statusId)
 			cachedStatusColors[statusId] = statusColor
 		} else {
 			statusColor = cachedStatusColors[statusId]
@@ -73,7 +76,7 @@ export const workpackageHelper = {
 
 		let typeColor
 		if (cachedTypeColors[typeId] === undefined) {
-			typeColor = await this.getColorAttributes('/apps/integration_openproject/api/v1/types/', typeId)
+			typeColor = await this.getColorAttributes(`/apps/${APP_ID}/api/v1/types/`, typeId)
 			cachedTypeColors[typeId] = typeColor
 		} else {
 			typeColor = cachedTypeColors[typeId]
@@ -154,10 +157,12 @@ export const workpackageHelper = {
 				}
 				break
 			} finally {
+				// INFO: Emit a fresh snapshot so each chunk update is observed by Vue reactivity
+				const chunkInfoSnapshot = { ...chunkingInformation }
 				if (isRemaining) {
-					component.setChunkedInformations(chunkingInformation)
+					component.setChunkedInformations(chunkInfoSnapshot)
 				} else {
-					component.$emit('set-chunked-informations', chunkingInformation)
+					component.$emit('set-chunked-informations', chunkInfoSnapshot)
 				}
 			}
 		}
@@ -169,7 +174,7 @@ export const workpackageHelper = {
 				'Content-Type': 'application/json',
 			},
 		}
-		const url = generateOcsUrl('/apps/integration_openproject/api/v1/work-packages')
+		const url = generateOcsUrl(`/apps/${APP_ID}/api/v1/work-packages`)
 		const body = {
 			values: {
 				workpackageId: selectedWorkpackage.id,
@@ -185,7 +190,7 @@ export const workpackageHelper = {
 			showSuccess(successMessage)
 		} catch (e) {
 			showError(
-				t('integration_openproject', 'Failed to link file to work package'),
+				t(APP_ID, 'Failed to link file to work package'),
 			)
 		}
 	},
