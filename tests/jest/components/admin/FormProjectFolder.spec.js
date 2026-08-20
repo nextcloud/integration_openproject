@@ -314,10 +314,16 @@ describe('Component: FormProjectFolder', () => {
 			describe('fresh setup', () => {
 				let wrapper
 				beforeEach(async () => {
-					wrapper = getWrapper({ props: defaultProps })
+					const props = structuredClone(defaultProps)
+					props.formState.openprojectOauth.complete = false
+					wrapper = getWrapper({ props })
+					await wrapper.vm.$nextTick()
 				})
 
 				it('should show enabled form fields', async () => {
+					await wrapper.setProps(defaultProps)
+					await wrapper.vm.$nextTick()
+
 					expect(wrapper.vm.folderFormMode).toBe(F_MODES.EDIT)
 					expect(wrapper.vm.passwordFormMode).toBe(F_MODES.DISABLE)
 					expect(wrapper.emitted().formcomplete).toBe(undefined)
@@ -342,6 +348,9 @@ describe('Component: FormProjectFolder', () => {
 					expect(wrapper.find(selectors.appPasswordFormContainer).exists()).toBe(false)
 				})
 				it('should show disabled form fields if project folder is disabled', async () => {
+					await wrapper.setProps(defaultProps)
+					await wrapper.vm.$nextTick()
+
 					const projectFolderSetupSwitch = wrapper.find(selectors.projectFolderSetupSwitch)
 					projectFolderSetupSwitch.vm.$emit('update:checked', false)
 					await flushPromises()
@@ -355,6 +364,11 @@ describe('Component: FormProjectFolder', () => {
 				})
 
 				describe('on save: disabled project folder', () => {
+					beforeEach(async () => {
+						await wrapper.setProps(defaultProps)
+						await wrapper.vm.$nextTick()
+					})
+
 					it('should set status "Inactive"', async () => {
 						const spySetAppPasswordFormToEditMode = jest.spyOn(wrapper.vm, 'setAppPasswordFormToEditMode')
 						const projectFolderSetupSwitch = wrapper.find(selectors.projectFolderSetupSwitch)
@@ -454,6 +468,11 @@ describe('Component: FormProjectFolder', () => {
 				})
 
 				describe('on save: enabled project folder', () => {
+					beforeEach(async () => {
+						await wrapper.setProps(defaultProps)
+						await wrapper.vm.$nextTick()
+					})
+
 					describe('upon success', () => {
 						beforeEach(() => {
 							const props = structuredClone(defaultProps)

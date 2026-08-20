@@ -313,6 +313,13 @@ export default {
 			return t('integration_openproject', 'This value will only be accessible once. Now, as an administrator copy this password to OpenProject {htmlLink}.', { htmlLink }, null, { escape: false, sanitize: false })
 		},
 	},
+	watch: {
+		isAuthorizationSettingFormComplete(value) {
+			if (value && this.projectFolderInfo.freshSetup) {
+				this.setProjectFolderFormToEditMode()
+			}
+		},
+	},
 	created() {
 		if (!this.projectFolderInfo.freshSetup) {
 			this.setProjectFolderFormToViewMode()
