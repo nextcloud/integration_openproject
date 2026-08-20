@@ -48,24 +48,14 @@ jobs:
         with:
           ref: ${{ inputs.branch }}
 
-      - name: Read package.json node and npm engines version
-        uses: skjnldsv/read-package-engines-version-actions@06d6baf7d8f41934ab630e97d9e6c0bc9c9ac5e4
-        id: versions
-        with:
-          fallbackNode: '^22'
-          fallbackNpm: '^10'
-
-      - name: Setup NodeJS ${{ steps.versions.outputs.nodeVersion }}
+      - name: Setup NodeJS
         uses: actions/setup-node@6044e13b5dc448c55e2357c09f80417699197238
         with:
-          node-version: ${{ steps.versions.outputs.nodeVersion }}
+          node-version-file: package.json
           cache: 'npm'
 
-      - name: Setup  NPM ${{ steps.versions.outputs.npmVersion }}
-        run: npm i -g npm@"${{ steps.versions.outputs.npmVersion }}"
-
-      - name: Install NPM Dependencies
-        run: npm install
+      - name: Build app
+        run: make npm
 
       - name: JS Lint
         run: make lint-js || ( echo 'Please run `make lint-js-fix` to format your code' && exit 1 )
