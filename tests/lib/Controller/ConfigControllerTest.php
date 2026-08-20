@@ -10,6 +10,7 @@ namespace OCA\OpenProject\Controller;
 use GuzzleHttp\Exception\ConnectException;
 use OC\Authentication\Token\IProvider;
 use OCA\OAuth2\Db\AccessTokenMapper;
+use OCA\OAuth2\Db\Client;
 use OCA\OAuth2\Db\ClientMapper;
 use OCA\OAuth2\Service\ClientService;
 use OCA\OpenProject\AppInfo\Application;
@@ -141,10 +142,14 @@ class ConfigControllerTest extends TestCase {
 		ClientMapper $clientMapper = null,
 		AccessTokenMapper $accessTokenMapper = null,
 	): ClientService {
+		if ($clientMapper === null) {
+			$clientMapper = $this->createMock(ClientMapper::class);
+			$clientMapper->method('getByUid')->willReturn(new Client());
+		}
 		return new ClientService(
 			$this->createMock(ISecureRandom::class),
 			$this->createMock(ICrypto::class),
-			$clientMapper ?? $this->createMock(ClientMapper::class),
+			$clientMapper,
 			$this->createMock(IUserManager::class),
 			$this->createMock(IProvider::class),
 			$this->createMock(LoggerInterface::class),
@@ -832,7 +837,7 @@ class ConfigControllerTest extends TestCase {
 					->method('setClientRedirectUri');
 
 				$clientMapperMock = $this->createMock(ClientMapper::class);
-				$clientMapperMock->expects($this->once())->method('getByUid');
+				$clientMapperMock->expects($this->once())->method('getByUid')->willReturn(new Client());
 				$clientMapperMock->expects($this->once())->method('delete');
 				$accessTokenMapperMock = $this->createMock(AccessTokenMapper::class);
 				$accessTokenMapperMock->expects($this->once())->method('deleteByClientId');
@@ -1617,7 +1622,7 @@ class ConfigControllerTest extends TestCase {
 			]);
 
 		$clientMapperMock = $this->createMock(ClientMapper::class);
-		$clientMapperMock->expects($this->once())->method('getByUid');
+		$clientMapperMock->expects($this->once())->method('getByUid')->willReturn(new Client());
 		$clientMapperMock->expects($this->once())->method('delete');
 		$accessTokenMapperMock = $this->createMock(AccessTokenMapper::class);
 		$accessTokenMapperMock->expects($this->once())->method('deleteByClientId');
