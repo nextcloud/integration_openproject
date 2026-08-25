@@ -37,9 +37,6 @@
     "Administration > File storages" : "Администриране > Файлови хранилища",
     "Go to your OpenProject {htmlLink} as an Administrator and start the setup and copy the values here." : "Отидете на вашия OpenProject {htmlLink} като администратор и стартирайте настройката и копирайте стойностите тук.",
     "Copy the following values back into the OpenProject {htmlLink} as an Administrator." : "Копирайте следните стойности обратно в OpenProject {htmlLink} като администратор.",
-    "Failed to perform revoke request due to connection error with the OpenProject server" : "Неуспешно изпълнение на заявка за отмяна поради грешка при свързването със сървъра на OpenProject",
-    "Failed to revoke some users' OpenProject OAuth access tokens" : "Неуспешна отмяна на OAuth токени за достъп на някои потребители на OpenProject",
-    "Successfully revoked users' OpenProject OAuth access tokens" : "Успешна отмяна на OAuth токени за достъп на някои потребители на OpenProject",
     "Failed to create Nextcloud OAuth client" : "Неуспешно създаване на Nextcloud OAuth клиент",
     "If you proceed you will need to update these settings with the new OpenProject OAuth credentials. Also, all users will need to reauthorize access to their OpenProject account." : "Ако продължите, ще трябва да актуализирате тези настройки с новите идентификационни данни за OpenProject OAuth. Също така, всички потребители ще трябва повторно да разрешат достъп до своя профил в OpenProject.",
     "Replace OpenProject OAuth values" : "Замяна на стойностите на OpenProject OAuth",
@@ -98,6 +95,9 @@
     "Unlink Work Package" : "Прекратяване на връзката на работния пакет",
     "Failed to link file to work package" : "Неуспешно свързване на файл към работен пакет",
     "Successfully connected to OpenProject!" : "Успешно свързване с OpenProject!",
-    "OAuth access token could not be obtained:" : "Токенът за достъп OAuth не може да бъде получен:"
+    "OAuth access token could not be obtained:" : "Токенът за достъп OAuth не може да бъде получен:",
+    "Failed to perform revoke request due to connection error with the OpenProject server" : "Неуспешно изпълнение на заявка за отмяна поради грешка при свързването със сървъра на OpenProject",
+    "Failed to revoke some users' OpenProject OAuth access tokens" : "Неуспешна отмяна на OAuth токени за достъп на някои потребители на OpenProject",
+    "Successfully revoked users' OpenProject OAuth access tokens" : "Успешна отмяна на OAuth токени за достъп на някои потребители на OpenProject"
 },"pluralForm" :"nplurals=2; plural=(n != 1);"
 }

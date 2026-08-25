@@ -52,9 +52,6 @@
     "Administration > File storages" : "Administration > Stockage de fichiers",
     "Go to your OpenProject {htmlLink} as an Administrator and start the setup and copy the values here." : "Allez sur votre OpenProject {htmlLink} en tant qu'administrateur, lancez la configuration et copiez les valeurs ici.",
     "Copy the following values back into the OpenProject {htmlLink} as an Administrator." : "Copiez les valeurs suivantes dans OpenProject {htmlLink} en tant qu'administrateur",
-    "Failed to perform revoke request due to connection error with the OpenProject server" : "Échec de la requête de révocation en raison d’une erreur de connexion avec le serveur OpenProject",
-    "Failed to revoke some users' OpenProject OAuth access tokens" : "Échec de la révocation des jetons d’accès OAuth OpenProject de certains utilisateurs.",
-    "Successfully revoked users' OpenProject OAuth access tokens" : "Jeton·s d’accès OAuth OpenProject révoqué·s avec succès.",
     "Failed to create Nextcloud OAuth client" : "Échec de la création du client Nextcloud OAuth",
     "If you proceed you will need to update these settings with the new OpenProject OAuth credentials. Also, all users will need to reauthorize access to their OpenProject account." : "Si vous continuez, vous devrez mettre à jour ces paramètres avec de nouvelles informations OAuth. Tous les utilisateurs devront ré-autoriser l'accès à leur compte OpenProject.",
     "Replace OpenProject OAuth values" : "Remplacez les valeurs OAuth d'OpenProject",
@@ -210,6 +207,9 @@
     "Successfully connected to OpenProject!" : "Connexion à OpenProject réussie !",
     "OAuth access token could not be obtained:" : "Le jeton d'accès OAuth n'a pas pu être obtenu :",
     "Displays a link to your OpenProject instance in the Nextcloud header." : "Affiche un lien vers votre instance OpenProject dans l’en-tête Nextcloud.",
-    "Allows you to search OpenProject work packages via the universal search bar in Nextcloud." : "Vous permet de rechercher des packages fonctionnels OpenProject via la barre de recherche universelle dans Nextcloud."
+    "Allows you to search OpenProject work packages via the universal search bar in Nextcloud." : "Vous permet de rechercher des packages fonctionnels OpenProject via la barre de recherche universelle dans Nextcloud.",
+    "Failed to perform revoke request due to connection error with the OpenProject server" : "Échec de la requête de révocation en raison d’une erreur de connexion avec le serveur OpenProject",
+    "Failed to revoke some users' OpenProject OAuth access tokens" : "Échec de la révocation des jetons d’accès OAuth OpenProject de certains utilisateurs.",
+    "Successfully revoked users' OpenProject OAuth access tokens" : "Jeton·s d’accès OAuth OpenProject révoqué·s avec succès."
 },"pluralForm" :"nplurals=3; plural=(n == 0 || n == 1) ? 0 : n != 0 && n % 1000000 == 0 ? 1 : 2;"
 }

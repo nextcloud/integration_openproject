@@ -53,9 +53,6 @@ OC.L10N.register(
     "Administration > File storages" : "管理 > 檔案儲存空間",
     "Go to your OpenProject {htmlLink} as an Administrator and start the setup and copy the values here." : "以管理員身份前往您的 OpenProject {htmlLink}，開始設定並複製值至此。",
     "Copy the following values back into the OpenProject {htmlLink} as an Administrator." : "以管理員身份將以下的值複製回 OpenProject {htmlLink}。",
-    "Failed to perform revoke request due to connection error with the OpenProject server" : "因為連線到 OpenProject 伺服器時發生錯誤，無法執行撤銷請求",
-    "Failed to revoke some users' OpenProject OAuth access tokens" : "無法撤銷某些使用者的 OpenProject OAuth 存取權杖",
-    "Successfully revoked users' OpenProject OAuth access tokens" : "已成功撤銷使用者的 OpenProject OAuth 存取權杖",
     "Failed to create Nextcloud OAuth client" : "建立 Nextcloud OAuth 客戶端失敗",
     "If you proceed you will need to update these settings with the new OpenProject OAuth credentials. Also, all users will need to reauthorize access to their OpenProject account." : "若繼續，您將需要使用新的 OpenProject OAuth 憑證更新這些設定。此外，所有使用者都需要重新授權存取其 OpenProject 帳號。",
     "Replace OpenProject OAuth values" : "取代 OpenProject OAuth 值",
@@ -208,6 +205,9 @@ OC.L10N.register(
     "Displays a link to your OpenProject instance in the Nextcloud header." : "在 Nextcloud 標頭中顯示指向 OpenProject 站台的連結。",
     "Allows you to search OpenProject work packages via the universal search bar in Nextcloud." : "允許您透過 Nextcloud 的統一搜尋列搜尋 OpenProject 工作包。",
     "Two-way OAuth 2.0 authorization code flow" : "雙向 OAuth 2.0 授權碼流程",
-    "Single-Sign-On through OpenID Connect Identity Provider" : "透過 OpenID Connect 身份提供者的單一登入"
+    "Single-Sign-On through OpenID Connect Identity Provider" : "透過 OpenID Connect 身份提供者的單一登入",
+    "Failed to perform revoke request due to connection error with the OpenProject server" : "因為連線到 OpenProject 伺服器時發生錯誤，無法執行撤銷請求",
+    "Failed to revoke some users' OpenProject OAuth access tokens" : "無法撤銷某些使用者的 OpenProject OAuth 存取權杖",
+    "Successfully revoked users' OpenProject OAuth access tokens" : "已成功撤銷使用者的 OpenProject OAuth 存取權杖"
 },
 "nplurals=1; plural=0;");

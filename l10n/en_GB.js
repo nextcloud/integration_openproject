@@ -54,9 +54,6 @@ OC.L10N.register(
     "Administration > File storages" : "Administration > File storages",
     "Go to your OpenProject {htmlLink} as an Administrator and start the setup and copy the values here." : "Go to your OpenProject {htmlLink} as an Administrator and start the setup and copy the values here.",
     "Copy the following values back into the OpenProject {htmlLink} as an Administrator." : "Copy the following values back into the OpenProject {htmlLink} as an Administrator.",
-    "Failed to perform revoke request due to connection error with the OpenProject server" : "Failed to perform revoke request due to connection error with the OpenProject server",
-    "Failed to revoke some users' OpenProject OAuth access tokens" : "Failed to revoke some users' OpenProject OAuth access tokens",
-    "Successfully revoked users' OpenProject OAuth access tokens" : "Successfully revoked users' OpenProject OAuth access tokens",
     "Failed to create Nextcloud OAuth client" : "Failed to create Nextcloud OAuth client",
     "If you proceed you will need to update these settings with the new OpenProject OAuth credentials. Also, all users will need to reauthorize access to their OpenProject account." : "If you proceed you will need to update these settings with the new OpenProject OAuth credentials. Also, all users will need to reauthorise access to their OpenProject account.",
     "Replace OpenProject OAuth values" : "Replace OpenProject OAuth values",
@@ -214,6 +211,9 @@ OC.L10N.register(
     "Displays a link to your OpenProject instance in the Nextcloud header." : "Displays a link to your OpenProject instance in the Nextcloud header.",
     "Allows you to search OpenProject work packages via the universal search bar in Nextcloud." : "Allows you to search OpenProject work packages via the universal search bar in Nextcloud.",
     "Two-way OAuth 2.0 authorization code flow" : "Two-way OAuth 2.0 authorization code flow",
-    "Single-Sign-On through OpenID Connect Identity Provider" : "Single-Sign-On through OpenID Connect Identity Provider"
+    "Single-Sign-On through OpenID Connect Identity Provider" : "Single-Sign-On through OpenID Connect Identity Provider",
+    "Failed to perform revoke request due to connection error with the OpenProject server" : "Failed to perform revoke request due to connection error with the OpenProject server",
+    "Failed to revoke some users' OpenProject OAuth access tokens" : "Failed to revoke some users' OpenProject OAuth access tokens",
+    "Successfully revoked users' OpenProject OAuth access tokens" : "Successfully revoked users' OpenProject OAuth access tokens"
 },
 "nplurals=2; plural=(n != 1);");

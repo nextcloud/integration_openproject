@@ -52,9 +52,6 @@ OC.L10N.register(
     "Administration > File storages" : "Správa → Úložiště souborů",
     "Go to your OpenProject {htmlLink} as an Administrator and start the setup and copy the values here." : "Přejděte do vámi využívané instance OpenProject {htmlLink} jako správce,  spusťte tam nastavení a hodnoty zkopírujte sem.",
     "Copy the following values back into the OpenProject {htmlLink} as an Administrator." : "Zkopírujte (jako správce) následující hodnoty zpět do OpenProject {htmlLink}.",
-    "Failed to perform revoke request due to connection error with the OpenProject server" : "Požadavek na odvolání platnosti se nepodařilo provést kvůli chybě spojení s OpenProject serverem",
-    "Failed to revoke some users' OpenProject OAuth access tokens" : "Nepodařilo se odvolat platnost OAuth přístupových tokenů pro některé OpenProject uživatele",
-    "Successfully revoked users' OpenProject OAuth access tokens" : "Úspěšně odvolána platnost OAuth přístupových tokenů pro OpenProject uživatele",
     "Failed to create Nextcloud OAuth client" : "Nepodařilo se vytvořit Nextcloud OAuth klienta",
     "If you proceed you will need to update these settings with the new OpenProject OAuth credentials. Also, all users will need to reauthorize access to their OpenProject account." : "Pokud budete pokračovat, bude třeba aktualizovat nastavení těmi novými  OpenProject OAuth přihlašovacími údaji. Také bude třeba, aby všichni uživatelé znovu udělili oprávnění k přístupu ke svým účtům v OpenProject.",
     "Replace OpenProject OAuth values" : "Nahradit OAuth hodnoty pro OpenProject",
@@ -212,6 +209,9 @@ OC.L10N.register(
     "Displays a link to your OpenProject instance in the Nextcloud header." : "Zobrazuje odkaz na vámi využívanou instanci OpenProject v záhlaví Nextcloud",
     "Allows you to search OpenProject work packages via the universal search bar in Nextcloud." : "Umožňuje hledat v balíčcích práce v OpenProject a to prostřednictvím lišty univerzálního vyhledávání v Nextcloud.",
     "Two-way OAuth 2.0 authorization code flow" : "Dvousměrný tok kódu OAuth 2.0 pověřování",
-    "Single-Sign-On through OpenID Connect Identity Provider" : "Sjednocené přihlášení prostřednictvím poskytovatele identity OpenID Connect"
+    "Single-Sign-On through OpenID Connect Identity Provider" : "Sjednocené přihlášení prostřednictvím poskytovatele identity OpenID Connect",
+    "Failed to perform revoke request due to connection error with the OpenProject server" : "Požadavek na odvolání platnosti se nepodařilo provést kvůli chybě spojení s OpenProject serverem",
+    "Failed to revoke some users' OpenProject OAuth access tokens" : "Nepodařilo se odvolat platnost OAuth přístupových tokenů pro některé OpenProject uživatele",
+    "Successfully revoked users' OpenProject OAuth access tokens" : "Úspěšně odvolána platnost OAuth přístupových tokenů pro OpenProject uživatele"
 },
 "nplurals=4; plural=(n == 1 && n % 1 == 0) ? 0 : (n >= 2 && n <= 4 && n % 1 == 0) ? 1: (n % 1 != 0 ) ? 2 : 3;");
