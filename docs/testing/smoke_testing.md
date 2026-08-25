@@ -12,12 +12,10 @@ The need for this smoke testing (manual) is that we do not have e2e test setup t
 
 - [Section A: Two-Way OAuth 2.0 Authorization Code Flow](#section-a-two-way-oauth-20-authorization-code-flow)
 - [Section B: Single-Sign-On through OpenID Connect Identity Provider](#section-b-single-sign-on-through-openid-connect-identity-provider)
-
   - [B.1: Nextcloud Hub as IDP](#B1-nextcloud-hub-as-idp)
   - [B.2: External Provider](#B2-External-Provider)
 
 - [Common Smoke Test Steps](#common-smoke-test-steps)
-
   - [1. Link/Unlink a work package for a file/folder in Nextcloud](#1-linkunlink-a-work-package-for-a-filefolder-in-nextcloud)
   - [2. Link/Unlink a work package for a file/folder from OpenProject](#2-linkunlink-a-work-package-for-a-filefolder-from-openproject)
   - [3. Direct upload file/folder from OpenProject to Nextcloud](#3-direct-upload-filefolder-from-openproject-to-nextcloud)
@@ -25,15 +23,6 @@ The need for this smoke testing (manual) is that we do not have e2e test setup t
   - [5. Check notification in `OpenProject` widget in Nextcloud](#5-check-notification-in-openproject-widget-in-nextcloud)
   - [6. Setup and check project folder in Nextcloud (with project folder setup)](#6-setup-and-check-project-folder-in-nextcloud-with-project-folder-setup)
   - [7. Setup and Check New folder with automatically managed permissions in OpenProject](#7-setup-and-check-new-folder-with-automatically-managed-permissions-in-openproject)
-
-- [App Upgrade Testing](#app-upgrade-testing)
-  - [Upgrade Steps](#upgrade-steps)
-  - [For OAuth 2.0 Setup](#for-oauth-20-setup)
-  - [For OIDC Setup](#for-oidc-setup)
-    - [Nextcloud Hub as IDP](#nextcloud-hub-as-idp)
-    - [External Provider (Keycloak)](#external-provider-keycloak)
-      - [Token Exchange Disabled](#token-exchange-disabled)
-      - [Token Exchange Enabled](#token-exchange-enabled)
 
 ## Section A: Two-Way OAuth 2.0 Authorization Code Flow
 
@@ -131,7 +120,7 @@ bash integration_setup.sh
   - Click the button `+ Add client`.
   - Add a client name (not an identifier) such as `openproject`.
   - Add a redirect URL: `<openproject_host>/auth/oidc-<idp_displayname_from_openproject>/callback`.
-   > **Note:** Use the same value as the custom OpenID provider `Display name` in OpenProject from `B.1.2` (for example, `nextcloud`) for `<idp_displayname_from_openproject>`.
+    > **Note:** Use the same value as the custom OpenID provider `Display name` in OpenProject from `B.1.2` (for example, `nextcloud`) for `<idp_displayname_from_openproject>`.
   - Choose Signing Algorithm option as `RS256`.
   - Choose Client Type as `Confidential` and click on `Add` button.
   - After clicking `add` button, click on the recently created client.
@@ -192,6 +181,7 @@ bash integration_setup.sh
 - [ ] Should show user is connected as an OpenProject user.
 
 #### B.1.6. Add File storage (Nextcloud) to an OpenProject project
+
 - [ ] In Openproject, as a user admin, select any OpenProject Project (for example, Demo Project) in OpenProject.
 - [ ] Navigate to Project settings > Files of Demo Project.
 - [ ] Add a file storage name Nextcloud( choose No specific Folder option ) for Demo Project.
@@ -228,13 +218,14 @@ bash integration_setup.sh
 - [ ] Logout.
 
 #### B.2.3. Add Keycloak IDP in OpenProject
+
 - [ ] In `OpenProject`, as a user `admin`, go to `Administration > Authentication > OpenID providers`.
 - [ ] Add a new custom OpenID provider:
   - Display name: `keycloak`
   - Discovery URL: `<keycloak_instance_url>/realms/<realm-name>/.well-known/openid-configuration`
   - Client ID: Client ID of openproject provided by keycloak in the <realm-name> realm.
   - Client secret: Client secret of openproject from keycloak
-  > Note: To find `Client ID` and `Client secret` in Keycloak, open `Clients` in your `<realm-name>` realm and select `openproject`. Copy `Client ID` from the `Settings` tab and `Client secret` from the `Credentials` tab.
+    > Note: To find `Client ID` and `Client secret` in Keycloak, open `Clients` in your `<realm-name>` realm and select `openproject`. Copy `Client ID` from the `Settings` tab and `Client secret` from the `Credentials` tab.
 - [ ] Go to Administration > Files.
   - [ ] Create a file storage type `Nextcloud` by clicking the button `+ Storage` and choosing Nextcloud
   - [ ] Add name as `Nextcloud`.
@@ -405,9 +396,11 @@ bash integration_oidc_setup.sh
 - [ ] Run the script again after it is already setup (Should not give any error).
 
 ## Common Smoke Test Steps
+
 > **Note**: For SSO setup, run smoke tests 1-5 and the portions of smoke test 6 that involve user interaction should be performed as a connected user.
 
 ### 1. Link/Unlink a work package for a file/folder in nextcloud
+
 - [ ] Select a file, navigate to sidebar `OpenProject` tab.
 - [ ] Search for any of the work packages in the `Demo Project`.
 - [ ] Work packages are listed.
@@ -418,6 +411,7 @@ bash integration_oidc_setup.sh
 - [ ] Unlink a work package and it should be deleted from the `OpenProject` Tab with a successful message.
 
 ### 2. Link/Unlink a work package for a file/folder from OpenProject
+
 - [ ] In `OpenProject`, navigate to `Demo Project > Work Packages` and double click any one of the work packages available.
 - [ ] Navigate to `Files` tab, click `link existing files`, select available files (for example, welcome.txt) from Nextcloud and link it to the work package.
 - [ ] Selected file is linked to the work package in `OpenProject`.
@@ -474,48 +468,3 @@ bash integration_oidc_setup.sh
 - [ ] Navigate to `Files` tab, click `link existing files`.
 - [ ] In a modal, `Nextcloud > OpenProject > Demo project(1)` should be visible.
 - [ ] Also Navigate to `Nextcloud` and in Files `OpenProject > Demo project(1)` folder is created.
-
-## App Upgrade Testing
-
-### Upgrade Steps
-
-- [ ] **Check update is available**: `php occ app:update --showonly integration_openproject`.
-- [ ] **Run upgrade**: `php occ app:update --allow-unstable integration_openproject`.
-- [ ] **Verify upgrade**: Confirm no errors and version updated.
-
-> **Important**: When upgrading from old versions, the upgrade might fail with "Undefined constant" error due to a known cache issue in Nextcloud. To fix this, please run the following commands:
->
-> ```bash
-> php occ upgrade
-> php occ maintenance:mode --off
-> ```
-
-### Upgrade Test Cases
-
-#### Existing OAuth 2.0 Setup
-
-- [ ] **Before upgrade**: Perform complete setup with OAuth2 method (Project folder enabled).
-- [ ] Perform [Upgrade steps](#upgrade-steps).
-- [ ] **After upgrade**: Check that the integration setup and other changes are preserved.
-
-#### Existing SSO Setup
-
-##### Nextcloud Hub as IDP
-
-- [ ] **Before upgrade**: Perform complete setup with sso method (Nextcloud Hub as IDP, Project folder enabled).
-- [ ] Perform [Upgrade steps](#upgrade-steps).
-- [ ] **After upgrade**: Check that the integration setup and other changes are preserved.
-
-#### External Provider (Keycloak)
-
-##### Token Exchange Disabled
-
-- [ ] **Before upgrade**: Perform complete setup with sso method (Keycloak as IDP, Token exchange disable, Project folder enabled).
-- [ ] Perform [Upgrade steps](#upgrade-steps).
-- [ ] **After upgrade**: Check that the integration setup and other changes are preserved.
-
-##### Token Exchange Enabled
-
-- [ ] **Before upgrade**: Perform complete setup with sso method (Keycloak as IDP, Token exchange enable, Project folder enabled).
-- [ ] Perform [Upgrade steps](#upgrade-steps).
-- [ ] **After upgrade**: Check that the integration setup and other changes are preserved.
