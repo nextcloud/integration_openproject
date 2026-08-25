@@ -53,9 +53,6 @@ OC.L10N.register(
     "Administration > File storages" : "Administración > Almacenamento de ficheiros",
     "Go to your OpenProject {htmlLink} as an Administrator and start the setup and copy the values here." : "Vaia ao seu OpenProject {htmlLink} como administrador, inicie a configuración e copie os valores aquí.",
     "Copy the following values back into the OpenProject {htmlLink} as an Administrator." : "Copiar os seguintes valores en OpenProject {htmlLink} como administrador.",
-    "Failed to perform revoke request due to connection error with the OpenProject server" : "Produciuse un erro ao realizar a solicitude de revogación por mor dun erro de conexión co servidor OpenProject",
-    "Failed to revoke some users' OpenProject OAuth access tokens" : "Non foi posíbel revogar os testemuños de acceso OpenProject OAuth dalgúns usuarios",
-    "Successfully revoked users' OpenProject OAuth access tokens" : "Foron revogados correctamente os testemuños de acceso OAuth de OpenProject dos usuarios",
     "Failed to create Nextcloud OAuth client" : "Produciuse un erro ao crear o cliente OAuth de Nextcloud",
     "If you proceed you will need to update these settings with the new OpenProject OAuth credentials. Also, all users will need to reauthorize access to their OpenProject account." : "Se continúa, terá que actualizar estes axustes coas novas credenciais de OpenProject OAuth. Ademais, todos os usuarios terán que volver autorizar o acceso á súa conta OpenProject.",
     "Replace OpenProject OAuth values" : "Substituír os valores de OpenProject OAuth",
@@ -213,6 +210,9 @@ OC.L10N.register(
     "Displays a link to your OpenProject instance in the Nextcloud header." : "Amosa unha ligazón á súa instancia de OpenProject na cabeceira de Nextcloud.",
     "Allows you to search OpenProject work packages via the universal search bar in Nextcloud." : "Permítelle buscar paquetes de traballo OpenProject a través da barra de busca universal en Nextcloud.",
     "Two-way OAuth 2.0 authorization code flow" : "Fluxo do código de autorización OAuth 2.0 bidireccional",
-    "Single-Sign-On through OpenID Connect Identity Provider" : "«Identificación única» (Single-Sign-On) a través do provedor de identidade de OpenID"
+    "Single-Sign-On through OpenID Connect Identity Provider" : "«Identificación única» (Single-Sign-On) a través do provedor de identidade de OpenID",
+    "Failed to perform revoke request due to connection error with the OpenProject server" : "Produciuse un erro ao realizar a solicitude de revogación por mor dun erro de conexión co servidor OpenProject",
+    "Failed to revoke some users' OpenProject OAuth access tokens" : "Non foi posíbel revogar os testemuños de acceso OpenProject OAuth dalgúns usuarios",
+    "Successfully revoked users' OpenProject OAuth access tokens" : "Foron revogados correctamente os testemuños de acceso OAuth de OpenProject dos usuarios"
 },
 "nplurals=2; plural=(n != 1);");

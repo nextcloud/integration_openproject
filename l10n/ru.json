@@ -33,7 +33,6 @@
     "Authentication method" : "Метод проверки подлинности",
     "Save" : "Сохранить",
     "Administration > File storages" : "Администрирование > Хранилища файлов",
-    "Failed to perform revoke request due to connection error with the OpenProject server" : "Не удалось выполнить запрос на отзыв из-за ошибки подключения к серверу OpenProject",
     "Failed to create Nextcloud OAuth client" : "Не удалось создать клиент Nextcloud OAuth",
     "If you proceed you will need to update these settings with the new OpenProject OAuth credentials. Also, all users will need to reauthorize access to their OpenProject account." : "Если вы продолжите, вам потребуется обновить эти настройки, используя новые учетные данные OpenProject OAuth. Кроме того, всем пользователям потребуется повторно авторизовать доступ к своей учетной записи OpenProject.",
     "Replace OpenProject OAuth values" : "Заменить значения OpenProject OAuth",
@@ -147,6 +146,7 @@
     "Successfully connected to OpenProject!" : "Успешное подключение к OpenProject!",
     "OAuth access token could not be obtained:" : "Токен доступа OAuth не может быть получен:",
     "Displays a link to your OpenProject instance in the Nextcloud header." : "Отображает ссылку на ваш экземпляр OpenProject в заголовке Nextcloud.",
-    "Allows you to search OpenProject work packages via the universal search bar in Nextcloud." : "Позволяет искать рабочие пакеты OpenProject через универсальную строку поиска в Nextcloud."
+    "Allows you to search OpenProject work packages via the universal search bar in Nextcloud." : "Позволяет искать рабочие пакеты OpenProject через универсальную строку поиска в Nextcloud.",
+    "Failed to perform revoke request due to connection error with the OpenProject server" : "Не удалось выполнить запрос на отзыв из-за ошибки подключения к серверу OpenProject"
 },"pluralForm" :"nplurals=4; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && n%10<=4 && (n%100<12 || n%100>14) ? 1 : n%10==0 || (n%10>=5 && n%10<=9) || (n%100>=11 && n%100<=14)? 2 : 3);"
 }

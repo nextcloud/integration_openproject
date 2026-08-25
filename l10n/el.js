@@ -53,9 +53,6 @@ OC.L10N.register(
     "Administration > File storages" : "Διαχείριση > Αποθηκευτικοί χώροι αρχείων",
     "Go to your OpenProject {htmlLink} as an Administrator and start the setup and copy the values here." : "Πηγαίνετε στο OpenProject {htmlLink} ως Διαχειριστής και ξεκινήστε τη ρύθμιση και αντιγράψτε τις τιμές εδώ.",
     "Copy the following values back into the OpenProject {htmlLink} as an Administrator." : "Αντιγράψτε τις ακόλουθες τιμές πίσω στο OpenProject {htmlLink} ως Διαχειριστής.",
-    "Failed to perform revoke request due to connection error with the OpenProject server" : "Αποτυχία εκτέλεσης αιτήματος ανάκλησης λόγω σφάλματος σύνδεσης με τον διακομιστή OpenProject",
-    "Failed to revoke some users' OpenProject OAuth access tokens" : "Αποτυχία ανάκλησης διακριτικών πρόσβασης OAuth OpenProject για ορισμένους χρήστες",
-    "Successfully revoked users' OpenProject OAuth access tokens" : "Επιτυχής ανάκληση διακριτικών πρόσβασης OAuth OpenProject για χρήστες",
     "Failed to create Nextcloud OAuth client" : "Αποτυχία δημιουργίας πελάτη OAuth Nextcloud",
     "If you proceed you will need to update these settings with the new OpenProject OAuth credentials. Also, all users will need to reauthorize access to their OpenProject account." : "Εάν προχωρήσετε, θα χρειαστεί να ενημερώσετε αυτές τις ρυθμίσεις με τα νέα διαπιστευτήρια OAuth του OpenProject. Επίσης, όλοι οι χρήστες θα χρειαστεί να επαναεξουσιοδοτήσουν την πρόσβαση στον λογαριασμό τους στο OpenProject.",
     "Replace OpenProject OAuth values" : "Αντικατάσταση τιμών OAuth OpenProject",
@@ -209,6 +206,9 @@ OC.L10N.register(
     "Displays a link to your OpenProject instance in the Nextcloud header." : "Εμφανίζει έναν σύνδεσμο προς την εγκατάσταση OpenProject σας στην κεφαλίδα του Nextcloud.",
     "Allows you to search OpenProject work packages via the universal search bar in Nextcloud." : "Σας επιτρέπει να αναζητάτε πακέτα εργασίας OpenProject μέσω της καθολικής γραμμής αναζήτησης στο Nextcloud.",
     "Two-way OAuth 2.0 authorization code flow" : "Ροή κωδικού εξουσιοδότησης OAuth 2.0 αμφίδρομης κατεύθυνσης",
-    "Single-Sign-On through OpenID Connect Identity Provider" : "Single-Sign-On μέσω Παρόχου Ταυτότητας OpenID Connect"
+    "Single-Sign-On through OpenID Connect Identity Provider" : "Single-Sign-On μέσω Παρόχου Ταυτότητας OpenID Connect",
+    "Failed to perform revoke request due to connection error with the OpenProject server" : "Αποτυχία εκτέλεσης αιτήματος ανάκλησης λόγω σφάλματος σύνδεσης με τον διακομιστή OpenProject",
+    "Failed to revoke some users' OpenProject OAuth access tokens" : "Αποτυχία ανάκλησης διακριτικών πρόσβασης OAuth OpenProject για ορισμένους χρήστες",
+    "Successfully revoked users' OpenProject OAuth access tokens" : "Επιτυχής ανάκληση διακριτικών πρόσβασης OAuth OpenProject για χρήστες"
 },
 "nplurals=2; plural=(n != 1);");

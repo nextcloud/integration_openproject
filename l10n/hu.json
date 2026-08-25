@@ -38,9 +38,6 @@
     "Administration > File storages" : "Adminisztráció > Fájltárolók",
     "Go to your OpenProject {htmlLink} as an Administrator and start the setup and copy the values here." : "Ugorjon az OpenProjecthez {htmlLink} adminisztrátorként, indítsa el a beállítást és másolja ide az értékeket.",
     "Copy the following values back into the OpenProject {htmlLink} as an Administrator." : "Másolja vissza a következő értékeket az OpenProjectbe {htmlLink} adminisztrátorként.",
-    "Failed to perform revoke request due to connection error with the OpenProject server" : "Az OpenProject kiszolgáló kapcsolati hibája miatt a visszavonási kérés elvégzése sikertelen",
-    "Failed to revoke some users' OpenProject OAuth access tokens" : "Egyes felhasználók OpenProject OAuth hozzáférési tokenjeinek visszavonása sikertelen",
-    "Successfully revoked users' OpenProject OAuth access tokens" : "A felhasználók OpenProject OAuth hozzáférési tokenjének visszavonása sikertelen",
     "Failed to create Nextcloud OAuth client" : "A Nextcloud OAuth-kliens létrehozása sikertelen",
     "If you proceed you will need to update these settings with the new OpenProject OAuth credentials. Also, all users will need to reauthorize access to their OpenProject account." : "Ha folytatja, akkor frissítenie kell ezeket a beállításokat az OpenProject OAuth hitelesítő adatokkal. Továbbá az összes felhasználónak újból hitelesítenie kell az OpenProject-fiókjával.",
     "Replace OpenProject OAuth values" : "OpenProject OAuth értékek lecserélése",
@@ -125,6 +122,9 @@
     "Link to work package" : "Hivatkozás a munkacsomagra",
     "Failed to link file to work package" : "A fájl munkacsomaghoz kapcsolása sikertelen",
     "Successfully connected to OpenProject!" : "Sikeresen kapcsolódott az OpenProjecthez.",
-    "OAuth access token could not be obtained:" : "Az OAuth hozzáférési token megszerzése sikertelen:"
+    "OAuth access token could not be obtained:" : "Az OAuth hozzáférési token megszerzése sikertelen:",
+    "Failed to perform revoke request due to connection error with the OpenProject server" : "Az OpenProject kiszolgáló kapcsolati hibája miatt a visszavonási kérés elvégzése sikertelen",
+    "Failed to revoke some users' OpenProject OAuth access tokens" : "Egyes felhasználók OpenProject OAuth hozzáférési tokenjeinek visszavonása sikertelen",
+    "Successfully revoked users' OpenProject OAuth access tokens" : "A felhasználók OpenProject OAuth hozzáférési tokenjének visszavonása sikertelen"
 },"pluralForm" :"nplurals=2; plural=(n != 1);"
 }

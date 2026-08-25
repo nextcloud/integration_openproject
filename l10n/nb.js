@@ -41,9 +41,6 @@ OC.L10N.register(
     "Administration > File storages" : "Administrasjon > Fillagring",
     "Go to your OpenProject {htmlLink} as an Administrator and start the setup and copy the values here." : "Gå til OpenProject {htmlLink} som administrator og start oppsettet og kopier verdiene her.",
     "Copy the following values back into the OpenProject {htmlLink} as an Administrator." : "Kopier følgende verdier tilbake til OpenProject {htmlLink} som administrator.",
-    "Failed to perform revoke request due to connection error with the OpenProject server" : "Kan ikke utføre tilbakekallingsforespørsel på grunn av tilkoblingsfeil med OpenProject-serveren",
-    "Failed to revoke some users' OpenProject OAuth access tokens" : "Kunne ikke tilbakekalle noen brukeres OpenProject OAuth-tilgangstokener",
-    "Successfully revoked users' OpenProject OAuth access tokens" : "Tilbakekalte brukeres OpenProject OAuth-tilgangstokener",
     "Failed to create Nextcloud OAuth client" : "Oppretting av Nextcloud OAuth-klient feilet",
     "If you proceed you will need to update these settings with the new OpenProject OAuth credentials. Also, all users will need to reauthorize access to their OpenProject account." : "Hvis du fortsetter, må du oppdatere disse innstillingene med den nye OpenProject OAuth-legitimasjonen. Alle brukere må også autorisere tilgang til OpenProject-kontoen på nytt.",
     "Replace OpenProject OAuth values" : "Erstatt OpenProject OAuth-verdier",
@@ -156,6 +153,9 @@ OC.L10N.register(
     "Successfully connected to OpenProject!" : "Koblet til OpenProject!",
     "OAuth access token could not be obtained:" : "OAuth access token kunne ikke innhentes:",
     "Displays a link to your OpenProject instance in the Nextcloud header." : "Viser en kobling til OpenProject-forekomsten i Nextcloud-overskriften.",
-    "Allows you to search OpenProject work packages via the universal search bar in Nextcloud." : "Lar deg søke i OpenProject-arbeidspakker via den universelle søkelinjen i Nextcloud."
+    "Allows you to search OpenProject work packages via the universal search bar in Nextcloud." : "Lar deg søke i OpenProject-arbeidspakker via den universelle søkelinjen i Nextcloud.",
+    "Failed to perform revoke request due to connection error with the OpenProject server" : "Kan ikke utføre tilbakekallingsforespørsel på grunn av tilkoblingsfeil med OpenProject-serveren",
+    "Failed to revoke some users' OpenProject OAuth access tokens" : "Kunne ikke tilbakekalle noen brukeres OpenProject OAuth-tilgangstokener",
+    "Successfully revoked users' OpenProject OAuth access tokens" : "Tilbakekalte brukeres OpenProject OAuth-tilgangstokener"
 },
 "nplurals=2; plural=(n != 1);");
