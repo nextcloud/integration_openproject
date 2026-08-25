@@ -297,7 +297,7 @@ export default {
 		},
 		getNoOptionTextForProject() {
 			if (this.availableProjects.length === 0) {
-				return messages.noMachingWorkProjectsFound
+				return messages.noMatchingWorkProjectsFound
 			}
 			// while projects are being searched we make the no text option empty
 			return ''
@@ -635,11 +635,11 @@ export default {
 				return messages.pleaseSelectProject
 			}
 			if (fieldName === 'assignee') {
-				return messages.noMachingAssigneeFound
+				return messages.noMatchingAssigneeFound
 			} else if (fieldName === 'type') {
-				return messages.noMachingTypeFound
+				return messages.noMatchingTypeFound
 			} else if (fieldName === 'status') {
-				return messages.noMachingStausFound
+				return messages.noMatchingStatusFound
 			}
 			return ''
 		},

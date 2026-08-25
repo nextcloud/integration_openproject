@@ -185,7 +185,7 @@ describe('CreateWorkPackageModal.vue', () => {
 					},
 				)
 				const searchResult = wrapper.find(firstProjectSelector)
-				expect(searchResult.text()).toBe(messages.noMachingWorkProjectsFound)
+				expect(searchResult.text()).toBe(messages.noMatchingWorkProjectsFound)
 			})
 
 			it.each([
@@ -228,7 +228,7 @@ describe('CreateWorkPackageModal.vue', () => {
 					},
 				)
 				const searchResult = wrapper.find(firstProjectSelector)
-				expect(searchResult.text()).toBe(messages.noMachingWorkProjectsFound)
+				expect(searchResult.text()).toBe(messages.noMatchingWorkProjectsFound)
 				expect(inputField.element.value).toBe('Scw')
 
 				// Trigger blur event (user moves to another field)
@@ -750,19 +750,19 @@ describe('CreateWorkPackageModal.vue', () => {
 				fieldName: 'type',
 				inputSelector: typeInputFieldSelector,
 				resultSelector: firstTypeSelector,
-				expectedMessage: messages.noMachingTypeFound,
+				expectedMessage: messages.noMatchingTypeFound,
 			},
 			{
 				fieldName: 'status',
 				inputSelector: statusInputFieldSelector,
 				resultSelector: firstStatusSelector,
-				expectedMessage: messages.noMachingStausFound,
+				expectedMessage: messages.noMatchingStatusFound,
 			},
 			{
 				fieldName: 'assignee',
 				inputSelector: assigneeInputFieldSelector,
 				resultSelector: firstAssigneeSelector,
-				expectedMessage: messages.noMachingAssigneeFound,
+				expectedMessage: messages.noMatchingAssigneeFound,
 			},
 		])('should show $expectedMessage when project is set and there is no $fieldName found in search query', async ({ inputSelector, resultSelector, expectedMessage }) => {
 
