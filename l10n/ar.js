@@ -47,9 +47,6 @@ OC.L10N.register(
     "Administration > File storages" : "الإدارة>تخزين الملفات  Administration>File storages",
     "Go to your OpenProject {htmlLink} as an Administrator and start the setup and copy the values here." : "انتقل إلى OpenProject ـ  {htmlLink} كمسؤول النظام وابدأ الإعداد وقم بنسخ القيم هنا.",
     "Copy the following values back into the OpenProject {htmlLink} as an Administrator." : "نسخ القيم التالية مرة أخرى إلى openProject ـ  {htmlLink} باستخدام صلاحية مسؤول النظام.",
-    "Failed to perform revoke request due to connection error with the OpenProject server" : "فشل تنفيذ طلب الإلغاء بسبب خطأ في الاتصال بخادم OpenProject",
-    "Failed to revoke some users' OpenProject OAuth access tokens" : "فشل في سحب بعض أَمَارَات الوصول access token إلى التصديق المفتوح OAuth لمستخدِمي OpenProject",
-    "Successfully revoked users' OpenProject OAuth access tokens" : "تمّ بنجاحٍ سحب أَمَارَات وصول access token إلى التصديق المفتوح OAuth لمستخدِمي OpenProject",
     "Failed to create Nextcloud OAuth client" : "فشل في إنشاء عميل Nextcloud OAuth",
     "If you proceed you will need to update these settings with the new OpenProject OAuth credentials. Also, all users will need to reauthorize access to their OpenProject account." : "فى حالة المتابعة فسوف تحتاج إلى تحديث هذه الإعدادات ببيانات اعتماد OpenProject OAuth الجديدة. كما سيحتاج جميع المستخدمين إلى إعادة تفويض الوصول إلى حسابOpenProject  الخاص بهم.",
     "Replace OpenProject OAuth values" : "استبدال قيم OpenProject OAuth",
@@ -195,6 +192,9 @@ OC.L10N.register(
     "Displays a link to your OpenProject instance in the Nextcloud header." : "يعرض رابطاً لخادوم \"أوبن بروحكت\" OpenProject في ترويسة نكست كلاود.",
     "Allows you to search OpenProject work packages via the universal search bar in Nextcloud." : "يُمكّنك من البحث عن حزم العمل في \"أوبن بروجكت\" من خلال شريط البحث الموحد في نكست كلاود.",
     "Two-way OAuth 2.0 authorization code flow" : "انسياب كود التخويل في الاتجاهين OAuth 2.0  ",
-    "Single-Sign-On through OpenID Connect Identity Provider" : "النفاذ المُوحَّد عبر مُزوِّد OpenID Connect للهُوِيَّة"
+    "Single-Sign-On through OpenID Connect Identity Provider" : "النفاذ المُوحَّد عبر مُزوِّد OpenID Connect للهُوِيَّة",
+    "Failed to perform revoke request due to connection error with the OpenProject server" : "فشل تنفيذ طلب الإلغاء بسبب خطأ في الاتصال بخادم OpenProject",
+    "Failed to revoke some users' OpenProject OAuth access tokens" : "فشل في سحب بعض أَمَارَات الوصول access token إلى التصديق المفتوح OAuth لمستخدِمي OpenProject",
+    "Successfully revoked users' OpenProject OAuth access tokens" : "تمّ بنجاحٍ سحب أَمَارَات وصول access token إلى التصديق المفتوح OAuth لمستخدِمي OpenProject"
 },
 "nplurals=6; plural=n==0 ? 0 : n==1 ? 1 : n==2 ? 2 : n%100>=3 && n%100<=10 ? 3 : n%100>=11 && n%100<=99 ? 4 : 5;");

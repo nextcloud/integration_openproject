@@ -54,9 +54,6 @@ OC.L10N.register(
     "Administration > File storages" : "Administration > Fillagringar",
     "Go to your OpenProject {htmlLink} as an Administrator and start the setup and copy the values here." : "Gå som administratör till OpenProject-sidan {htmlLink}, starta konfigurationen och kopiera värdena hit.",
     "Copy the following values back into the OpenProject {htmlLink} as an Administrator." : "Kopiera som administratör följande värden tillbaka till OpenProject-sidan {htmlLink}.",
-    "Failed to perform revoke request due to connection error with the OpenProject server" : "Det gick inte att utföra återkallelseförfrågan på grund av ett anslutningsfel mot OpenProject-servern",
-    "Failed to revoke some users' OpenProject OAuth access tokens" : "Det gick inte att återkalla vissa användares OAuth-åtkomsttoken för OpenProject",
-    "Successfully revoked users' OpenProject OAuth access tokens" : "Användarnas OAuth-åtkomsttoken för OpenProject återkallades",
     "Failed to create Nextcloud OAuth client" : "Det gick inte att skapa Nextclouds OAuth-klient",
     "If you proceed you will need to update these settings with the new OpenProject OAuth credentials. Also, all users will need to reauthorize access to their OpenProject account." : "Om du fortsätter måste du uppdatera inställningarna med de nya OAuth-inloggningsuppgifterna för OpenProject. Alla användare måste dessutom godkänna åtkomsten till sitt OpenProject-konto på nytt.",
     "Replace OpenProject OAuth values" : "Ersätt OAuth-värden för OpenProject",
@@ -214,6 +211,9 @@ OC.L10N.register(
     "Displays a link to your OpenProject instance in the Nextcloud header." : "Visar en länk till din OpenProject-instans i Nextcloud-sidhuvudet.",
     "Allows you to search OpenProject work packages via the universal search bar in Nextcloud." : "Gör det möjligt att söka efter OpenProject-arbetspaket via det universella sökfältet i Nextcloud.",
     "Two-way OAuth 2.0 authorization code flow" : "Dubbelriktat OAuth 2.0-flöde med auktoriseringskod",
-    "Single-Sign-On through OpenID Connect Identity Provider" : "Enkel inloggning via en OpenID Connect-identitetsleverantör"
+    "Single-Sign-On through OpenID Connect Identity Provider" : "Enkel inloggning via en OpenID Connect-identitetsleverantör",
+    "Failed to perform revoke request due to connection error with the OpenProject server" : "Det gick inte att utföra återkallelseförfrågan på grund av ett anslutningsfel mot OpenProject-servern",
+    "Failed to revoke some users' OpenProject OAuth access tokens" : "Det gick inte att återkalla vissa användares OAuth-åtkomsttoken för OpenProject",
+    "Successfully revoked users' OpenProject OAuth access tokens" : "Användarnas OAuth-åtkomsttoken för OpenProject återkallades"
 },
 "nplurals=2; plural=(n != 1);");

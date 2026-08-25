@@ -45,9 +45,6 @@ OC.L10N.register(
     "Administration > File storages" : "Administration > File storages",
     "Go to your OpenProject {htmlLink} as an Administrator and start the setup and copy the values here." : "Go to your OpenProject {htmlLink} as an Administrator and start the setup and copy the values here.",
     "Copy the following values back into the OpenProject {htmlLink} as an Administrator." : "Copy the following values back into the OpenProject {htmlLink} as an Administrator.",
-    "Failed to perform revoke request due to connection error with the OpenProject server" : "Failed to perform revoke request due to connection error with the OpenProject server",
-    "Failed to revoke some users' OpenProject OAuth access tokens" : "Failed to revoke some users' OpenProject OAuth access tokens",
-    "Successfully revoked users' OpenProject OAuth access tokens" : "Successfully revoked users' OpenProject OAuth access tokens",
     "Failed to create Nextcloud OAuth client" : "Failed to create Nextcloud OAuth client",
     "If you proceed you will need to update these settings with the new OpenProject OAuth credentials. Also, all users will need to reauthorize access to their OpenProject account." : "If you proceed you will need to update these settings with the new OpenProject OAuth credentials. Also, all users will need to reauthorize access to their OpenProject account.",
     "Replace OpenProject OAuth values" : "Replace OpenProject OAuth values",
@@ -200,6 +197,9 @@ OC.L10N.register(
     "Link to work package" : "Link to work package",
     "Failed to link file to work package" : "Failed to link file to work package",
     "Successfully connected to OpenProject!" : "Successfully connected to OpenProject!",
-    "OAuth access token could not be obtained:" : "OAuth access token could not be obtained:"
+    "OAuth access token could not be obtained:" : "OAuth access token could not be obtained:",
+    "Failed to perform revoke request due to connection error with the OpenProject server" : "Failed to perform revoke request due to connection error with the OpenProject server",
+    "Failed to revoke some users' OpenProject OAuth access tokens" : "Failed to revoke some users' OpenProject OAuth access tokens",
+    "Successfully revoked users' OpenProject OAuth access tokens" : "Successfully revoked users' OpenProject OAuth access tokens"
 },
 "nplurals=2; plural=(n != 1);");

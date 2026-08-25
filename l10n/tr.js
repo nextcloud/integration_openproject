@@ -54,9 +54,6 @@ OC.L10N.register(
     "Administration > File storages" : "Yönetim > Dosya depolama alanları",
     "Go to your OpenProject {htmlLink} as an Administrator and start the setup and copy the values here." : "Yönetici olarak OpenProject {htmlLink} bağlantısına giderek kurulumu başlatın ve değerleri buraya kopyalayın.",
     "Copy the following values back into the OpenProject {htmlLink} as an Administrator." : "Şu değerleri yönetici olarak OpenProject {htmlLink} bağlantısına geri kopyalayın.",
-    "Failed to perform revoke request due to connection error with the OpenProject server" : "Geçersiz kılma isteği, OpenProject sunucusuyla bağlantı sorunu nedeniyle yerine getirilemedi",
-    "Failed to revoke some users' OpenProject OAuth access tokens" : "Bazı kullanıcıların OpenProject OAuth erişim kodları geçersiz kılınamadı",
-    "Successfully revoked users' OpenProject OAuth access tokens" : "Kullanıcıların OpenProject OAuth erişim kodları geçersiz kılındı",
     "Failed to create Nextcloud OAuth client" : "Nextcloud OAuth istemcisi oluşturulamadı",
     "If you proceed you will need to update these settings with the new OpenProject OAuth credentials. Also, all users will need to reauthorize access to their OpenProject account." : "İlerlerseniz, bu ayarları yeni OpenProject OAuth kimlik bilgileriyle güncellemeniz gerekir. Ayrıca, tüm kullanıcıların yeniden OpenProject hesaplarına erişim izni vermeleri gerekir.",
     "Replace OpenProject OAuth values" : "OpenProject OAuth değerlerini değiştir",
@@ -214,6 +211,9 @@ OC.L10N.register(
     "Displays a link to your OpenProject instance in the Nextcloud header." : "Nextcloud başlığında OpenProject kopyanızın bağlantısını görüntüler.",
     "Allows you to search OpenProject work packages via the universal search bar in Nextcloud." : "Nextcloud evrensel arama çubuğu ile OpenProject iş paketlerini aramanızı sağlar.",
     "Two-way OAuth 2.0 authorization code flow" : "OAuth 2.0 çift yönlü kimlik doğrulama kodu akışı",
-    "Single-Sign-On through OpenID Connect Identity Provider" : "OpenID Connect kimlik hizmeti sağlayıcısı ile tek oturum açma"
+    "Single-Sign-On through OpenID Connect Identity Provider" : "OpenID Connect kimlik hizmeti sağlayıcısı ile tek oturum açma",
+    "Failed to perform revoke request due to connection error with the OpenProject server" : "Geçersiz kılma isteği, OpenProject sunucusuyla bağlantı sorunu nedeniyle yerine getirilemedi",
+    "Failed to revoke some users' OpenProject OAuth access tokens" : "Bazı kullanıcıların OpenProject OAuth erişim kodları geçersiz kılınamadı",
+    "Successfully revoked users' OpenProject OAuth access tokens" : "Kullanıcıların OpenProject OAuth erişim kodları geçersiz kılındı"
 },
 "nplurals=2; plural=(n > 1);");

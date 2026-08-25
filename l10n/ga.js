@@ -54,9 +54,6 @@ OC.L10N.register(
     "Administration > File storages" : "Riarachán > Stóráil comhad",
     "Go to your OpenProject {htmlLink} as an Administrator and start the setup and copy the values here." : "Téigh chuig do OpenProject {htmlLink} mar Riarthóir agus cuir tús leis an socrú agus cóipeáil na luachanna anseo.",
     "Copy the following values back into the OpenProject {htmlLink} as an Administrator." : "Cóipeáil na luachanna seo a leanas ar ais isteach san OpenProject {htmlLink} mar Riarthóir.",
-    "Failed to perform revoke request due to connection error with the OpenProject server" : "Theip ar an iarratas cúlghairme a dhéanamh mar gheall ar earráid cheangail leis an bhfreastalaí OpenProject",
-    "Failed to revoke some users' OpenProject OAuth access tokens" : "Theip ar chomharthaí rochtana OpenProject OAuth roinnt úsáideoirí a chúlghairm",
-    "Successfully revoked users' OpenProject OAuth access tokens" : "D'éirigh leis na comharthaí rochtana OpenProject OAuth úsáideoirí a chúlghairm",
     "Failed to create Nextcloud OAuth client" : "Níorbh fhéidir cliant Nextcloud OAuth a chruthú",
     "If you proceed you will need to update these settings with the new OpenProject OAuth credentials. Also, all users will need to reauthorize access to their OpenProject account." : "Má leanann tú ar aghaidh beidh ort na socruithe seo a nuashonrú leis na dintiúir nua OpenProject OAuth. Chomh maith leis sin, beidh ar gach úsáideoir rochtain ar a gcuntas OpenProject a athúdarú.",
     "Replace OpenProject OAuth values" : "Ionadaigh luachanna OpenProject OAuth",
@@ -214,6 +211,9 @@ OC.L10N.register(
     "Displays a link to your OpenProject instance in the Nextcloud header." : "Taispeánann sé nasc chuig do shampla OpenProject sa cheanntásc Nextcloud.",
     "Allows you to search OpenProject work packages via the universal search bar in Nextcloud." : "Ligeann sé duit pacáistí oibre OpenProject a chuardach tríd an mbarra cuardaigh uilíoch in Nextcloud.",
     "Two-way OAuth 2.0 authorization code flow" : "Sreabhadh cód údaraithe OAuth 2.0 dhá bhealach",
-    "Single-Sign-On through OpenID Connect Identity Provider" : "Sínigh Aonair trí Sholáthraí Aitheantais Nasc OpenID"
+    "Single-Sign-On through OpenID Connect Identity Provider" : "Sínigh Aonair trí Sholáthraí Aitheantais Nasc OpenID",
+    "Failed to perform revoke request due to connection error with the OpenProject server" : "Theip ar an iarratas cúlghairme a dhéanamh mar gheall ar earráid cheangail leis an bhfreastalaí OpenProject",
+    "Failed to revoke some users' OpenProject OAuth access tokens" : "Theip ar chomharthaí rochtana OpenProject OAuth roinnt úsáideoirí a chúlghairm",
+    "Successfully revoked users' OpenProject OAuth access tokens" : "D'éirigh leis na comharthaí rochtana OpenProject OAuth úsáideoirí a chúlghairm"
 },
 "nplurals=5; plural=(n==1 ? 0 : n==2 ? 1 : n<7 ? 2 : n<11 ? 3 : 4);");

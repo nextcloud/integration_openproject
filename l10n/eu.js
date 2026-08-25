@@ -42,9 +42,6 @@ OC.L10N.register(
     "Administration > File storages" : "Administrazioa > Fitxategi biltegiak",
     "Go to your OpenProject {htmlLink} as an Administrator and start the setup and copy the values here." : "Joan zure OpenProject-era {htmlLink} administratzaile gisa eta hasi konfigurazioa eta balioen kopia hemen.",
     "Copy the following values back into the OpenProject {htmlLink} as an Administrator." : "Kopiatu hurrengo balioak OpenProject-era {htmlLink} administratzaile gisa.",
-    "Failed to perform revoke request due to connection error with the OpenProject server" : "Baliogabetzeko eskeara egiteak huts egin du, OpenProject zerbitzariarekin konexio errorea dela eta.",
-    "Failed to revoke some users' OpenProject OAuth access tokens" : "Erabiltzaile batzuen OpenProject OAuth atzitze tokena baliogabetzeak huts egin du",
-    "Successfully revoked users' OpenProject OAuth access tokens" : "Ondo baliogabetu da erabiltzaileen OpenProject OAuth atzitze tokena",
     "Failed to create Nextcloud OAuth client" : "Ezin izan da Nextcloud OAuth aplikazioa sortu",
     "If you proceed you will need to update these settings with the new OpenProject OAuth credentials. Also, all users will need to reauthorize access to their OpenProject account." : "Jarraitzen baduzu ezarpen hauek OpenProject OAuth kredentzial berriekin eguneratu beharko dituzu. Gainera, erabiltzaile guztiek OpenProject konturako sarbidea berriro autorizatu behar dute.",
     "Replace OpenProject OAuth values" : "Ordeztu OpenProject OAuth balioak",
@@ -134,6 +131,9 @@ OC.L10N.register(
     "Retry setup OpenProject user, group and folder" : "Saiatu berriro OpenProject erabiltzailea, taldea eta karpeta konfiguratzen",
     "Failed to link file to work package" : "Arazoa lan-paketea estekatzerakoan",
     "Successfully connected to OpenProject!" : "Behar bezala konektatuta OpenProject-era!",
-    "OAuth access token could not be obtained:" : "Ezin izan da OAuth sarbide tokena lortu:"
+    "OAuth access token could not be obtained:" : "Ezin izan da OAuth sarbide tokena lortu:",
+    "Failed to perform revoke request due to connection error with the OpenProject server" : "Baliogabetzeko eskeara egiteak huts egin du, OpenProject zerbitzariarekin konexio errorea dela eta.",
+    "Failed to revoke some users' OpenProject OAuth access tokens" : "Erabiltzaile batzuen OpenProject OAuth atzitze tokena baliogabetzeak huts egin du",
+    "Successfully revoked users' OpenProject OAuth access tokens" : "Ondo baliogabetu da erabiltzaileen OpenProject OAuth atzitze tokena"
 },
 "nplurals=2; plural=(n != 1);");

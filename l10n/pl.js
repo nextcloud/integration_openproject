@@ -53,9 +53,6 @@ OC.L10N.register(
     "Administration > File storages" : "Administracja > Magazyny plików",
     "Go to your OpenProject {htmlLink} as an Administrator and start the setup and copy the values here." : "Przejdź do OpenProject {htmlLink} jako administrator i rozpocznij konfigurację oraz skopiuj wartości tutaj.",
     "Copy the following values back into the OpenProject {htmlLink} as an Administrator." : "Skopiuj następujące wartości z powrotem do OpenProject {htmlLink} jako administrator.",
-    "Failed to perform revoke request due to connection error with the OpenProject server" : "Nie udało się wykonać żądania unieważnienia z powodu błędu połączenia z serwerem OpenProject",
-    "Failed to revoke some users' OpenProject OAuth access tokens" : "Nie udało się unieważnić tokenów dostępu OAuth niektórych użytkowników OpenProject",
-    "Successfully revoked users' OpenProject OAuth access tokens" : "Pomyślnie unieważniono tokeny dostępu OAuth użytkowników OpenProject",
     "Failed to create Nextcloud OAuth client" : "Nie udało się utworzyć klienta OAuth Nextcloud",
     "If you proceed you will need to update these settings with the new OpenProject OAuth credentials. Also, all users will need to reauthorize access to their OpenProject account." : "Jeśli będziesz kontynuować, będziesz musiał zaktualizować te ustawienia przy użyciu nowych poświadczeń OAuth OpenProject. Ponadto wszyscy użytkownicy będą musieli ponownie autoryzować dostęp do swojego konta OpenProject.",
     "Replace OpenProject OAuth values" : "Zastąp wartości OAuth OpenProject",
@@ -207,6 +204,9 @@ OC.L10N.register(
     "Displays a link to your OpenProject instance in the Nextcloud header." : "Wyświetla link do Twojej instancji OpenProject w nagłówku Nextcloud.",
     "Allows you to search OpenProject work packages via the universal search bar in Nextcloud." : "Umożliwia wyszukiwanie pakietów roboczych OpenProject poprzez uniwersalny pasek wyszukiwania w Nextcloud.",
     "Two-way OAuth 2.0 authorization code flow" : "Dwukierunkowy przepływ autoryzacji OAuth 2.0 (authorization code flow)",
-    "Single-Sign-On through OpenID Connect Identity Provider" : "Logowanie jednokrotne (Single-Sign-On) przez dostawcę tożsamości OpenID Connect"
+    "Single-Sign-On through OpenID Connect Identity Provider" : "Logowanie jednokrotne (Single-Sign-On) przez dostawcę tożsamości OpenID Connect",
+    "Failed to perform revoke request due to connection error with the OpenProject server" : "Nie udało się wykonać żądania unieważnienia z powodu błędu połączenia z serwerem OpenProject",
+    "Failed to revoke some users' OpenProject OAuth access tokens" : "Nie udało się unieważnić tokenów dostępu OAuth niektórych użytkowników OpenProject",
+    "Successfully revoked users' OpenProject OAuth access tokens" : "Pomyślnie unieważniono tokeny dostępu OAuth użytkowników OpenProject"
 },
 "nplurals=4; plural=(n==1 ? 0 : (n%10>=2 && n%10<=4) && (n%100<12 || n%100>14) ? 1 : n!=1 && (n%10>=0 && n%10<=1) || (n%10>=5 && n%10<=9) || (n%100>=12 && n%100<=14) ? 2 : 3);");
