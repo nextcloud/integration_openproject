@@ -47,9 +47,6 @@ OC.L10N.register(
     "Administration > File storages" : "Administrácia > Úložiská súborov",
     "Go to your OpenProject {htmlLink} as an Administrator and start the setup and copy the values here." : "Prejdite do svojho OpenProject {htmlLink} ako administrátor a spustite nastavenie a skopírujte hodnoty sem.",
     "Copy the following values back into the OpenProject {htmlLink} as an Administrator." : "Skopírujte nasledujúce hodnoty späť do OpenProject {htmlLink} ako administrátor.",
-    "Failed to perform revoke request due to connection error with the OpenProject server" : "Nepodarilo sa vykonať požiadavku na zrušenie z dôvodu chyby spojenia so serverom OpenProject",
-    "Failed to revoke some users' OpenProject OAuth access tokens" : "Nepodarilo sa odvolať prístupové tokeny OAuth OpenProject pre niektorých používateľov",
-    "Successfully revoked users' OpenProject OAuth access tokens" : "OAuth Prístupové tokeny užívateľov OpenProject boli úspešne odvolané",
     "Failed to create Nextcloud OAuth client" : "Nepodarilo sa vytvoriť Nextcloud OAuth klienta",
     "If you proceed you will need to update these settings with the new OpenProject OAuth credentials. Also, all users will need to reauthorize access to their OpenProject account." : "Ak budete pokračovať, budete musieť aktualizovať tieto nastavenia pomocou nových poverení OpenProject OAuth. Všetci užívatelia budú musieť znova autorizovať prístup k svojmu účtu OpenProject.",
     "Replace OpenProject OAuth values" : "Nahradiť hodnoty OpenProject OAuth",
@@ -187,6 +184,9 @@ OC.L10N.register(
     "Displays a link to your OpenProject instance in the Nextcloud header." : "Zobraziť odkaz na vašu inštanciu OpenProject v hlavičke Nextcloud.",
     "Allows you to search OpenProject work packages via the universal search bar in Nextcloud." : "Umožňuje vám vyhľadávať pracovné balíky OpenProject prostredníctvom univerzálneho vyhľadávacieho panela v Nextcloud.",
     "Two-way OAuth 2.0 authorization code flow" : "Tok 2-faktorového autorizačného kódu OAuth 2.0",
-    "Single-Sign-On through OpenID Connect Identity Provider" : "Jednotné prihlásenie cez OpenID Connect Identity Provider"
+    "Single-Sign-On through OpenID Connect Identity Provider" : "Jednotné prihlásenie cez OpenID Connect Identity Provider",
+    "Failed to perform revoke request due to connection error with the OpenProject server" : "Nepodarilo sa vykonať požiadavku na zrušenie z dôvodu chyby spojenia so serverom OpenProject",
+    "Failed to revoke some users' OpenProject OAuth access tokens" : "Nepodarilo sa odvolať prístupové tokeny OAuth OpenProject pre niektorých používateľov",
+    "Successfully revoked users' OpenProject OAuth access tokens" : "OAuth Prístupové tokeny užívateľov OpenProject boli úspešne odvolané"
 },
 "nplurals=4; plural=(n % 1 == 0 && n == 1 ? 0 : n % 1 == 0 && n >= 2 && n <= 4 ? 1 : n % 1 != 0 ? 2: 3);");

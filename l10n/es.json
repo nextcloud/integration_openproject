@@ -51,9 +51,6 @@
     "Administration > File storages" : "Administración > Almacenamiento de archivos",
     "Go to your OpenProject {htmlLink} as an Administrator and start the setup and copy the values here." : "Diríjase a su OpenProject {htmlLink} como administrador e inicie la configuración y copie los valores aquí.",
     "Copy the following values back into the OpenProject {htmlLink} as an Administrator." : "Copie los siguientes valores en el OpenProject {htmlLink} como administrador.",
-    "Failed to perform revoke request due to connection error with the OpenProject server" : "Fallo al ejecutar la solicitud de revocación ya que hubo un problema de conexión con el servidor OpenProject",
-    "Failed to revoke some users' OpenProject OAuth access tokens" : "Fallo al revocar los tokens de acceso OAuth de OpenProject de algunos usuarios",
-    "Successfully revoked users' OpenProject OAuth access tokens" : "Se revocaron los tokens de acceso OAuth de OpenProject de los usuarios de manera exitosa",
     "Failed to create Nextcloud OAuth client" : "Fallo al crear el cliente OAuth de Nextcloud",
     "If you proceed you will need to update these settings with the new OpenProject OAuth credentials. Also, all users will need to reauthorize access to their OpenProject account." : "Si continúa, tendrá que actualizar estos ajustes con las nuevas credenciales OAuth de OpenProject. Además, todos los usuarios tendrán que volver a autorizar el acceso a su cuenta de OpenProject.",
     "Replace OpenProject OAuth values" : "Sustituir los valores OAuth de OpenProject",
@@ -211,6 +208,9 @@
     "Displays a link to your OpenProject instance in the Nextcloud header." : "Muestra un enlace a su instancia de OpenProject en el encabezado de Nextcloud.",
     "Allows you to search OpenProject work packages via the universal search bar in Nextcloud." : "Le permite buscar paquetes de trabajo de OpenProject a través de la barra de búsqueda universal en Nextcloud.",
     "Two-way OAuth 2.0 authorization code flow" : "Flujo de código de autorización OAuth 2.0 de dos vías",
-    "Single-Sign-On through OpenID Connect Identity Provider" : "Usar Single-Sign-On a través del Proveedor de Identidad de OpenID Connect"
+    "Single-Sign-On through OpenID Connect Identity Provider" : "Usar Single-Sign-On a través del Proveedor de Identidad de OpenID Connect",
+    "Failed to perform revoke request due to connection error with the OpenProject server" : "Fallo al ejecutar la solicitud de revocación ya que hubo un problema de conexión con el servidor OpenProject",
+    "Failed to revoke some users' OpenProject OAuth access tokens" : "Fallo al revocar los tokens de acceso OAuth de OpenProject de algunos usuarios",
+    "Successfully revoked users' OpenProject OAuth access tokens" : "Se revocaron los tokens de acceso OAuth de OpenProject de los usuarios de manera exitosa"
 },"pluralForm" :"nplurals=3; plural=n == 1 ? 0 : n != 0 && n % 1000000 == 0 ? 1 : 2;"
 }

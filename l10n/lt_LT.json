@@ -52,9 +52,6 @@
     "Administration > File storages" : "Administravimas > Failų saugyklos",
     "Go to your OpenProject {htmlLink} as an Administrator and start the setup and copy the values here." : "Eikite į savo „OpenProject“ {htmlLink} kaip administratorius, paleiskite sąranką ir nukopijuokite reikšmes čia.",
     "Copy the following values back into the OpenProject {htmlLink} as an Administrator." : "Nukopijuokite šias reikšmes atgal į „OpenProject“ {htmlLink} kaip administratorius.",
-    "Failed to perform revoke request due to connection error with the OpenProject server" : "Nepavyko įvykdyti atšaukimo užklausos dėl ryšio klaidos su „OpenProject“ serveriu",
-    "Failed to revoke some users' OpenProject OAuth access tokens" : "Nepavyko atšaukti kai kurių vartotojų „OpenProject OAuth“ prieigos žymenų",
-    "Successfully revoked users' OpenProject OAuth access tokens" : "Sėkmingai atšaukti naudotojų „OpenProject OAuth“ prieigos žymenys",
     "Failed to create Nextcloud OAuth client" : "Nepavyko sukurti „Nextcloud OAuth“ kliento",
     "If you proceed you will need to update these settings with the new OpenProject OAuth credentials. Also, all users will need to reauthorize access to their OpenProject account." : "Jei tęsite, turėsite atnaujinti šiuos nustatymus naudodami naujus „OpenProject OAuth“ prisijungimo duomenis. Be to, visi vartotojai turės iš naujo autorizuoti prieigą prie savo „OpenProject“ paskyros.",
     "Replace OpenProject OAuth values" : "Pakeisti „OpenProject OAuth“ reikšmes",
@@ -212,6 +209,9 @@
     "Displays a link to your OpenProject instance in the Nextcloud header." : "Rodo nuorodą į jūsų „OpenProject“ egzempliorių „Nextcloud“ antraštėje.",
     "Allows you to search OpenProject work packages via the universal search bar in Nextcloud." : "Leidžia ieškoti „OpenProject“ darbo paketų naudojant universalią paieškos juostą „Nextcloud“.",
     "Two-way OAuth 2.0 authorization code flow" : "Dvipusis „OAuth 2.0“ autorizacijos kodo srautas",
-    "Single-Sign-On through OpenID Connect Identity Provider" : "Vienkartinis prisijungimas per „OpenID Connect“ tapatybės teikėją"
+    "Single-Sign-On through OpenID Connect Identity Provider" : "Vienkartinis prisijungimas per „OpenID Connect“ tapatybės teikėją",
+    "Failed to perform revoke request due to connection error with the OpenProject server" : "Nepavyko įvykdyti atšaukimo užklausos dėl ryšio klaidos su „OpenProject“ serveriu",
+    "Failed to revoke some users' OpenProject OAuth access tokens" : "Nepavyko atšaukti kai kurių vartotojų „OpenProject OAuth“ prieigos žymenų",
+    "Successfully revoked users' OpenProject OAuth access tokens" : "Sėkmingai atšaukti naudotojų „OpenProject OAuth“ prieigos žymenys"
 },"pluralForm" :"nplurals=4; plural=(n % 10 == 1 && (n % 100 > 19 || n % 100 < 11) ? 0 : (n % 10 >= 2 && n % 10 <=9) && (n % 100 > 19 || n % 100 < 11) ? 1 : n % 1 != 0 ? 2: 3);"
 }

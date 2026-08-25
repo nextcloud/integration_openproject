@@ -53,9 +53,6 @@ OC.L10N.register(
     "Administration > File storages" : "باشقۇرۇش> ھۆججەت ئامبىرى",
     "Go to your OpenProject {htmlLink} as an Administrator and start the setup and copy the values here." : "باشقۇرغۇچى سۈپىتىدە OpenProject {htmlLink} غا كىرىپ تەڭشەشنى باشلاڭ ۋە قىممەتنى بۇ يەردىن كۆچۈرۈڭ.",
     "Copy the following values back into the OpenProject {htmlLink} as an Administrator." : "تۆۋەندىكى قىممەتلەرنى باشقۇرغۇچى سۈپىتىدە OpenProject {htmlLink} غا قايتا كۆچۈرۈڭ.",
-    "Failed to perform revoke request due to connection error with the OpenProject server" : "OpenProject مۇلازىمېتىرى بىلەن ئۇلىنىش خاتالىقى سەۋەبىدىن بىكار قىلىش تەلىپىنى ئورۇندىيالمىدى",
-    "Failed to revoke some users' OpenProject OAuth access tokens" : "بەزى ئىشلەتكۈچىلەرنىڭ OpenProject OAuth زىيارەت بەلگىسىنى بىكار قىلالمىدى",
-    "Successfully revoked users' OpenProject OAuth access tokens" : "ئابونتلارنىڭ OpenProject OAuth زىيارەت بەلگىسىنى مۇۋەپپەقىيەتلىك ئەمەلدىن قالدۇردى",
     "Failed to create Nextcloud OAuth client" : "Nextcloud OAuth خېرىدارىنى قۇرالمىدى",
     "If you proceed you will need to update these settings with the new OpenProject OAuth credentials. Also, all users will need to reauthorize access to their OpenProject account." : "ئەگەر داۋاملاشتۇرسىڭىز ، بۇ تەڭشەكلەرنى يېڭى OpenProject OAuth كىنىشكىسى بىلەن يېڭىلىشىڭىز لازىم. شۇنداقلا ، بارلىق ئىشلەتكۈچىلەر ئۆزلىرىنىڭ OpenProject ھېساباتىغا قايتا ئىجازەت بېرىشى كېرەك.",
     "Replace OpenProject OAuth values" : "OpenProject OAuth قىممىتىنى ئالماشتۇرۇڭ",
@@ -212,6 +209,9 @@ OC.L10N.register(
     "Displays a link to your OpenProject instance in the Nextcloud header." : "Nextcloud ماۋزۇسىدا OpenProject مىسالىڭىزغا ئۇلانمىنى كۆرسىتىدۇ.",
     "Allows you to search OpenProject work packages via the universal search bar in Nextcloud." : "Nextcloud دىكى ئۇنىۋېرسال ئىزدەش بالدىقى ئارقىلىق OpenProject خىزمەت بوغچىسىنى ئىزدەشىڭىزگە يول قويىدۇ.",
     "Two-way OAuth 2.0 authorization code flow" : "ئىككى تەرەپلىك OAuth 2.0 ئىجازەت كودى ئېقىمى",
-    "Single-Sign-On through OpenID Connect Identity Provider" : "OpenID Connect كىملىك تەمىنلىگۈچىسى ئارقىلىق يەككە كىرىش"
+    "Single-Sign-On through OpenID Connect Identity Provider" : "OpenID Connect كىملىك تەمىنلىگۈچىسى ئارقىلىق يەككە كىرىش",
+    "Failed to perform revoke request due to connection error with the OpenProject server" : "OpenProject مۇلازىمېتىرى بىلەن ئۇلىنىش خاتالىقى سەۋەبىدىن بىكار قىلىش تەلىپىنى ئورۇندىيالمىدى",
+    "Failed to revoke some users' OpenProject OAuth access tokens" : "بەزى ئىشلەتكۈچىلەرنىڭ OpenProject OAuth زىيارەت بەلگىسىنى بىكار قىلالمىدى",
+    "Successfully revoked users' OpenProject OAuth access tokens" : "ئابونتلارنىڭ OpenProject OAuth زىيارەت بەلگىسىنى مۇۋەپپەقىيەتلىك ئەمەلدىن قالدۇردى"
 },
 "nplurals=2; plural=(n != 1);");

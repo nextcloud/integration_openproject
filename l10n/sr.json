@@ -51,9 +51,6 @@
     "Administration > File storages" : "Администрација > Фајл складишта",
     "Go to your OpenProject {htmlLink} as an Administrator and start the setup and copy the values here." : "Идите на свој OpenProject {htmlLink} као Администратор, започните подешавање и копирајте вредности овде.",
     "Copy the following values back into the OpenProject {htmlLink} as an Administrator." : "Копирајте следеће вредности назад у OpenProject {htmlLink} као Администратор.",
-    "Failed to perform revoke request due to connection error with the OpenProject server" : "Није успело повлачења захтева услед грешке у повезивању са  OpenProject сервером",
-    "Failed to revoke some users' OpenProject OAuth access tokens" : "Није успело повлачење OpenProject OAuth приступних жетона за неке кориснике",
-    "Successfully revoked users' OpenProject OAuth access tokens" : "Успешно су повучени корисникови OpenProject OAuth приступни жетони",
     "Failed to create Nextcloud OAuth client" : "Није успело креирање Nextcloud OAuth клијента",
     "If you proceed you will need to update these settings with the new OpenProject OAuth credentials. Also, all users will need to reauthorize access to their OpenProject account." : "Ако наставите, мораћете да ажурирате ова подешавања са новим OpenProject OAuth подацима за приступ. Такође, сви корисници ће поново морати да ауторизују приступ свом OpenProject налогу.",
     "Replace OpenProject OAuth values" : "Замени OpenProject OAuth вредности",
@@ -207,6 +204,9 @@
     "Displays a link to your OpenProject instance in the Nextcloud header." : "Приказује у Nextcloud заглављу линк на вашу OpenProject инстанцу.",
     "Allows you to search OpenProject work packages via the universal search bar in Nextcloud." : "Омогућава вам да у Nextcloud универзалној траци за претрагу претражујете OpenProject радне пакете.",
     "Two-way OAuth 2.0 authorization code flow" : "Двосмерни ток OAuth2 кода провере идентитета",
-    "Single-Sign-On through OpenID Connect Identity Provider" : "Јединствена пријава кроз пружаоца OpenID Connect Identity услуге"
+    "Single-Sign-On through OpenID Connect Identity Provider" : "Јединствена пријава кроз пружаоца OpenID Connect Identity услуге",
+    "Failed to perform revoke request due to connection error with the OpenProject server" : "Није успело повлачења захтева услед грешке у повезивању са  OpenProject сервером",
+    "Failed to revoke some users' OpenProject OAuth access tokens" : "Није успело повлачење OpenProject OAuth приступних жетона за неке кориснике",
+    "Successfully revoked users' OpenProject OAuth access tokens" : "Успешно су повучени корисникови OpenProject OAuth приступни жетони"
 },"pluralForm" :"nplurals=3; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && n%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2);"
 }

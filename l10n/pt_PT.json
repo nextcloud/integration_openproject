@@ -48,8 +48,6 @@
     "Administration > File storages" : "Administração > Armazenamentos de arquivos",
     "Go to your OpenProject {htmlLink} as an Administrator and start the setup and copy the values here." : "Vá para o seu {htmlLink} do OpenProject como administrador e inicie a configuração e copie os valores aqui.",
     "Copy the following values back into the OpenProject {htmlLink} as an Administrator." : "Copie os seguintes valores de volta para o OpenProject {htmlLink} como Administrador.",
-    "Failed to revoke some users' OpenProject OAuth access tokens" : "Falha ao revogar os tokens de acesso OAuth do OpenProject de alguns usuários",
-    "Successfully revoked users' OpenProject OAuth access tokens" : "Tokens de acesso OAuth do OpenProject dos usuários revogados com sucesso",
     "Failed to create Nextcloud OAuth client" : "Falha ao criar cliente OAuth do Nextcloud",
     "If you proceed you will need to update these settings with the new OpenProject OAuth credentials. Also, all users will need to reauthorize access to their OpenProject account." : "Se você continuar, precisará atualizar estas configurações com as novas credenciais do OpenProject OAuth. Além disso, todos os usuários precisarão reautorizar o acesso à sua conta OpenProject.",
     "Replace OpenProject OAuth values" : "Substituir os valores OAuth do OpenProject",
@@ -198,6 +196,8 @@
     "OAuth access token could not be obtained:" : "Não foi possível obter o token de acesso OAuth:",
     "Allows you to search OpenProject work packages via the universal search bar in Nextcloud." : "Permite que você pesquise pacotes de trabalho OpenProject por meio da barra de pesquisa universal no Nextcloud.",
     "Two-way OAuth 2.0 authorization code flow" : "Fluxo de código de autorização do OAuth 2.0 bidirecional",
-    "Single-Sign-On through OpenID Connect Identity Provider" : "Logon Único (Single Sign On) por meio do Provedor de Identidade OpenID Connect"
+    "Single-Sign-On through OpenID Connect Identity Provider" : "Logon Único (Single Sign On) por meio do Provedor de Identidade OpenID Connect",
+    "Failed to revoke some users' OpenProject OAuth access tokens" : "Falha ao revogar os tokens de acesso OAuth do OpenProject de alguns usuários",
+    "Successfully revoked users' OpenProject OAuth access tokens" : "Tokens de acesso OAuth do OpenProject dos usuários revogados com sucesso"
 },"pluralForm" :"nplurals=3; plural=(n == 0 || n == 1) ? 0 : n != 0 && n % 1000000 == 0 ? 1 : 2;"
 }

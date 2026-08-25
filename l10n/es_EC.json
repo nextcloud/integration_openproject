@@ -40,9 +40,6 @@
     "Administration > File storages" : "Configuración > Almacenamiento de archivos",
     "Go to your OpenProject {htmlLink} as an Administrator and start the setup and copy the values here." : "Ve a tu OpenProject {htmlLink} como administrador y comienza la configuración y copia los valores aquí.",
     "Copy the following values back into the OpenProject {htmlLink} as an Administrator." : "Copia los siguientes valores de vuelta a tu OpenProject {htmlLink} como administrador.",
-    "Failed to perform revoke request due to connection error with the OpenProject server" : "Error al realizar la solicitud de revocación debido a un error de conexión con el servidor de OpenProject",
-    "Failed to revoke some users' OpenProject OAuth access tokens" : "Error al revocar algunos tokens de acceso OAuth de OpenProject de los usuarios",
-    "Successfully revoked users' OpenProject OAuth access tokens" : "Tokens de acceso OAuth de OpenProject de algunos usuarios revocados con éxito",
     "Failed to create Nextcloud OAuth client" : "Error al crear el cliente OAuth de Nextcloud",
     "If you proceed you will need to update these settings with the new OpenProject OAuth credentials. Also, all users will need to reauthorize access to their OpenProject account." : "Si continúas, deberás actualizar esta configuración con las nuevas credenciales OAuth de OpenProject. Además, todos los usuarios deberán autorizar nuevamente el acceso a su cuenta de OpenProject.",
     "Replace OpenProject OAuth values" : "Reemplazar los valores de OAuth de OpenProject",
@@ -119,6 +116,9 @@
     "Retry setup OpenProject user, group and folder" : "Reintentar configurar usuario, grupo y carpeta de OpenProject",
     "Failed to link file to work package" : "Error al vincular archivo con el paquete de trabajo",
     "Successfully connected to OpenProject!" : "¡Conectado con éxito a OpenProject!",
-    "OAuth access token could not be obtained:" : "No se pudo obtener el token de acceso de OAuth:"
+    "OAuth access token could not be obtained:" : "No se pudo obtener el token de acceso de OAuth:",
+    "Failed to perform revoke request due to connection error with the OpenProject server" : "Error al realizar la solicitud de revocación debido a un error de conexión con el servidor de OpenProject",
+    "Failed to revoke some users' OpenProject OAuth access tokens" : "Error al revocar algunos tokens de acceso OAuth de OpenProject de los usuarios",
+    "Successfully revoked users' OpenProject OAuth access tokens" : "Tokens de acceso OAuth de OpenProject de algunos usuarios revocados con éxito"
 },"pluralForm" :"nplurals=3; plural=n == 1 ? 0 : n != 0 && n % 1000000 == 0 ? 1 : 2;"
 }
