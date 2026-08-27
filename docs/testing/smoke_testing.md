@@ -7,6 +7,7 @@
 
 **Table of Content:**
 
+- [Installation](#installation)
 - [Section A: Two-Way OAuth 2.0 Authorization Code Flow](#section-a-two-way-oauth-20-authorization-code-flow)
 - [Section B: Single-Sign-On through OpenID Connect Identity Provider](#section-b-single-sign-on-through-openid-connect-identity-provider)
   - [B.1: Nextcloud Hub as IDP](#B1-nextcloud-hub-as-idp)
@@ -16,6 +17,15 @@
   - [2. Link/Unlink Work Packages in OpenProject](#2-linkunlink-work-packages-in-openproject)
   - [3. Create a Work Package From Nextcloud](#3-create-a-work-package-from-nextcloud)
   - [4. Check Notifications in Nextcloud Dashboard Widget](#4-check-notifications-in-nextcloud-dashboard-widget)
+
+## Installation
+
+- Download and enable/disable app from [marketplace](https://apps.nextcloud.com/apps/integration_openproject/releases)
+  - [ ] Check the version is correct.
+- Enable/Disable from CLI:`php occ a:e integration_openproject`, `php occ a:d integration_openproject`
+  - [ ] Check the version is correct.
+- Enable/Disable from Nextcloud webUI.
+  - [ ] Check the version is correct.
 
 ## Section A: Two-Way OAuth 2.0 Authorization Code Flow
 
