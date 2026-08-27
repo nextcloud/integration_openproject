@@ -34,17 +34,24 @@ On the OpenProject end, users are able to:
 
 Please report issues and bugs here: https://community.openproject.org/projects/nextcloud-integration/work_packages
 
-## 📚 Documentation for users and administrators guide
+## 📚 Documentation for Users and Administrators
 
 - For documentation on how to set up the integration as an administrator, refer to [Nextcloud integration setup](https://openproject.org/docs/system-admin-guide/integrations/nextcloud/).
 - For documentation on how to use the integration once it is set up, refer to [Using the Nextcloud integration](https://openproject.org/docs/user-guide/nextcloud-integration/).
+- [Set up integration using API](docs/setting_up_as_admin.md)
+- [Set up integration using shell script](docs/setting_up_via_shell_script.md)
+- [Direct upload API](docs/direct_upload.md)
+- [File information API](docs/get_file_information.md)
 
 ## 🔨 Development Setup Guide
 
-- [Start Nextcloud-OpenProject setup](docs/setup_nc_op__full.md)
-- [APIs for integration setup for admin](docs/setting_up_as_admin.md)
-- [Setting up Integration via Shell Script](docs/setting_up_via_shell_script.md)
-- [APIs for Direct Upload](docs/direct_upload.md)
-- [APIs to get file information](docs/get_file_information.md)
-- [Release Preparation](docs/release.md)
-- [Running API tests](docs/running_API_test.md)
+- [Start Nextcloud-OpenProject setup](docs/setup_nc_op_full.md)
+
+## 💡 Testing Documentation
+
+- [Running API tests](docs/testing/running_API_test.md)
+- [Test plans](docs/testing)
+
+## 📦 Release Guide
+
+- [Release preparation](docs/release.md)
