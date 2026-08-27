@@ -71,7 +71,7 @@ In Nextcloud:
 
 ## Section B: Single-Sign-On through OpenID Connect Identity Provider
 
-> **Note**: `OpenProject` must be an Enterprise edition to use SSO setup.
+> **Note**: OpenProject must be an Enterprise edition to use SSO setup.
 
 ### B.1: Nextcloud Hub as IDP
 
