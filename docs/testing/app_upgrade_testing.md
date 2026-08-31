@@ -8,12 +8,11 @@
 **Table of Content:**
 
 - [Upgrade Steps](#upgrade-steps)
-- [For OAuth 2.0 Setup](#for-oauth-20-setup)
-- [For OIDC Setup](#for-oidc-setup)
-  - [Nextcloud Hub as IDP](#nextcloud-hub-as-idp)
-  - [External Provider (Keycloak)](#external-provider-keycloak)
-    - [Token Exchange Disabled](#token-exchange-disabled)
-    - [Token Exchange Enabled](#token-exchange-enabled)
+- [Upgrade Test Cases](#upgrade-test-cases)
+  - [Existing OAuth 2.0 Setup](#existing-oauth-20-setup)
+  - [Existing SSO Setup](#existing-sso-setup)
+    - [Nextcloud Hub as IDP](#nextcloud-hub-as-idp)
+    - [External Provider (Keycloak)](#external-provider-keycloak)
 
 ## Upgrade Steps
 
@@ -44,16 +43,16 @@
 - [ ] Perform [Upgrade steps](#upgrade-steps).
 - [ ] **After upgrade**: Check that the integration setup and other changes are preserved.
 
-### External Provider (Keycloak)
+#### External Provider (Keycloak)
 
-#### Token Exchange Disabled
+##### Token Exchange Disabled
 
-- [ ] **Before upgrade**: Perform complete setup with sso method (Keycloak as IDP, Token exchange disable, Project folder enabled).
+- [ ] **Before upgrade**: Perform complete setup with sso method (Keycloak as IDP, Token exchange disabled, Project folder enabled).
 - [ ] Perform [Upgrade steps](#upgrade-steps).
 - [ ] **After upgrade**: Check that the integration setup and other changes are preserved.
 
-#### Token Exchange Enabled
+##### Token Exchange Enabled
 
-- [ ] **Before upgrade**: Perform complete setup with sso method (Keycloak as IDP, Token exchange enable, Project folder enabled).
+- [ ] **Before upgrade**: Perform complete setup with sso method (Keycloak as IDP, Token exchange enabled, Project folder enabled).
 - [ ] Perform [Upgrade steps](#upgrade-steps).
 - [ ] **After upgrade**: Check that the integration setup and other changes are preserved.

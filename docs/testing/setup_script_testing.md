@@ -17,15 +17,15 @@ Reset Nextcloud and OpenProject configurations before running the script.
 - OpenProject:
   - Delete `nextcloud` file storage: `Administration > Files`.
 
-> Run the following cleanup script:
->
-> ```bash
-> bash dev/cleanup_setup.sh
-> ```
+Or, you can run the following cleanup script:
+
+```bash
+bash dev/cleanup_setup.sh
+```
 
 ## Two-Way OAuth Setup Script
 
-1. [Reset settings](#before-running-the-setup-script) before running the script.
+1. [Reset settings](#cleanup-before-running-script) before running the script.
 2. Run the following command to set up integration without project folder:
 
    ```bash
@@ -57,7 +57,7 @@ Reset Nextcloud and OpenProject configurations before running the script.
 > - `oidc` - OIDC Identity Provider
 > - `user_oidc` - OpenID Connect user backend
 
-1. [Reset settings](#before-running-the-setup-script) before running the script.
+1. [Reset settings](#cleanup-before-running-script) before running the script.
 2. Run the following command to set up integration without project folder:
 
    ```bash
@@ -87,7 +87,7 @@ Reset Nextcloud and OpenProject configurations before running the script.
 >
 > - `user_oidc` - OpenID Connect user backend
 
-1. [Reset settings](#before-running-the-setup-script) before running the script.
+1. [Reset settings](#cleanup-before-running-script) before running the script.
 2. Run the following command to set up integration without project folder:
 
    ```bash
@@ -116,7 +116,7 @@ Reset Nextcloud and OpenProject configurations before running the script.
 
 ### External IDP With Token Exchange
 
-1. [Reset settings](#before-running-the-setup-script) before running the script.
+1. [Reset settings](#cleanup-before-running-script) before running the script.
 2. Run the following command to set up integration without project folder:
 
    ```bash
