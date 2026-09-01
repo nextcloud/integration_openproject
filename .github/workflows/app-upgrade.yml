@@ -93,8 +93,9 @@ jobs:
       - name: Setup NodeJS
         uses: actions/setup-node@6044e13b5dc448c55e2357c09f80417699197238
         with:
-          node-version-file: package.json
+          node-version-file: integration_openproject/package.json
           cache: 'npm'
+          cache-dependency-path: 'integration_openproject/package-lock.json'
 
       - name: Wait for Nextcloud server to be ready
         run: |
