@@ -97,11 +97,11 @@ services:
       SQL: pgsql
       PROTOCOL: https
       VIRTUAL_HOST: nextcloud.local
-      SERVER_BRANCH: ${NEXTCLOUD_BRANCH:-stable33}
+      SERVER_BRANCH: ${NEXTCLOUD_BRANCH:-stable34}
       NEXTCLOUD_AUTOINSTALL: YES
       NEXTCLOUD_TRUSTED_DOMAINS: nextcloud.local
       NEXTCLOUD_AUTOINSTALL_APPS: oidc groupfolders user_oidc ${NEXTCLOUD_AUTOINSTALL_APPS:-}
-      NEXTCLOUD_AUTOINSTALL_APPS_WAIT_TIME: 60
+      NEXTCLOUD_AUTOINSTALL_APPS_WAIT_TIME: 10
       # [INFO] Pre-defined database config
       # - admin-user: admin
       # - admin-pass: admin
