@@ -208,6 +208,8 @@
     "OAuth access token could not be obtained:" : "Le jeton d'accès OAuth n'a pas pu être obtenu :",
     "Displays a link to your OpenProject instance in the Nextcloud header." : "Affiche un lien vers votre instance OpenProject dans l’en-tête Nextcloud.",
     "Allows you to search OpenProject work packages via the universal search bar in Nextcloud." : "Vous permet de rechercher des packages fonctionnels OpenProject via la barre de recherche universelle dans Nextcloud.",
+    "Two-way OAuth 2.0 authorization code flow" : "Flux de code d'autorisation OAuth 2.0 mutuelle",
+    "Single-Sign-On through OpenID Connect Identity Provider" : "Authentification unique via un fournisseur d'identité OpenID Connect",
     "Failed to perform revoke request due to connection error with the OpenProject server" : "Échec de la requête de révocation en raison d’une erreur de connexion avec le serveur OpenProject",
     "Failed to revoke some users' OpenProject OAuth access tokens" : "Échec de la révocation des jetons d’accès OAuth OpenProject de certains utilisateurs.",
     "Successfully revoked users' OpenProject OAuth access tokens" : "Jeton·s d’accès OAuth OpenProject révoqué·s avec succès."
