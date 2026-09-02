@@ -3,519 +3,268 @@
   - SPDX-License-Identifier: AGPL-3.0-or-later
 -->
 
-# Smoke Testing Docs for `integration_openproject`
-
-This file consists of some smoke testing to be done before the release (major and minor) of `integration_application` application.
-The need for this smoke testing (manual) is that we do not have e2e test setup to automate that involves both `OpenProject` and `Nextcloud`.
+# Smoke Testing
 
 **Table of Content:**
 
+- [Installation](#installation)
 - [Section A: Two-Way OAuth 2.0 Authorization Code Flow](#section-a-two-way-oauth-20-authorization-code-flow)
 - [Section B: Single-Sign-On through OpenID Connect Identity Provider](#section-b-single-sign-on-through-openid-connect-identity-provider)
+  - [B.1: Nextcloud Hub as IDP](#b1-nextcloud-hub-as-idp)
+  - [B.2: External Provider](#b2-external-provider)
+- [Test Cases](#test-cases)
+  - [1. Link/Unlink Work Packages in Nextcloud](#1-linkunlink-work-packages-in-nextcloud)
+  - [2. Link/Unlink Work Packages in OpenProject](#2-linkunlink-work-packages-in-openproject)
+  - [3. Create a Work Package From Nextcloud](#3-create-a-work-package-from-nextcloud)
+  - [4. Check Notifications in Nextcloud Dashboard Widget](#4-check-notifications-in-nextcloud-dashboard-widget)
 
-  - [B.1: Nextcloud Hub as IDP](#B1-nextcloud-hub-as-idp)
-  - [B.2: External Provider](#B2-External-Provider)
+## Installation
 
-- [Common Smoke Test Steps](#common-smoke-test-steps)
-
-  - [1. Link/Unlink a work package for a file/folder in Nextcloud](#1-linkunlink-a-work-package-for-a-filefolder-in-nextcloud)
-  - [2. Link/Unlink a work package for a file/folder from OpenProject](#2-linkunlink-a-work-package-for-a-filefolder-from-openproject)
-  - [3. Direct upload file/folder from OpenProject to Nextcloud](#3-direct-upload-filefolder-from-openproject-to-nextcloud)
-  - [4. Create a WorkPackage from Nextcloud](#4-create-a-workpackage-from-nextcloud)
-  - [5. Check notification in `OpenProject` widget in Nextcloud](#5-check-notification-in-openproject-widget-in-nextcloud)
-  - [6. Setup and check project folder in Nextcloud (with project folder setup)](#6-setup-and-check-project-folder-in-nextcloud-with-project-folder-setup)
-  - [7. Setup and Check New folder with automatically managed permissions in OpenProject](#7-setup-and-check-new-folder-with-automatically-managed-permissions-in-openproject)
-
-- [App Upgrade Testing](#app-upgrade-testing)
-  - [Upgrade Steps](#upgrade-steps)
-  - [For OAuth 2.0 Setup](#for-oauth-20-setup)
-  - [For OIDC Setup](#for-oidc-setup)
-    - [Nextcloud Hub as IDP](#nextcloud-hub-as-idp)
-    - [External Provider (Keycloak)](#external-provider-keycloak)
-      - [Token Exchange Disabled](#token-exchange-disabled)
-      - [Token Exchange Enabled](#token-exchange-enabled)
+- Download and enable/disable app from [marketplace](https://apps.nextcloud.com/apps/integration_openproject/releases)
+  - [ ] Check the version is correct.
+- Enable/Disable from CLI:`php occ a:e integration_openproject`, `php occ a:d integration_openproject`
+  - [ ] Check the version is correct.
+- Enable/Disable from Nextcloud webUI.
+  - [ ] Check the version is correct.
 
 ## Section A: Two-Way OAuth 2.0 Authorization Code Flow
 
-### A1. OAuth configuration
+### Pre-Requisites
 
-- [ ] Keep two browser tabs open: one for `OpenProject` and one for `Nextcloud`.
-- [ ] In `OpenProject`, as a user `admin`, navigate to `Administration > Files` and add a new `Nextcloud` storage:
-  - Add name to `Nextcloud` and host to `<nextcloud-host>`.
-  - Select `Two-way OAuth 2.0 authorization code flow` as the authentication method.
-  - Click `Save and Continue` — note the generated `OpenProject OAuth Client ID` and `Client Secret`.
-- [ ] In `Nextcloud`, as a user `admin`, navigate to `Administration Settings > OpenProject`:
-  - Set `OpenProject server` to `<openproject_host>`.
-  - Select `Two-way OAuth 2.0 authorization code flow` as the authentication method.
-  - Enter the `OpenProject OAuth Client ID` and `Client Secret` copied from the previous step.
-  - Click `Save` — note the generated `Nextcloud OAuth Client ID` and `Client Secret`.
-- [ ] Back in `OpenProject`:
-  - Enter the `Nextcloud OAuth Client ID` and `Client Secret`, then click `Save and Continue`.
-  - Uncheck the `Automatically managed folders` and click on `Finish setup`.
-- [ ] Back in `Nextcloud`, click `Yes, I have copied these values`.
-- [ ] Disable `Automatically managed project folders` and click `Complete without Project Folders`.
+- Create a test user in Nextcloud and OpenProject.
 
-### A2. Connect Nextcloud with OpenProject
+### 1. Integration Setup
 
-- [ ] Complete step [Test No A1](#a1-oauth-configuration).
-- [ ] In `Nextcloud`, navigate to `Personal Settings > OpenProject` and click on `Connect to OpenProject` button.
-- [ ] `Nextcloud` admin should be connected as an `OpenProject` admin.
-- [ ] Also, create a user in both `Nextcloud` as well as `OpenProject`.
-- [ ] From the personal section of the created user in `Nextcloud`, connect to `OpenProject`.
-- [ ] `Nextcloud` user should be connected as an `OpenProject` user.
+- Open Nextcloud and OpenProject.
+- In OpenProject (as admin), navigate to `Administration > Files` and add a new `Nextcloud` storage:
+  - [ ] Add name and Nextcloud host URL.
+  - [ ] Select `Two-way OAuth 2.0 authorization code flow` as the authentication method.
+  - Note the generated OpenProject OAuth client ID and secret. **[We will need this in the next step]**
+- In Nextcloud (as admin), navigate to `Administration Settings > OpenProject`:
+  - [ ] Add OpenProject host URL.
+  - [ ] Select `Two-way OAuth 2.0 authorization code flow` authentication method.
+  - [ ] Enter the OpenProject client ID and secret copied from the step above.
+  - [ ] Note the generated Nextcloud OAuth client ID and secret. **[We will need this in the next step]**
+  - [ ] Enable `Automatically managed folders`
+  - [ ] Note the generated application password. **[We will need this in the next step]**
+- Back in OpenProject:
+  - [ ] Enter the Nextcloud client ID and secret copied from the step above.
+  - [ ] Enable `Automatically managed folders` and enter the application password copied from the step above.
+  - [ ] Save the storage.
 
-### A3. Add File storage (Nextcloud) to an OpenProject project
+### 2. Establish Connection
 
-- [ ] Complete step [Test No A1](#a1-oauth-configuration).
-- [ ] In `Openproject`, as a user `admin`, select any `OpenProject` Project (for example, `Demo Project`) in `OpenProject`.
-- [ ] Navigate to `Project settings > Files` of `Demo Project`.
-- [ ] Add a file storage name `Nextcloud`( choose `No specific Folder` option ) for `Demo Project`.
-- [ ] Add the nextcloud-created user as the member of Demo Project project.
+In OpenProject:
 
-### A4. Connect OpenProject with Nextcloud
+- As admin:
+  - [ ] Select a Project (e.g., `Demo Project`).
+  - [ ] Add created test user as a project member: `Members` sidebar menu.
+  - [ ] Add `Nextcloud` storage to it: `Project settings > Files` sidebar menu.
+  - [ ] Connect to Nextcloud admin user using `Nextcloud log in` button if prompted.
+  - [ ] Log out
+- Login as test user:
+  - [ ] Connect to Nextcloud test user using `nextcloud` sidebar menu.
 
-- [ ] Complete step [Test No A1](#a1-oauth-configuration).
-- [ ] Complete step [Test No A3](#a3-add-file-storage-nextcloud-to-an-openproject-project).
-- [ ] In `Openproject`, as a user `admin`, navigate to `Demo Project > Work Packages` and open any work package by clicking its ID.
-- [ ] Navigate to `Files` tab, and login to `Nextcloud`.
-- [ ] `OpenProject` admin is connected to `Nextcloud` as a `Nextcloud` admin.
-- [ ] Add the created `OpenProject` user as the member of `Demo Project` project (admin can add members to a project).
-- [ ] Login as created user in both `OpenProject` and `Nextcloud`.
-- [ ] Try to connect the created `OpenProject` user as created `Nextcloud` user.
-- [ ] `OpenProject` user should be connected as a `Nextcloud` user.
+In Nextcloud:
 
-### A5. Complete the common smoke tests
+- As admin:
+  - [ ] Navigate to `Personal Settings > OpenProject`.
+  - [ ] Connect to OpenProject admin user using `Connect to OpenProject` button.
+  - [ ] Log out
+- Login as test user:
+  - [ ] Navigate to `Settings > OpenProject`.
+  - [ ] Connect to OpenProject test user using `Connect to OpenProject` button.
 
-- [ ] Complete [smoke tests 1-7](#common-smoke-test-steps).
+### 3. Complete the common smoke tests
 
-### A6. Check the integration script for oauth set up
-
-> Before running the script, make sure that your `Nextcloud` and `OpenProject` instances are up and running.
-
-- [ ] Run the `integration_setup.sh` script to set up integration without project folder with the following command:
-
-```bash
-SETUP_PROJECT_FOLDER=false \
-NEXTCLOUD_HOST=<nextcloud_instance_url> \
-OPENPROJECT_HOST=<openproject_instance_url> \
-OP_ADMIN_USERNAME=admin \
-OP_ADMIN_PASSWORD=admin \
-NC_ADMIN_USERNAME=admin \
-NC_ADMIN_PASSWORD=admin \
-OPENPROJECT_STORAGE_NAME=Nextcloud  \
-bash integration_setup.sh
-```
-
-- [ ] Upon success, try step [Test No A2](#a2-connect-nextcloud-with-openproject) (Skip first check).
-- [ ] Upon success, try step [Test No A4](#a4-connect-openproject-with-nextcloud) (Skip first check).
-- [ ] Also, to set up the integration configuration with project folder setup, just set environment `SETUP_PROJECT_FOLDER=true` and run the script.
-- [ ] Re-run the script again after it is already setup (Should not give any error).
+- [ ] Validate [test cases 1-4](#test-cases).
 
 ## Section B: Single-Sign-On through OpenID Connect Identity Provider
 
-> **Note**: `OpenProject` must be an Enterprise edition to use SSO setup.
+> **Note**: OpenProject must be an Enterprise edition to use SSO setup.
 
 ### B.1: Nextcloud Hub as IDP
 
-#### B.1.1. Configure Nextcloud
+<!-- move setup steps to separate docs file -->
 
-- [ ] In `Nextcloud`, log in as a user `admin`.
-- [ ] Install and enable `OIDC Identity Provider`(`oidc`) and `OpenID Connect user backend`(`user_oidc`) apps.
-- [ ] Create a new user ( with username, display name, password, and email).
-- [ ] Check whether `oidc_provider_bearer_validation` exists and is set to `true` by running `php occ config:list`.
-  > **Note:** This requires the OIDC Identity Provider app >= v1.4.0. Access tokens and JWT tokens can be validated.
-  - [ ] If the setting does not exist or is set to `false`, run:
-    - `php occ config:system:set user_oidc --type boolean --value="true" oidc_provider_bearer_validation`
-- [ ] Go to `Administration > OpenID Connect` and enable `store login tokens` option.
-- [ ] Go to `Administration > OpenID Connect Provider`.
-  - Click the button `+ Add client`.
-  - Add a client name (not an identifier) such as `openproject`.
-  - Add a redirect URL: `<openproject_host>/auth/oidc-<idp_displayname_from_openproject>/callback`.
-   > **Note:** Use the same value as the custom OpenID provider `Display name` in OpenProject from `B.1.2` (for example, `nextcloud`) for `<idp_displayname_from_openproject>`.
-  - Choose Signing Algorithm option as `RS256`.
-  - Choose Client Type as `Confidential` and click on `Add` button.
-  - After clicking `add` button, click on the recently created client.
-  - Choose `Access Token Type` as `JWT Access Token (RFC9068)` and click on `save` button.
-  - Go to `settings` section.
-  - Set `Refresh Token Expire Time` to `Never`.
-  - Save.
-  - Copy the Client ID and Client secret (you will need these later in OpenProject and integration_openproject).
+#### Pre-Requisites
 
-#### B.1.2. Add Nextcloud IDP in OpenProject (Without project folder setup)
+Setup Nextcloud:
 
-- [ ] In `OpenProject`, log in as a user `admin`.
-- [ ] Go to `Administration > Authentication > OpenID providers`.
-- [ ] Add a new custom OpenID provider:
-  - Display name: `nextcloud` (use this name as redirect URL in Nextcloud: <idp_displayname_from_openproject>)
-  - Discovery URL: `<nextcloud_instance_url>/index.php/.well-known/openid-configuration`
-  - Client ID: Client ID copied earlier from Nextcloud
-  - Client secret: Client secret copied earlier from Nextcloud
-  - Keep all other options as default and click on `save`.
-- [ ] Then, go to `Administration > Files`.
-- [ ] Create a file storage type `Nextcloud` by clicking the button `+ Storage` and choosing `Nextcloud`.
-- [ ] Set the name to `Nextcloud`.
-- [ ] Set Host to `<nextcloud-host>`.
-- [ ] Set authentication Method to `Single-Sign-On through OpenID Connect Identity Provider`.
-- [ ] Then, select the option `Use access token obtained during user log in`.
-- [ ] Uncheck project folder (automatically managed folder).
-- [ ] Click on button `Finish setup`.
+- Enable the following apps:
+  - OIDC Identity Provider (`oidc`)
+  - OpenID Connect user backend (`user_oidc`)
+- Create an OIDC client: `Administration settings > OpenID Connect Provider`
+  - Name: `openproject`
+  - Redirect URL: `<openproject_host_url>/auth/oidc-nextcloud/callback`
+  - Add the client.
+- Open the created client:
+  - Change access token type to JWT Access Token.
+  - Note the client ID and secret.
+- Enable `store login tokens` option in `Administration settings > OpenID Connect`.
+- Create a test user with username, display name, password, and email.
 
-#### B.1.3. Setup integration (Without project folder setup)
+Setup OpenProject:
 
-- [ ] Complete step [Test No B.1.1](#b11-configure-nextcloud).
-- [ ] Complete step [Test No B.1.2](#b12-add-nextcloud-idp-in-openproject-without-project-folder-setup).
-- [ ] In `Nextcloud`, as a user `admin`, go to `Administration > OpenProject`.
-- [ ] Add openproject host.
-- [ ] Under `Authentication Method`, select `Single-Sign-On through OpenID Connect Identity Provider`.
-- [ ] In `Authentication settings`, select `provider Type` as `Nextcloud Hub`.
-- [ ] Set OpenProject `client ID` by Client ID copied earlier in **Test No B1**.
-- [ ] Uncheck `project folder (automatically managed folder)`.
+- Add a custom OpenID provider: `Administration > Authentication > OpenID providers`
+  - Display name: `nextcloud`
+  - Discovery URL: `<nextcloud_host_url>/index.php/.well-known/openid-configuration`
+  - Client ID: `Client ID copied earlier from Nextcloud`
+  - Client secret: `Client secret copied earlier from Nextcloud`
+  - Complete the setup.
 
-#### B.1.4. Login to OpenProject using Nextcloud user
+#### 1. Integration Setup
 
-- [ ] Complete step [Test No B.1.1](#B11-Configure-Nextcloud).
-- [ ] Complete step [Test No B.1.2](#b12-add-nextcloud-idp-in-openproject-without-project-folder-setup).
-- [ ] Complete step [Test No B.1.3](#b13-setup-integration-without-project-folder-setup).
-- [ ] In `nextcloud`, login as nextcloud-created user.
-- [ ] In `openproject`, use the SSO button on the login page to sign in as the nextcloud-created user.
-- [ ] Login should be successful in `openproject`.
-- [ ] The OpenProject username should match the Nextcloud-created user’s name.
+- Open Nextcloud and OpenProject.
+- In OpenProject (as admin), navigate to `Administration > Files` and add a new `Nextcloud` storage:
+  - [ ] Add name and Nextcloud host URL.
+  - [ ] Select `Single-Sign-On through OpenID Connect Identity Provider` as the authentication method.
+  - [ ] Choose `Use access token obtained during user log in` option.
+- In Nextcloud (as admin), navigate to `Administration Settings > OpenProject`:
+  - [ ] Add OpenProject host URL.
+  - [ ] Select `Single-Sign-On through OpenID Connect Identity Provider` authentication method.
+  - [ ] Choose `Nextcloud Hub` as provider type.
+  - [ ] Enter the client ID copied from the setup step above.
+  - [ ] Enable `Automatically managed folders`
+  - [ ] Note the generated application password. **[We will need this in the next step]**
+- Back in OpenProject:
+  - [ ] Enable `Automatically managed folders` and enter the application password copied from the step above.
+  - [ ] Save the storage.
 
-#### B.1.5. Verify Connection of Nextcloud user with OpenProject
+#### 2. Establish Connection
 
-- [ ] Complete step [Test No B.1.1](#B11-Configure-Nextcloud).
-- [ ] Complete step [Test No B.1.2](#b12-add-nextcloud-idp-in-openproject-without-project-folder-setup).
-- [ ] Complete step [Test No B.1.3](#b13-setup-integration-without-project-folder-setup).
-- [ ] Complete step [Test No B.1.4](#b14-login-to-openProject-using-nextcloud-user).
-- [ ] In nextcloud, login as nextcloud-created user.
-- [ ] Navigate to `Settings > OpenProject`.
-- [ ] Should show user is connected as an OpenProject user.
+In OpenProject:
 
-#### B.1.6. Add File storage (Nextcloud) to an OpenProject project
-- [ ] In Openproject, as a user admin, select any OpenProject Project (for example, Demo Project) in OpenProject.
-- [ ] Navigate to Project settings > Files of Demo Project.
-- [ ] Add a file storage name Nextcloud( choose No specific Folder option ) for Demo Project.
-- [ ] Add the nextcloud-created user as the member of Demo Project project.
+- Use Nextcloud SSO button to login as Nextcloud test user.
+- Login as admin:
+  - [ ] Select a Project (e.g., `Demo Project`).
+  - [ ] Add Nextcloud test user as a project member: `Members` sidebar menu.
+  - [ ] Add `Nextcloud` storage to it: `Project settings > Files` sidebar menu.
+  - [ ] Log out
+- As Nextcloud test user:
+  - [ ] Select a Project (e.g., `Demo Project`).
+  - [ ] Open a work package.
+  - [ ] From `FILES` tab, check that Nextcloud files is connected (Should see Nextcloud files upload section).
 
-#### B.1.7. Complete the common smoke tests
+In Nextcloud:
 
-- [ ] Complete [smoke tests 1-7](#common-smoke-test-steps).
+- As Nextcloud test user:
+  - [ ] Navigate to `Settings > OpenProject`.
+  - [ ] Check that the user is connected.
+
+#### 3. Complete the common smoke tests
+
+- [ ] Validate [test cases 1-4](#test-cases).
 
 ### B.2: External Provider
 
-> Here, keycloak is an External Provider
+Use Keycloak as an External Provider.
 
-#### B.2.1. Configure Keycloak
+#### Pre-Requisites
 
-- [ ] Set up Keycloak using this guide: [Keycloak Setup](https://www.openproject-edge.com/docs/system-admin-guide/integrations/nextcloud/oidc-sso/#keycloak).
+Setup Keycloak (Skip this if you are using [dev compose setup](../../dev/)):
 
-#### B.2.2. Configure Nextcloud
+- Set up Keycloak using [Keycloak Setup](https://www.openproject-edge.com/docs/system-admin-guide/integrations/nextcloud/oidc-sso/#keycloak) guide.
+- In the current realm, create test users.
 
-- [ ] In **nextcloud**, as an admin go to `Administration > OpenID Connect`.
-- [ ] Enable `store login tokens` options.
-- [ ] Register a new providers with the following data:
+Setup Nextcloud (Skip this if you are using [dev compose setup](../../dev/)):
+
+- Enable `store login tokens` option.
+- Register a new OIDC provider: `Administration settings > OpenID Connect`.
   - Identifier: `keycloak`
-  - Client ID: nextcloud client id from keycloak
-  - Client Secret: nextcloud client secret from keycloak
-  - Discovery endpoint: `<keycloak_instance_url>/realms/<realm-name>/.well-known/openid-configuration` (for example realm name can be `opnc`)
+  - Client ID: `Nextcloud client ID from Keycloak`
+  - Client Secret: `Nextcloud client secret from Keycloak`
+  - Discovery endpoint: `<keycloak_host_url>/realms/<realm-name>/.well-known/openid-configuration`
   - Scope: `openid profile email api_v3`
-  - submit
-- [ ] If you are using [Docker setup](../../dev/), default `Keycloak` users already exist (`alice` and `brian`, password: `1234`), so you can skip the user-creation steps below and go directly to step [B.2.3](#b23-add-keycloak-idp-in-openproject).
-- [ ] In Keycloak, go to the user management section. For example, if your realm name is `opnc`, navigate to: `opnc > Users`.
-- [ ] Then create a user.
-- [ ] Login as keycloak-created user in `Nextcloud`.
-- [ ] Login should be successful.
-- [ ] Logout.
 
-#### B.2.3. Add Keycloak IDP in OpenProject
-- [ ] In `OpenProject`, as a user `admin`, go to `Administration > Authentication > OpenID providers`.
-- [ ] Add a new custom OpenID provider:
+Setup OpenProject:
+
+- Add a custom OpenID provider: `Administration > Authentication > OpenID providers`
   - Display name: `keycloak`
-  - Discovery URL: `<keycloak_instance_url>/realms/<realm-name>/.well-known/openid-configuration`
-  - Client ID: Client ID of openproject provided by keycloak in the <realm-name> realm.
-  - Client secret: Client secret of openproject from keycloak
-  > Note: To find `Client ID` and `Client secret` in Keycloak, open `Clients` in your `<realm-name>` realm and select `openproject`. Copy `Client ID` from the `Settings` tab and `Client secret` from the `Credentials` tab.
-- [ ] Go to Administration > Files.
-  - [ ] Create a file storage type `Nextcloud` by clicking the button `+ Storage` and choosing Nextcloud
-  - [ ] Add name as `Nextcloud`.
-  - [ ] Add Host as `<nextcloud-host>`
-  - [ ] Set authentication method to `Single-Sign-On through OpenID Connect Identity Provider`.
-  - [ ] Then, select the option `Use access token obtained during user log in`.
-  - [ ] Uncheck project folder (automatically managed folder).
-  - [ ] Click on button `Finish setup`.
-- [ ] Navigate to `Project settings > Files` of a project (for example, `Demo Project`) and add `Nextcloud` as a file storage.
-- [ ] In `OpenProject`, login as keycloak-created user.
-- [ ] In `OpenProject`, log out, then log in as a user `admin`.
-- [ ] As an `OpenProject` admin, add keycloak-created user as a member in one of the project (for example, `Demo Project`).
+  - Discovery URL: `<keycloak_host_url>/realms/<realm-name>/.well-known/openid-configuration`
+  - Client ID: `OpenProject client ID from Keycloak`
+  - Client secret: `OpenProject client secret from Keycloak`
+  - Complete the setup.
 
-#### B.2.4. Setup integration (token exchange disabled) in Nextcloud
+#### 1. Integration Setup
 
-- [ ] As a user `admin`, go to `Administration > OpenProject`.
-- [ ] Add OpenProject host as `<openproject_host>`.
-- [ ] Under `Authentication Method`, select `Single-Sign-On through OpenID Connect Identity Provider`.
-- [ ] In `Authentication settings`, select `provider Type` as `Keycloak`.
-- [ ] Disable `token exchange` as well as `Automatically managed folders`.
+- Open Nextcloud and OpenProject.
+- In OpenProject (as admin), navigate to `Administration > Files` and add a new `Nextcloud` storage:
+  - [ ] Add name and Nextcloud host URL.
+  - [ ] Select `Single-Sign-On through OpenID Connect Identity Provider` as the authentication method.
+  - [ ] Choose `Use access token obtained during user log in` option.
+- In Nextcloud (as admin), navigate to `Administration Settings > OpenProject`:
+  - [ ] Add OpenProject host URL.
+  - [ ] Select `Single-Sign-On through OpenID Connect Identity Provider` authentication method.
+  - [ ] Choose `External Provider` as provider type.
+  - [ ] Select `keycloak` provider from the list and save.
+  - [ ] Enable `Automatically managed folders`
+  - [ ] Note the generated application password. **[We will need this in the next step]**
+- Back in OpenProject:
+  - [ ] Enable `Automatically managed folders` and enter the application password copied from the step above.
+  - [ ] Save the storage.
 
-#### B.2.5. Verify Connection in nextcloud
+#### 2. Establish Connection
 
-- [ ] First, complete steps **B.2.1** to **B.2.4**.
-- [ ] In nextcloud, login as keycloak-created user.
-- [ ] Navigate to `Settings > OpenProject`.
-- [ ] Should show user is connected as an OpenProject user.
-
-#### B.2.6. Complete the common smoke tests
-
-- [ ] Complete [smoke tests 1-7](#common-smoke-test-steps).
-
-#### B.2.7. Setup integration (token exchange enabled) in Nextcloud
-
-- [ ] Complete step [Test No B.2.1](#b21-configure-keycloak).
-- [ ] Complete step [Test No B.2.2](#b22-configure-nextcloud).
-- [ ] Complete step [Test No B.2.3](#b23-Add-Keycloak-idp-in-openoroject).
-- [ ] As a user `admin` go to `Administration > OpenProject` in nextcloud.
-- [ ] Under `Authentication Method`, select `Single-Sign-On through OpenID Connect Identity Provider`.
-- [ ] In `Authentication settings`, select `provider Type` as `Keycloak`.
-- [ ] Enable `token exchange`.
-- [ ] Set `OpenProject client ID *` to `openproject`.
-
-#### B.2.8. Verify Connection in nextcloud
-
-- [ ] Complete step [Test No B.2.1](#b21-configure-keycloak).
-- [ ] Complete step [Test No B.2.2](#b22-configure-nextcloud).
-- [ ] Complete step [Test No B.2.3](#b23-add-keycloak-idp-in-openproject).
-- [ ] Complete step [Test No B.2.5](#b25-verify-connection-in-nextcloud).
-- [ ] In nextcloud, login as keycloak-created user.
-- [ ] Navigate to `Settings > OpenProject`.
-- [ ] Should show user is connected as an OpenProject user.
-
-#### B.2.9. Complete the common smoke tests
-
-- [ ] Complete [smoke tests 1-7](#common-smoke-test-steps).
-
-### Check the integration script for sso setup (Nextcloud Hub)
-
-> Before running the script, make sure that your `Nextcloud` and `OpenProject` instances are up and running.
-> If you're using Nextcloud as the Identity Provider (OIDC), make sure the following apps are installed and enabled in Nextcloud:
+> Keycloak users if you are using [dev compose setup](../../dev/):
 >
-> - oidc
-> - integration_openproject
->
-> If you are using a custom Identity Provider, ensure that:
->
-> - user_oidc app is installed and enabled in Nextcloud.
-> - The custom IdP is properly configured and accessible.
->
-> To add the Nextcloud storage, delete the 'nextcloud' file storage from OpenProject, reset the Nextcloud config, and run the script again.
+> - `alice`:`1234`
+> - `brian`:`1234`
 
-- [ ] Complete step [Test No B.1.1](#b11-configure-nextcloud) (only the first , second and third steps are required).
-- [ ] Complete step [Test No B.1.2](#b12-add-nextcloud-idp-in-openProject-without-project-folder-setup) (only the first and second steps are required).
-- [ ] Run the `integration_oidc_setup.sh` script to set up integration without project folder with the following command:
+In OpenProject:
 
-```bash
-NC_INTEGRATION_PROVIDER_TYPE=nextcloud_hub \
-NC_ADMIN_USERNAME=admin \
-NC_ADMIN_PASSWORD=admin \
-NC_INTEGRATION_ENABLE_NAVIGATION=false \
-NC_INTEGRATION_ENABLE_SEARCH=false \
-NC_HOST=<nextcloud_instance_url> \
-OP_ADMIN_USERNAME=admin \
-OP_ADMIN_PASSWORD=admin \
-OP_STORAGE_NAME=nextcloud \
-OP_HOST=<openproject_instance_url> \
-OP_USE_LOGIN_TOKEN=true \
-bash integration_oidc_setup.sh
-```
+- Use Keycloak SSO button to login as Keycloak test user.
+- Login as admin:
+  - [ ] Select a Project (e.g., `Demo Project`).
+  - [ ] Add Keycloak test user as a project member: `Members` sidebar menu.
+  - [ ] Add `Nextcloud` storage to it: `Project settings > Files` sidebar menu.
+  - [ ] Log out
+- As Keycloak test user:
+  - [ ] Select a Project (e.g., `Demo Project`).
+  - [ ] Open a work package.
+  - [ ] From `FILES` tab, check that Nextcloud files is connected (Should see Nextcloud files upload section).
 
-- [ ] Upon success, try step [Test No B.1.4](#b14-login-to-openproject-using-nextcloud-user).
-- [ ] Upon success, try step [Test No B.1.5](#b15-verify-connection-of-nextcloud-user-with-openproject).
-- [ ] Also, to set up the integration configuration with project folder setup, at first delete 'nextcloud' file storage from OpenProject.
-- [ ] In nextcloud, delete the `OpenProject` user, group and team folder from the nextcloud (if they exist).
-- [ ] Then, reset the Nextcloud config.
-- [ ] Set environment `SETUP_PROJECT_FOLDER=true` and run the script.
-- [ ] Run the script again after it is already setup (Should not give any error).
+In Nextcloud:
 
-### Check the integration script for sso setup (External provider without token exchange)
+- Login as Keycloak test user:
+  - [ ] Navigate to `Settings > OpenProject`.
+  - [ ] Check that the user is connected.
 
-> Before running the script make sure that you delete the 'nextcloud' file storage from OpenProject and reset the integration settings in Nextcloud.
+#### 3. Complete the common smoke tests
 
-- [ ] Complete step [Test No B.2.1](#b21-configure-keycloak).
-- [ ] Complete step [Test No B.2.2](#b22-configure-nextcloud).
-- [ ] Complete step [Test No B.2.3](#b23-add-keycloak-idp-in-openproject).
-- [ ] Run the `integration_oidc_setup.sh` script to set up integration without project folder with the following command:
+- [ ] Validate [test cases 1-4](#test-cases).
 
-```bash
-NC_HOST=<nextcloud_instance_url> \
-NC_ADMIN_USERNAME=admin \
-NC_ADMIN_PASSWORD=admin \
-NC_INTEGRATION_PROVIDER_TYPE=external \
-NC_INTEGRATION_PROVIDER_NAME=keycloak \
-NC_INTEGRATION_OP_CLIENT_ID=openproject \
-NC_INTEGRATION_TOKEN_EXCHANGE=false \
-NC_INTEGRATION_ENABLE_NAVIGATION=false \
-NC_INTEGRATION_ENABLE_SEARCH=false \
-OP_HOST=<openproject_instance_url> \
-OP_ADMIN_USERNAME=admin \
-OP_ADMIN_PASSWORD=admin \
-OP_STORAGE_NAME=nextcloud \
-OP_USE_LOGIN_TOKEN=true \
-bash integration_oidc_setup.sh
+## Test Cases
 
-```
+### 1. Link/Unlink Work Packages in Nextcloud
 
-- [ ] Upon success, try step [Test No B.2.5](#b25-verify-connection-in-nextcloud).
-- [ ] Also, to set up the integration configuration with project folder setup, at first delete 'nextcloud' file storage from OpenProject.
-- [ ] In nextcloud, delete the `OpenProject` user, group and team folder from the nextcloud (if they exist).
-- [ ] Then, reset the Nextcloud config.
-- [ ] Set environment `SETUP_PROJECT_FOLDER=true` and run the script.
-- [ ] Run the script again after it is already setup (Should not give any error).
+- Upload a file
+- [ ] Open OpenProject sidebar from file context menu.
+  - File's 3 dots menu (`...`) -> `OpenProject`.
+- [ ] Search for a work package and select to link.
+- [ ] Check that the work package is listed under `Existing relations`.
+- [ ] Unlink the work package (hover over the linked work package and click unlink icon).
 
-### Check the integration script for sso setup (External provider with token exchange)
+### 2. Link/Unlink Work Packages in OpenProject
 
-> Before running the script below, make sure that you delete the 'nextcloud' file storage from OpenProject and reset the Nextcloud config.
+- [ ] Open a connected project's work package.
+- [ ] From the `FILES` tab, link existing Nextcloud file using `link existing files` option.
+- [ ] Again from the `FILES` tab, upload a file to Nextcloud using `Upload files` option.
+- In Nextcloud, check that:
+  - [ ] Each file has linked work package listed in the OpenProject sidebar.
+  - [ ] Uploaded file is present under `OpenProject/<project_name>/`.
 
-- [ ] Complete step [Test No B.2.1](#b21-configure-keycloak).
-- [ ] Complete step [Test No B.2.2](#b22-configure-nextcloud).
-- [ ] Complete step [Test No B.2.3](#b23-add-keycloak-idp-in-openproject).
-- [ ] Run the `integration_oidc_setup.sh` script to set up integration without project folder with the following command:
+### 3. Create a Work Package From Nextcloud
 
-```bash
-NC_HOST=<nextcloud_instance_url> \
-NC_ADMIN_USERNAME=admin \
-NC_ADMIN_PASSWORD=admin \
-NC_INTEGRATION_PROVIDER_TYPE=external \
-NC_INTEGRATION_PROVIDER_NAME=keycloak \
-NC_INTEGRATION_OP_CLIENT_ID=openproject \
-NC_INTEGRATION_TOKEN_EXCHANGE=true \
-NC_INTEGRATION_ENABLE_NAVIGATION=false \
-NC_INTEGRATION_ENABLE_SEARCH=false \
-OP_HOST=<openproject_instance_url> \
-OP_ADMIN_USERNAME=admin \
-OP_ADMIN_PASSWORD=admin \
-OP_STORAGE_NAME=nextcloud \
-OP_STORAGE_AUDIENCE=nextcloud \
-OP_STORAGE_SCOPE=<scope_for_token_exchange> \
-bash integration_oidc_setup.sh
-```
+- [ ] From OpenProject sidebar, click `Create and link a new work package` button.
+- [ ] Fill in the work package details and create.
+- [ ] Check that the work package is listed under `Existing relations`.
+- [ ] In OpenProject, check that the work package is created and linked to the file.
 
-- [ ] Upon success, try step [Test No B.2.8](#b28-verify-connection-in-nextcloud).
-- [ ] Also, to set up the integration configuration with project folder setup, at first delete 'nextcloud' file storage from OpenProject.
-- [ ] In nextcloud, delete the `OpenProject` user, group and team folder from the nextcloud (if they exist).
-- [ ] Then, reset the Nextcloud config.
-- [ ] Set environment `SETUP_PROJECT_FOLDER=true` and run the script.
-- [ ] Run the script again after it is already setup (Should not give any error).
+### 4. Check Notifications in Nextcloud Dashboard Widget
 
-## Common Smoke Test Steps
-> **Note**: For SSO setup, run smoke tests 1-5 and the portions of smoke test 6 that involve user interaction should be performed as a connected user.
+> Make sure your OpenProject is running along with worker instance
 
-### 1. Link/Unlink a work package for a file/folder in nextcloud
-- [ ] Select a file, navigate to sidebar `OpenProject` tab.
-- [ ] Search for any of the work packages in the `Demo Project`.
-- [ ] Work packages are listed.
-- [ ] Link to any one of the work packages appeared in the search lists.
-- [ ] Linked work package appears in the `OpenProject` Tab with a successful message.
-- [ ] Also, try linking other work packages, reload the browser and all the linked ones should appear in the `OpenProject` Tab.
-- [ ] Hover to a work package to be unlinked, unlink button is visible.
-- [ ] Unlink a work package and it should be deleted from the `OpenProject` Tab with a successful message.
-
-### 2. Link/Unlink a work package for a file/folder from OpenProject
-- [ ] In `OpenProject`, navigate to `Demo Project > Work Packages` and double click any one of the work packages available.
-- [ ] Navigate to `Files` tab, click `link existing files`, select available files (for example, welcome.txt) from Nextcloud and link it to the work package.
-- [ ] Selected file is linked to the work package in `OpenProject`.
-- [ ] Also Navigate to nextcloud and see in the `OpenProject` tab for file (welcome.txt), the work package should be linked.
-
-### 3. Direct upload file/folder from OpenProject to Nextcloud
-
-- [ ] In `OpenProject`, navigate to `Demo Project > Work Packages` and double click any one of the work packages available.
-- [ ] Navigate to `Files` tab, click `Upload files`, select available files from your local system (for example, local.txt) and upload choosing the upload location.
-- [ ] Uploaded file is linked to the work package in `OpenProject`.
-- [ ] Also Navigate to `Nextcloud` and see in the `OpenProject` tab for file (local.txt), the work package should be linked.
-
-### 4. Create a WorkPackage from Nextcloud
-
-- [ ] In `Nextcloud`, select a file and open the sidebar `OpenProject` tab.
-- [ ] Click `Create and link new work package`.
-- [ ] Select `Demo Project`, fill up the modal form and create.
-- [ ] Work package should be created and linked to the selected file.
-
-### 5. Check notification in `OpenProject` widget in Nextcloud
-
-> Make sure your `OpenProject` is running along with `worker` instance
-
-- [ ] In `Nextcloud` dashboard, open `Customize` and enable `integration_openproject` to view notifications.
-- [ ] Now as an `OpenProject` admin, assign any of the `Demo Project` work packages to the created `OpenProject` user.
-- [ ] The `Nextcloud` user should receive a notification regarding the assignment.
-
-### 6. Setup and check project folder in Nextcloud (with project folder setup)
-
-- [ ] As a user `admin` enable the Nextcloud `groupfolders` app (`Team folders`) in `Nextcloud`.
-- [ ] Enable `Automatically managed folders` switch in `Administration settings -> OpenProject -> Edit project folders` and set project folder.
-- [ ] Application password should be generated (copy this password as this will be needed in the next step).
-- [ ] Verify that `OpenProject` user and `OpenProject` group are created with user `OpenProject` as sub-admin of the group.
-- [ ] Verify that `OpenProjectNoAutomaticProjectFolders` group is also created with user `OpenProject` as sub-admin.
-- [ ] Navigate to `Administration settings > Team folders`.
-- [ ] Verify that a folder named `OpenProject` is created, assigned to the `OpenProject` group, and has advanced permissions for the `OpenProject` user.
-- [ ] Try deleting `OpenProject` user and `OpenProject` group, those should not be deleted.
-- [ ] Try deleting `OpenProjectNoAutomaticProjectFolders` group, it should not be possible to delete.
-- [ ] Test group management (as a user `OpenProject`):
-  - Login as `OpenProject` user
-  - Add a test user `user1` to the `OpenProject` group
-  - Remove `user1` from the `OpenProject` group
-  - Verify that `user1` is automatically moved to the `OpenProjectNoAutomaticProjectFolders` group
-
-### 7. Setup and Check New folder with automatically managed permissions in OpenProject
-
-- [ ] In `OpenProject`, as a user `admin` navigate to `Administration > Files > Nextcloud`.
-- [ ] On `Automatically managed folders` section, click on Edit.
-- [ ] Enable the `Automatically managed folders` option.
-- [ ] Enter the application password generated from `Nextcloud` and click on `Finish setup`.
-- [ ] Navigate to `Demo Project > Project settings > Files`.
-- [ ] Edit the `Nextcloud` storage, choose `New folder with automatically managed permissions`, and click `Save`.
-- [ ] As a created user, navigate to `Demo Project > Work Packages` and double click any one of the work packages available.
-- [ ] Navigate to `Files` tab, click `link existing files`.
-- [ ] In a modal, `Nextcloud > OpenProject > Demo project(1)` should be visible.
-- [ ] Also Navigate to `Nextcloud` and in Files `OpenProject > Demo project(1)` folder is created.
-
-## App Upgrade Testing
-
-### Upgrade Steps
-
-- [ ] **Check update is available**: `php occ app:update --showonly integration_openproject`.
-- [ ] **Run upgrade**: `php occ app:update --allow-unstable integration_openproject`.
-- [ ] **Verify upgrade**: Confirm no errors and version updated.
-
-> **Important**: When upgrading from old versions, the upgrade might fail with "Undefined constant" error due to a known cache issue in Nextcloud. To fix this, please run the following commands:
->
-> ```bash
-> php occ upgrade
-> php occ maintenance:mode --off
-> ```
-
-### Upgrade Test Cases
-
-#### Existing OAuth 2.0 Setup
-
-- [ ] **Before upgrade**: Perform complete setup with OAuth2 method (Project folder enabled).
-- [ ] Perform [Upgrade steps](#upgrade-steps).
-- [ ] **After upgrade**: Check that the integration setup and other changes are preserved.
-
-#### Existing SSO Setup
-
-##### Nextcloud Hub as IDP
-
-- [ ] **Before upgrade**: Perform complete setup with sso method (Nextcloud Hub as IDP, Project folder enabled).
-- [ ] Perform [Upgrade steps](#upgrade-steps).
-- [ ] **After upgrade**: Check that the integration setup and other changes are preserved.
-
-#### External Provider (Keycloak)
-
-##### Token Exchange Disabled
-
-- [ ] **Before upgrade**: Perform complete setup with sso method (Keycloak as IDP, Token exchange disable, Project folder enabled).
-- [ ] Perform [Upgrade steps](#upgrade-steps).
-- [ ] **After upgrade**: Check that the integration setup and other changes are preserved.
-
-##### Token Exchange Enabled
-
-- [ ] **Before upgrade**: Perform complete setup with sso method (Keycloak as IDP, Token exchange enable, Project folder enabled).
-- [ ] Perform [Upgrade steps](#upgrade-steps).
-- [ ] **After upgrade**: Check that the integration setup and other changes are preserved.
+- [ ] In Nextcloud dashboard, click `Customize` and enable `OpenProject` widget.
+- [ ] From OpenProject (as admin), assign a work package to a user connected to Nextcloud.
+- [ ] The Nextcloud user should see a notification regarding the assignment.
