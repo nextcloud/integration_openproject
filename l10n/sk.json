@@ -70,6 +70,7 @@
     "Please introduce your OpenProject hostname" : "Uveďte svoj názov hostiteľa OpenProject",
     "Edit server information" : "Upraviť informácie o serveri",
     "Active" : "Aktívne",
+    "Inactive" : "Neaktívne",
     "If you proceed, your old application password for the OpenProject user will be deleted and you will receive a new OpenProject user password." : "Ak budete pokračovať, vaše staré heslo aplikácie pre užívateľa OpenProject bude vymazané a dostanete nové heslo užívateľa OpenProject.",
     "Replace user app password" : "Nahradiť uživateľské heslo aplikácie",
     "Project folders (recommended)" : "Adresáre projetku (odporúčané)",
