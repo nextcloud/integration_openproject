@@ -5,8 +5,11 @@
 -->
 <phpunit xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 		 bootstrap="bootstrap.php"
-		 verbose="true" backupGlobals="false" timeoutForSmallTests="900"
-		 timeoutForMediumTests="900" timeoutForLargeTests="900"
+		 verbose="true"
+		 backupGlobals="false"
+		 timeoutForSmallTests="900"
+		 timeoutForMediumTests="900"
+		 timeoutForLargeTests="900"
 		 xsi:noNamespaceSchemaLocation="https://schema.phpunit.de/9.3/phpunit.xsd">
 	<coverage>
 		<report>
@@ -18,14 +21,12 @@
 			<directory suffix=".php">lib</directory>
 		</include>
 	</coverage>
-
 	<testsuites>
 		<testsuite name="OpenProject">
 			<directory suffix=".php">tests/lib/</directory>
 		</testsuite>
 	</testsuites>
 	<php>
-		<env name="PACT_MOCK_SERVER_PORT" value="7300"/>
 		<env name="PACT_MOCK_SERVER_HOST" value="localhost"/>
 		<env name="PACT_CONSUMER_NAME" value="integration_openproject"/>
 		<env name="PACT_CONSUMER_VERSION" value="1.0.0"/>
@@ -34,7 +35,6 @@
 		<env name="PACT_OUTPUT_DIR" value="./tests/pact/"/>
 		<env name="PACT_LOGLEVEL" value="INFO"/>
 		<env name="PACT_LOG" value="./tests/pact/pact.log"/>
-		<!-- <env name="PACT_BROKER_URI" value="http://localhost"/> -->
 	</php>
 	<logging/>
 </phpunit>
