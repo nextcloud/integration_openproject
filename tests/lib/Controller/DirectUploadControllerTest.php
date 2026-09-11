@@ -13,7 +13,6 @@ use OCP\Files\InvalidContentException;
 use OCP\Files\IUserFolder;
 use OCP\IL10N;
 use OCP\IRequest;
-use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use function PHPUnit\Framework\assertSame;
 
