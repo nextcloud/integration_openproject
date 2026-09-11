@@ -18,6 +18,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ### Fixed
 
 ### Changed
+- Make OAuth2 Client class usage compatible with older Nextcloud versions [#1148](https://github.com/nextcloud/integration_openproject/pull/1148)
 
 ### Removed
 
@@ -40,7 +41,6 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 - Update npm dependencies [#1123](https://github.com/nextcloud/integration_openproject/pull/1123)
 - Migrate to Vue 3 and @nextcloud/vue v9 [#1152](https://github.com/nextcloud/integration_openproject/pull/1152)
-- Make OAuth2 Client class usage compatible with older Nextcloud versions [#1148](https://github.com/nextcloud/integration_openproject/pull/1148)
 
 ### Removed
 
