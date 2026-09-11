@@ -19,10 +19,11 @@ On the release branch:
 3. Update the version in:
    - [appinfo/info.xml](../appinfo/info.xml)
    - [package.json](../package.json)
+   - `package-lock.json` (use `npm install` command)
 4. Update the minimum and maximum nexcloud version support in:
    - [appinfo/info.xml](../appinfo/info.xml)
    - [shared workflow CI](../.github/workflows/shared_workflow.yml)
-   - [nighlty ci release branch](../.github/workflows/nighlty-ci-release-branch.yml)
+   - [nightly ci release branch](../.github/workflows/nighlty-ci-release-branch.yml)
    - [release CI](../.github/workflows/release.yml)
 5. Add the new release branch in `.tx/backport` to allow transifex commits.
 6. Update `CHANGELOG.md` with the changes and the version to be released.
@@ -37,11 +38,12 @@ On the current release branch:
 1. Update the patch version in:
    - [appinfo/info.xml](../appinfo/info.xml)
    - [package.json](../package.json)
+   - `package-lock.json` (use `npm install` command)
 2. Update `CHANGELOG.md` with the changes and the version to be released.
 3. Update the minimum and maximum nexcloud version support in:
    - [appinfo/info.xml](../appinfo/info.xml)
    - [shared workflow CI](../.github/workflows/shared_workflow.yml)
-   - [nighlty ci release branch](../.github/workflows/nighlty-ci-release-branch.yml)
+   - [nightly ci release branch](../.github/workflows/nighlty-ci-release-branch.yml)
    - [release CI](../.github/workflows/release.yml)
 4. Perform confirmatory testing (Changelogs) - by the OpenProject team.
 5. Perform [smoke testing](testing/smoke_testing.md) - by the OpenProject team.
