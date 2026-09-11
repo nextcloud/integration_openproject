@@ -35,4 +35,6 @@ dev/compose.override.yaml
 dev/.env
 
 # server files
+# ignore: server, server34
 server/
+server[0-9]*/
