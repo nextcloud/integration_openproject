@@ -14,6 +14,7 @@ use OCP\Files\Config\ICachedMountFileInfo;
 use OCP\Files\Config\IUserMountCache;
 use OCP\Files\DavUtil;
 use OCP\Files\Folder;
+use OCP\Files\IUserFolder;
 use OCP\Files\Node;
 use OCP\IDBConnection;
 use OCP\IRequest;
@@ -27,6 +28,16 @@ use function PHPUnit\Framework\assertSame;
 
 class FilesControllerTest extends TestCase {
 	use PHPMock;
+
+	/**
+	 * @return mixed
+	 */
+	public function getFolderMock(): mixed {
+		if (interface_exists(IUserFolder::class)) {
+			return $this->createMock(IUserFolder::class);
+		}
+		return $this->createMock(Folder::class);
+	}
 
 	/**
 	 * @return array<mixed>
@@ -104,7 +115,7 @@ class FilesControllerTest extends TestCase {
 		$expectedMimeType,
 		$expectedPath
 	) {
-		$folderMock = $this->getMockBuilder(Folder::class)->getMock();
+		$folderMock = $this->getFolderMock();
 		$folderMock->method('getById')->willReturn($nodeMocks);
 
 		$mountCacheMock = $this->getSimpleMountCacheMock($internalPath);
@@ -136,7 +147,7 @@ class FilesControllerTest extends TestCase {
 	}
 
 	public function testGetFileInfoFileNotFound(): void {
-		$folderMock = $this->getMockBuilder(Folder::class)->getMock();
+		$folderMock = $this->getFolderMock();
 		$folderMock->method('getById')->willReturn([]);
 
 		$filesController = $this->createFilesController($folderMock);
@@ -147,7 +158,7 @@ class FilesControllerTest extends TestCase {
 	}
 
 	public function testGetFileInfoFileExistingButNotReadable(): void {
-		$folderMock = $this->getMockBuilder(Folder::class)->getMock();
+		$folderMock = $this->getFolderMock();
 		$folderMock->method('getById')->willReturn([]);
 		$mountCacheMock = $this->getMockBuilder(IUserMountCache::class)->getMock();
 		$mountCacheMock->method('getMountsForFileId')
@@ -165,7 +176,7 @@ class FilesControllerTest extends TestCase {
 	}
 
 	public function testGetFileInfoFileExistingButCannotGetNameInContextOfOwner(): void {
-		$folderMock = $this->getMockBuilder(Folder::class)->getMock();
+		$folderMock = $this->getFolderMock();
 		$folderMock->method('getById')->willReturn(
 			[$this->getNodeMock('image/png', 586, 'file', '/testUser/files/name-in-the-context-of-requester')]
 		);
@@ -186,7 +197,7 @@ class FilesControllerTest extends TestCase {
 	}
 
 	public function testGetFilesInfoFourIdsRequestedOneExistsOneInTrashOneNotExisitingOneForbidden(): void {
-		$folderMock = $this->getMockBuilder(Folder::class)->getMock();
+		$folderMock = $this->getFolderMock();
 		$folderMock->method('getById')
 			->willReturnMap(
 				[
@@ -243,7 +254,7 @@ class FilesControllerTest extends TestCase {
 	}
 
 	public function testGetFilesInfoOneIdRequestedFileExistsReturnsOneResult(): void {
-		$folderMock = $this->getMockBuilder(Folder::class)->getMock();
+		$folderMock = $this->getFolderMock();
 		$folderMock->method('getById')
 			->willReturn(
 				[
@@ -268,7 +279,7 @@ class FilesControllerTest extends TestCase {
 	}
 
 	public function testGetFilesInfoThreeIdsRequestedOneFileExistsReturnsOneResult(): void {
-		$folderMock = $this->getMockBuilder(Folder::class)->getMock();
+		$folderMock = $this->getFolderMock();
 		$folderMock->method('getById')
 			->willReturnMap(
 				[
@@ -312,7 +323,7 @@ class FilesControllerTest extends TestCase {
 	}
 
 	public function testGetFilesInfoTwoIdsRequestedAllFilesExistsEachReturnsOneResult(): void {
-		$folderMock = $this->getMockBuilder(Folder::class)->getMock();
+		$folderMock = $this->getFolderMock();
 		$folderMock->method('getById')
 			->willReturnMap(
 				[
@@ -356,7 +367,7 @@ class FilesControllerTest extends TestCase {
 	}
 
 	public function testGetFilesInfoTwoIdsRequestedAllFilesExistsEachReturnsMultipleResults(): void {
-		$folderMock = $this->getMockBuilder(Folder::class)->getMock();
+		$folderMock = $this->getFolderMock();
 		$folderMock->method('getById')
 			->willReturnMap(
 				[
@@ -401,7 +412,7 @@ class FilesControllerTest extends TestCase {
 	}
 
 	public function testGetFilesInfoTwoIdsRequestedEachReturnsOneFolder(): void {
-		$folderMock = $this->getMockBuilder(Folder::class)->getMock();
+		$folderMock = $this->getFolderMock();
 		$folderMock->method('getById')
 			->willReturnMap([
 				[
@@ -494,7 +505,7 @@ class FilesControllerTest extends TestCase {
 	}
 
 	public function testGetFilesInfoInvalidRequest(): void {
-		$folderMock = $this->getMockBuilder(Folder::class)->getMock();
+		$folderMock = $this->getFolderMock();
 		$filesController = $this->createFilesController($folderMock);
 
 		$result = $filesController->getFilesInfo(null);
@@ -506,7 +517,7 @@ class FilesControllerTest extends TestCase {
 	}
 
 	public function testGetFilesInfoSendStringIds(): void {
-		$folderMock = $this->getMockBuilder(Folder::class)->getMock();
+		$folderMock = $this->getFolderMock();
 		$folderMock->method('getById')
 			->willReturnMap([
 				[	2,
@@ -598,7 +609,7 @@ class FilesControllerTest extends TestCase {
 		$classExistsMock = $this->getFunctionMock(__NAMESPACE__, "class_exists");
 		$classExistsMock->expects($this->any())->willReturn(false);
 
-		$folderMock = $this->getMockBuilder(Folder::class)->getMock();
+		$folderMock = $this->getFolderMock();
 		$folderMock->method('getById')
 			->willReturn([
 				$this->getNodeMock('image/png', 1, 'file', '/testUser/files/inFolder/image.png')
@@ -754,7 +765,7 @@ class FilesControllerTest extends TestCase {
 		$name,
 		$path
 	): void {
-		$folderMock = $this->getMockBuilder(Folder::class)->getMock();
+		$folderMock = $this->getFolderMock();
 		$folderMock->method('getById')->willReturn($nodeMocks);
 
 		$mountCacheMock = $this->getSimpleMountCacheMock($path);
@@ -909,14 +920,14 @@ class FilesControllerTest extends TestCase {
 
 	/**
 	 * @param array<string> $onlyMethods
-	 * @param MockObject $folderMock
+	 * @param mixed $folderMock
 	 * @param MockObject|null $mountCacheMock mock for Files that exist but cannot be accessed by this user
 	 * @param MockObject|null $davUtilsMock
 	 * @return FilesController|MockObject
 	 */
 	public function getFilesControllerMock(
 		array $onlyMethods,
-		MockObject $folderMock,
+		mixed $folderMock,
 		MockObject $mountCacheMock = null,
 		MockObject $davUtilsMock = null
 	): FilesController|MockObject {

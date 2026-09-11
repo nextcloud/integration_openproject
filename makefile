@@ -60,7 +60,15 @@ npm-dev:
 
 .PHONY: psalm
 psalm:
-	composer run psalm
+	@if [ -n "$$SERVER_PATH" ]; then \
+		sed -i "s|name=\"server/lib\"|name=\"$$SERVER_PATH/lib\"|g" psalm.xml; \
+	fi
+
+	@composer run psalm || exit_code=$$?; \
+	if [ -n "$$SERVER_PATH" ]; then \
+		sed -i "s|name=\"$$SERVER_PATH/lib\"|name=\"server/lib\"|g" psalm.xml; \
+	fi; \
+	exit $$exit_code
 
 .PHONY: phpcs
 phpcs:

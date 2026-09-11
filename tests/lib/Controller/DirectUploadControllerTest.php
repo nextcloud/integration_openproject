@@ -10,9 +10,9 @@ namespace OCA\OpenProject\Controller;
 use OCP\Files\Folder;
 use OCP\Files\ForbiddenException as FileAccessForbiddenException;
 use OCP\Files\InvalidContentException;
+use OCP\Files\IUserFolder;
 use OCP\IL10N;
 use OCP\IRequest;
-use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use function PHPUnit\Framework\assertSame;
 
@@ -24,10 +24,20 @@ class DirectUploadControllerTest extends TestCase {
 	private $l;
 
 	/**
+	 * @return mixed
+	 */
+	public function getFolderMock(): mixed {
+		if (interface_exists(IUserFolder::class)) {
+			return $this->createMock(IUserFolder::class);
+		}
+		return $this->createMock(Folder::class);
+	}
+
+	/**
 	 * @return void
 	 */
 	public function testprepareDirectUpload() {
-		$folderMock = $this->getMockBuilder('\OCP\Files\Folder')->getMock();
+		$folderMock = $this->getFolderMock();
 		$folderMock->method('getById')->willReturn($this->getNodeMock('dir'));
 		$directUploadController = $this->createDirectUploadController($folderMock);
 		$result = $directUploadController->prepareDirectUpload(123);
@@ -45,7 +55,7 @@ class DirectUploadControllerTest extends TestCase {
 	 * @return void
 	 */
 	public function testprepareDirectUploadTypeFile(): void {
-		$folderMock = $this->getMockBuilder('\OCP\Files\Folder')->getMock();
+		$folderMock = $this->getFolderMock();
 		$folderMock->method('getById')->willReturn($this->getNodeMock('file'));
 		$directUploadController = $this->createDirectUploadController($folderMock);
 		$result = $directUploadController->prepareDirectUpload(123);
@@ -59,7 +69,7 @@ class DirectUploadControllerTest extends TestCase {
 	}
 
 	public function testprepareDirectUploadException(): void {
-		$folderMock = $this->getMockBuilder('\OCP\Files\Folder')->getMock();
+		$folderMock = $this->getFolderMock();
 		$folderMock->method('getById')
 			->will($this->throwException(new \Exception('something bad happened')));
 		$directUploadController = $this->createDirectUploadController($folderMock);
@@ -93,7 +103,7 @@ class DirectUploadControllerTest extends TestCase {
 	 * @return void
 	 */
 	public function testDirectUploadInvalidToken(string $token):void {
-		$folderMock = $this->getMockBuilder('\OCP\Files\Folder')->getMock();
+		$folderMock = $this->getFolderMock();
 		$folderMock->method('getById')->willReturn($this->getNodeMock('folder'));
 		$directUploadController = $this->createDirectUploadController($folderMock);
 		$result = $directUploadController->directUpload($token);
@@ -110,7 +120,7 @@ class DirectUploadControllerTest extends TestCase {
 		$nodeMock = $this->getNodeMock('folder');
 		$nodeMock[0]->method('getFreeSpace')->willReturn(100);
 
-		$userFolderMock = $this->getMockBuilder('\OCP\Files\Folder')->getMock();
+		$userFolderMock = $this->getFolderMock();
 		$userFolderMock->method('getById')->willReturn($nodeMock);
 		$directUploadController = $this->createDirectUploadController(
 			$userFolderMock, 101
@@ -146,7 +156,7 @@ class DirectUploadControllerTest extends TestCase {
 	public function testDirectUploadFileNotUploaded(string $tmpName, int $error):void {
 		$nodeMock = $this->getNodeMock('folder');
 
-		$userFolderMock = $this->getMockBuilder('\OCP\Files\Folder')->getMock();
+		$userFolderMock = $this->getFolderMock();
 		$userFolderMock->method('getById')->willReturn($nodeMock);
 		$directUploadController = $this->createDirectUploadController(
 			$userFolderMock, 100, $tmpName, $error
@@ -185,7 +195,7 @@ class DirectUploadControllerTest extends TestCase {
 		$tmpFileName = '/tmp/integration_openproject_unit_test';
 		touch($tmpFileName);
 		$nodeMock[0]->method('newFile')->will($this->throwException($exception));
-		$userFolderMock = $this->getMockBuilder('\OCP\Files\Folder')->getMock();
+		$userFolderMock = $this->getFolderMock();
 		$userFolderMock->method('getById')->willReturn($nodeMock);
 		$directUploadController = $this->createDirectUploadController(
 			$userFolderMock, 0, $tmpFileName);
@@ -214,7 +224,7 @@ class DirectUploadControllerTest extends TestCase {
 		touch($tmpFileName);
 		$nodeMock[0]->method('getFreeSpace')->willReturn(-3);
 		$nodeMock[0]->method('newFile')->willReturn($fileMock);
-		$userFolderMock = $this->getMockBuilder('\OCP\Files\Folder')->getMock();
+		$userFolderMock = $this->getFolderMock();
 		$userFolderMock->method('getById')->willReturn($nodeMock);
 		$directUploadController = $this->createDirectUploadController(
 			$userFolderMock, 101, $tmpFileName
@@ -234,14 +244,14 @@ class DirectUploadControllerTest extends TestCase {
 
 
 	/**
-	 * @param MockObject $folderMock
+	 * @param mixed $folderMock
 	 * @param int $uploadedFileSize
 	 * @param string $uploadedFileTmpName
 	 * @param int $uploadedFileError
 	 * @return DirectUploadController
 	 */
 	private function createDirectUploadController(
-		MockObject $folderMock,
+		mixed $folderMock,
 		int $uploadedFileSize = 9999,
 		string $uploadedFileTmpName = '/tmp/andjashd',
 		int $uploadedFileError = 0
@@ -307,7 +317,7 @@ class DirectUploadControllerTest extends TestCase {
 	 *
 	 * @param string $type
 	 * @param int $id
-	 * @return array<MockObject|Folder>
+	 * @return array<mixed>
 	 */
 	private function getNodeMock(string $type, int $id = 123): array {
 		$ownerMock = $this->getMockBuilder('\OCP\IUser')->getMock();
@@ -323,7 +333,7 @@ class DirectUploadControllerTest extends TestCase {
 		$fileMock->method('getId')->willReturn(123);
 		$fileMock->method('getStorage')->willReturn($storageMock);
 
-		$folderMock = $this->createMock('\OCP\Files\Folder');
+		$folderMock = $this->getFolderMock();
 		$folderMock->method('getId')->willReturn($id);
 		$folderMock->method('getType')->willReturn($type);
 		$folderMock->method('isCreatable')->willReturn(true);

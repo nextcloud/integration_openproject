@@ -9,17 +9,20 @@ define('PHPUNIT_RUN', 1);
 use Composer\Autoload\ClassLoader;
 
 include_once __DIR__.'/vendor/autoload.php';
-$serverPath = __DIR__ . '/server';
 
-if (!file_exists($serverPath . '/lib/base.php')) {
+$serverPath = getenv('SERVER_PATH') ?: __DIR__ . '/server';
+$serverBaseFile = '/lib/base.php';
+
+if (!file_exists($serverPath . $serverBaseFile)) {
 	$serverPath = __DIR__ . '/../..';
 }
-if (!file_exists($serverPath . '/lib/base.php')) {
-	throw new RuntimeException('Server path not found: ' . $serverPath);
+
+if (!file_exists($serverPath . $serverBaseFile)) {
+	throw new RuntimeException('Server files not found at ' . $serverPath);
 }
 
 include_once $serverPath.'/3rdparty/autoload.php';
-require_once $serverPath. '/lib/base.php';
+require_once $serverPath. $serverBaseFile;
 
 $classLoader = new ClassLoader();
 $classLoader->addPsr4("OCA\\OpenProject\\", __DIR__ . '/lib', true);

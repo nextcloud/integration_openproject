@@ -34,7 +34,9 @@ use OCP\App\IAppManager;
 use OCP\AppFramework\Http;
 use OCP\Encryption\IManager;
 use OCP\EventDispatcher\IEventDispatcher;
+use OCP\Files\Folder;
 use OCP\Files\IRootFolder;
+use OCP\Files\IUserFolder;
 use OCP\Files\NotFoundException;
 use OCP\Files\NotPermittedException;
 use OCP\Files\SimpleFS\ISimpleFile;
@@ -576,6 +578,16 @@ class OpenProjectAPIServiceTest extends TestCase {
 	private array $appValues = [];
 
 	/**
+	 * @return mixed
+	 */
+	public function getFolderMock(): mixed {
+		if (interface_exists(IUserFolder::class)) {
+			return $this->createMock(IUserFolder::class);
+		}
+		return $this->createMock(Folder::class);
+	}
+
+	/**
 	 * [key => value] pairs of custom app values
 	 * @param array $withValues
 	 *
@@ -602,26 +614,15 @@ class OpenProjectAPIServiceTest extends TestCase {
 		}
 		return $appValues;
 	}
+
 	/**
 	 * @return void
-	 * @before
 	 */
-	public function setupMockServer(): void {
+	protected function setUp(): void {
 		// NOTE: mocking 'class_exists' must be done before anything else
 		$this->classExistsMock = $this->getFunctionMock(__NAMESPACE__, "class_exists");
 
 		$this->pactMockServerConfig = new MockServerEnvConfig();
-
-		// find an unused port and use it for the mock server
-		// using the same port all the time is not stable
-		// sometimes the server fails saying its already used
-		$address = $this->pactMockServerConfig->getHost();
-		$sock = socket_create(AF_INET, SOCK_STREAM, SOL_TCP);
-		socket_bind($sock, $address);
-		socket_getsockname($sock, $address, $port);
-		socket_close($sock);
-
-		$this->pactMockServerConfig->setPort($port);
 		$this->builder = new InteractionBuilder($this->pactMockServerConfig);
 
 		$this->service = $this->getOpenProjectAPIService();
@@ -651,7 +652,7 @@ class OpenProjectAPIServiceTest extends TestCase {
 	private function getStorageMock($nodeClassName = null) {
 		$nodeMock = $this->getNodeMock($nodeClassName);
 
-		$folderMock = $this->getMockBuilder('\OCP\Files\Folder')->getMock();
+		$folderMock = $this->getFolderMock();
 		$folderMock->method('getById')->willReturn([$nodeMock]);
 
 		$storageMock = $this->getMockBuilder('\OCP\Files\IRootFolder')->getMock();
@@ -1863,7 +1864,7 @@ class OpenProjectAPIServiceTest extends TestCase {
 	 * @return void
 	 */
 	public function testGetNodeNotFoundException($expectedReturn) {
-		$folderMock = $this->getMockBuilder('\OCP\Files\Folder')->getMock();
+		$folderMock = $this->getFolderMock();
 		$folderMock->method('getById')->willReturn($expectedReturn);
 		$storageMock = $this->getMockBuilder('\OCP\Files\IRootFolder')->getMock();
 		$storageMock->method('getUserFolder')->willReturn($folderMock);

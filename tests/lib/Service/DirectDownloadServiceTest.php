@@ -11,6 +11,7 @@ namespace OCA\OpenProject\Service;
 use OC\User\Session;
 use OCA\DAV\Controller\DirectController;
 use OCA\OpenProject\AppInfo\Application;
+use OCP\Files\Folder;
 use OCP\Files\IRootFolder;
 use OCP\IUserManager;
 use PHPUnit\Framework\TestCase;
@@ -23,7 +24,7 @@ class DirectDownloadServiceTest extends TestCase {
 	 */
 	private $directDownloadService;
 	/**
-	 * @var \OCP\Files\Folder
+	 * @var Folder
 	 */
 	private $userFolder;
 	/**
