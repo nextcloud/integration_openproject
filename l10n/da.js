@@ -25,6 +25,7 @@ OC.L10N.register(
     "Create" : "Opret",
     "Mark as read" : "Marker som læst",
     "mentioned" : "omtalt",
+    "Unlink" : "Fjern link",
     "Download and enable it" : "Download og aktiver det",
     "OAuth access token could not be obtained:" : "OAuth adgangsnøgle kunne ikke skaffes:"
 },

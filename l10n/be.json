@@ -9,8 +9,6 @@
     "Incorrect access token" : "Няправільны токен доступу",
     "Invalid token" : "Памылковы токен",
     "Save" : "Захаваць",
-    "Failed to revoke some users' OpenProject OAuth access tokens" : "Не атрымалася адклікаць токены доступу OpenProject OAuth некаторых карыстальнікаў",
-    "Successfully revoked users' OpenProject OAuth access tokens" : "Токены доступу карыстальнікаў да OpenProject OAuth паспяхова адкліканы",
     "Replace OpenProject OAuth values" : "Замяніць значэнні OAuth OpenProject",
     "Yes, replace" : "Yes, replace",
     "Documentation" : "Дакументацыя",

@@ -33,7 +33,6 @@
     "Authentication method" : "Метод проверки подлинности",
     "Save" : "Сохранить",
     "Administration > File storages" : "Администрирование > Хранилища файлов",
-    "Failed to perform revoke request due to connection error with the OpenProject server" : "Не удалось выполнить запрос на отзыв из-за ошибки подключения к серверу OpenProject",
     "Failed to create Nextcloud OAuth client" : "Не удалось создать клиент Nextcloud OAuth",
     "If you proceed you will need to update these settings with the new OpenProject OAuth credentials. Also, all users will need to reauthorize access to their OpenProject account." : "Если вы продолжите, вам потребуется обновить эти настройки, используя новые учетные данные OpenProject OAuth. Кроме того, всем пользователям потребуется повторно авторизовать доступ к своей учетной записи OpenProject.",
     "Replace OpenProject OAuth values" : "Заменить значения OpenProject OAuth",
