@@ -211,9 +211,6 @@ OC.L10N.register(
     "Displays a link to your OpenProject instance in the Nextcloud header." : "Nextcloud başlığında OpenProject kopyanızın bağlantısını görüntüler.",
     "Allows you to search OpenProject work packages via the universal search bar in Nextcloud." : "Nextcloud evrensel arama çubuğu ile OpenProject iş paketlerini aramanızı sağlar.",
     "Two-way OAuth 2.0 authorization code flow" : "OAuth 2.0 çift yönlü kimlik doğrulama kodu akışı",
-    "Single-Sign-On through OpenID Connect Identity Provider" : "OpenID Connect kimlik hizmeti sağlayıcısı ile tek oturum açma",
-    "Failed to perform revoke request due to connection error with the OpenProject server" : "Geçersiz kılma isteği, OpenProject sunucusuyla bağlantı sorunu nedeniyle yerine getirilemedi",
-    "Failed to revoke some users' OpenProject OAuth access tokens" : "Bazı kullanıcıların OpenProject OAuth erişim kodları geçersiz kılınamadı",
-    "Successfully revoked users' OpenProject OAuth access tokens" : "Kullanıcıların OpenProject OAuth erişim kodları geçersiz kılındı"
+    "Single-Sign-On through OpenID Connect Identity Provider" : "OpenID Connect kimlik hizmeti sağlayıcısı ile tek oturum açma"
 },
 "nplurals=2; plural=(n > 1);");

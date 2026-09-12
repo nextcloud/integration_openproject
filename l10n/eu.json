@@ -129,9 +129,6 @@
     "Retry setup OpenProject user, group and folder" : "Saiatu berriro OpenProject erabiltzailea, taldea eta karpeta konfiguratzen",
     "Failed to link file to work package" : "Arazoa lan-paketea estekatzerakoan",
     "Successfully connected to OpenProject!" : "Behar bezala konektatuta OpenProject-era!",
-    "OAuth access token could not be obtained:" : "Ezin izan da OAuth sarbide tokena lortu:",
-    "Failed to perform revoke request due to connection error with the OpenProject server" : "Baliogabetzeko eskeara egiteak huts egin du, OpenProject zerbitzariarekin konexio errorea dela eta.",
-    "Failed to revoke some users' OpenProject OAuth access tokens" : "Erabiltzaile batzuen OpenProject OAuth atzitze tokena baliogabetzeak huts egin du",
-    "Successfully revoked users' OpenProject OAuth access tokens" : "Ondo baliogabetu da erabiltzaileen OpenProject OAuth atzitze tokena"
+    "OAuth access token could not be obtained:" : "Ezin izan da OAuth sarbide tokena lortu:"
 },"pluralForm" :"nplurals=2; plural=(n != 1);"
 }

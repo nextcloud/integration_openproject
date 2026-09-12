@@ -207,9 +207,6 @@
     "Displays a link to your OpenProject instance in the Nextcloud header." : "Nextcloud ماۋزۇسىدا OpenProject مىسالىڭىزغا ئۇلانمىنى كۆرسىتىدۇ.",
     "Allows you to search OpenProject work packages via the universal search bar in Nextcloud." : "Nextcloud دىكى ئۇنىۋېرسال ئىزدەش بالدىقى ئارقىلىق OpenProject خىزمەت بوغچىسىنى ئىزدەشىڭىزگە يول قويىدۇ.",
     "Two-way OAuth 2.0 authorization code flow" : "ئىككى تەرەپلىك OAuth 2.0 ئىجازەت كودى ئېقىمى",
-    "Single-Sign-On through OpenID Connect Identity Provider" : "OpenID Connect كىملىك تەمىنلىگۈچىسى ئارقىلىق يەككە كىرىش",
-    "Failed to perform revoke request due to connection error with the OpenProject server" : "OpenProject مۇلازىمېتىرى بىلەن ئۇلىنىش خاتالىقى سەۋەبىدىن بىكار قىلىش تەلىپىنى ئورۇندىيالمىدى",
-    "Failed to revoke some users' OpenProject OAuth access tokens" : "بەزى ئىشلەتكۈچىلەرنىڭ OpenProject OAuth زىيارەت بەلگىسىنى بىكار قىلالمىدى",
-    "Successfully revoked users' OpenProject OAuth access tokens" : "ئابونتلارنىڭ OpenProject OAuth زىيارەت بەلگىسىنى مۇۋەپپەقىيەتلىك ئەمەلدىن قالدۇردى"
+    "Single-Sign-On through OpenID Connect Identity Provider" : "OpenID Connect كىملىك تەمىنلىگۈچىسى ئارقىلىق يەككە كىرىش"
 },"pluralForm" :"nplurals=2; plural=(n != 1);"
 }

@@ -15,6 +15,7 @@ OC.L10N.register(
     "Save" : "Simpan",
     "Documentation" : "Dokumentasi",
     "Active" : "Aktif",
+    "Inactive" : "Tidak aktif",
     "Copied!" : "Tersalin!",
     "Copied to the clipboard" : "Disalin ke papan klip",
     "Details" : "Detail",

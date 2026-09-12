@@ -211,9 +211,6 @@ OC.L10N.register(
     "Displays a link to your OpenProject instance in the Nextcloud header." : "在 Nextcloud 標頭中顯示指向 OpenProject 實例的連結。",
     "Allows you to search OpenProject work packages via the universal search bar in Nextcloud." : "允許您透過 Nextcloud 中的通用搜尋列搜尋 OpenProject 工作包。",
     "Two-way OAuth 2.0 authorization code flow" : "雙向 OAuth 2.0 授權碼流程",
-    "Single-Sign-On through OpenID Connect Identity Provider" : "通過 OpenID Connect 身份提供者的單一登入",
-    "Failed to perform revoke request due to connection error with the OpenProject server" : "由於與 OpenProject 伺服器的連接錯誤，無法執行撤銷請求",
-    "Failed to revoke some users' OpenProject OAuth access tokens" : "無法撤銷某些用戶的 OpenProject OAuth 存取權杖",
-    "Successfully revoked users' OpenProject OAuth access tokens" : "已成功撤銷用戶 OpenProject OAuth 存取權杖"
+    "Single-Sign-On through OpenID Connect Identity Provider" : "通過 OpenID Connect 身份提供者的單一登入"
 },
 "nplurals=1; plural=0;");

@@ -122,9 +122,6 @@
     "Link to work package" : "Hivatkozás a munkacsomagra",
     "Failed to link file to work package" : "A fájl munkacsomaghoz kapcsolása sikertelen",
     "Successfully connected to OpenProject!" : "Sikeresen kapcsolódott az OpenProjecthez.",
-    "OAuth access token could not be obtained:" : "Az OAuth hozzáférési token megszerzése sikertelen:",
-    "Failed to perform revoke request due to connection error with the OpenProject server" : "Az OpenProject kiszolgáló kapcsolati hibája miatt a visszavonási kérés elvégzése sikertelen",
-    "Failed to revoke some users' OpenProject OAuth access tokens" : "Egyes felhasználók OpenProject OAuth hozzáférési tokenjeinek visszavonása sikertelen",
-    "Successfully revoked users' OpenProject OAuth access tokens" : "A felhasználók OpenProject OAuth hozzáférési tokenjének visszavonása sikertelen"
+    "OAuth access token could not be obtained:" : "Az OAuth hozzáférési token megszerzése sikertelen:"
 },"pluralForm" :"nplurals=2; plural=(n != 1);"
 }
