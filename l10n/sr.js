@@ -206,9 +206,6 @@ OC.L10N.register(
     "Displays a link to your OpenProject instance in the Nextcloud header." : "Приказује у Nextcloud заглављу линк на вашу OpenProject инстанцу.",
     "Allows you to search OpenProject work packages via the universal search bar in Nextcloud." : "Омогућава вам да у Nextcloud универзалној траци за претрагу претражујете OpenProject радне пакете.",
     "Two-way OAuth 2.0 authorization code flow" : "Двосмерни ток OAuth2 кода провере идентитета",
-    "Single-Sign-On through OpenID Connect Identity Provider" : "Јединствена пријава кроз пружаоца OpenID Connect Identity услуге",
-    "Failed to perform revoke request due to connection error with the OpenProject server" : "Није успело повлачења захтева услед грешке у повезивању са  OpenProject сервером",
-    "Failed to revoke some users' OpenProject OAuth access tokens" : "Није успело повлачење OpenProject OAuth приступних жетона за неке кориснике",
-    "Successfully revoked users' OpenProject OAuth access tokens" : "Успешно су повучени корисникови OpenProject OAuth приступни жетони"
+    "Single-Sign-On through OpenID Connect Identity Provider" : "Јединствена пријава кроз пружаоца OpenID Connect Identity услуге"
 },
 "nplurals=3; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && n%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2);");

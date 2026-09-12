@@ -209,9 +209,6 @@
     "Displays a link to your OpenProject instance in the Nextcloud header." : "Zeigt einen Link zu deiner OpenProject-Instanz im Nextcloud-Header an.",
     "Allows you to search OpenProject work packages via the universal search bar in Nextcloud." : "Ermöglicht die Suche nach OpenProject-Arbeitspaketen über die universelle Suchleiste in Nextcloud.",
     "Two-way OAuth 2.0 authorization code flow" : "Zwei-Wege OAuth 2.0-Autorisierungs-Code-flow",
-    "Single-Sign-On through OpenID Connect Identity Provider" : "Single-Sign-On über OpenID Connect Identitätsanbieter",
-    "Failed to perform revoke request due to connection error with the OpenProject server" : "Die Widerrufsanforderung konnte aufgrund eines Verbindungsfehlers mit dem OpenProject-Server nicht ausgeführt werden",
-    "Failed to revoke some users' OpenProject OAuth access tokens" : "OpenProject OAuth-Zugriffstoken einiger Benutzer konnten nicht widerrufen werden",
-    "Successfully revoked users' OpenProject OAuth access tokens" : "OAuth-Zugriffstoken für OpenProject-OAuth von Benutzern wurde widerrufen"
+    "Single-Sign-On through OpenID Connect Identity Provider" : "Single-Sign-On über OpenID Connect Identitätsanbieter"
 },"pluralForm" :"nplurals=2; plural=(n != 1);"
 }

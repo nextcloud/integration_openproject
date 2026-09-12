@@ -197,9 +197,6 @@ OC.L10N.register(
     "Link to work package" : "Link to work package",
     "Failed to link file to work package" : "Failed to link file to work package",
     "Successfully connected to OpenProject!" : "Successfully connected to OpenProject!",
-    "OAuth access token could not be obtained:" : "OAuth access token could not be obtained:",
-    "Failed to perform revoke request due to connection error with the OpenProject server" : "Failed to perform revoke request due to connection error with the OpenProject server",
-    "Failed to revoke some users' OpenProject OAuth access tokens" : "Failed to revoke some users' OpenProject OAuth access tokens",
-    "Successfully revoked users' OpenProject OAuth access tokens" : "Successfully revoked users' OpenProject OAuth access tokens"
+    "OAuth access token could not be obtained:" : "OAuth access token could not be obtained:"
 },
 "nplurals=2; plural=(n != 1);");

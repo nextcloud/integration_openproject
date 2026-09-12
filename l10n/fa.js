@@ -210,9 +210,6 @@ OC.L10N.register(
     "Displays a link to your OpenProject instance in the Nextcloud header." : "پیوندی به نمونه OpenProject شما در هدر نکست‌کلود نمایش می‌دهد.",
     "Allows you to search OpenProject work packages via the universal search bar in Nextcloud." : "به شما امکان می‌دهد بسته‌های کاری OpenProject را از طریق نوار جستجوی عمومی نکست‌کلود جستجو کنید.",
     "Two-way OAuth 2.0 authorization code flow" : "جریان کد مجوز دوطرفه OAuth 2.0",
-    "Single-Sign-On through OpenID Connect Identity Provider" : "ورود یکپارچه از طریق ارائه‌دهنده هویت OpenID Connect",
-    "Failed to perform revoke request due to connection error with the OpenProject server" : "انجام درخواست لغو به دلیل خطای اتصال به سرور OpenProject انجام نشد",
-    "Failed to revoke some users' OpenProject OAuth access tokens" : "لغو توکن‌های دسترسی OAuth OpenProject برخی کاربران انجام نشد",
-    "Successfully revoked users' OpenProject OAuth access tokens" : "توکن‌های دسترسی OAuth OpenProject کاربران با موفقیت لغو شد"
+    "Single-Sign-On through OpenID Connect Identity Provider" : "ورود یکپارچه از طریق ارائه‌دهنده هویت OpenID Connect"
 },
 "nplurals=2; plural=(n > 1);");

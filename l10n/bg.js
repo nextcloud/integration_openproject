@@ -97,9 +97,6 @@ OC.L10N.register(
     "Unlink Work Package" : "Прекратяване на връзката на работния пакет",
     "Failed to link file to work package" : "Неуспешно свързване на файл към работен пакет",
     "Successfully connected to OpenProject!" : "Успешно свързване с OpenProject!",
-    "OAuth access token could not be obtained:" : "Токенът за достъп OAuth не може да бъде получен:",
-    "Failed to perform revoke request due to connection error with the OpenProject server" : "Неуспешно изпълнение на заявка за отмяна поради грешка при свързването със сървъра на OpenProject",
-    "Failed to revoke some users' OpenProject OAuth access tokens" : "Неуспешна отмяна на OAuth токени за достъп на някои потребители на OpenProject",
-    "Successfully revoked users' OpenProject OAuth access tokens" : "Успешна отмяна на OAuth токени за достъп на някои потребители на OpenProject"
+    "OAuth access token could not be obtained:" : "Токенът за достъп OAuth не може да бъде получен:"
 },
 "nplurals=2; plural=(n != 1);");

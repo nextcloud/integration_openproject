@@ -205,9 +205,6 @@ OC.L10N.register(
     "Displays a link to your OpenProject instance in the Nextcloud header." : "ສະແດງລິ້ງໄປຍັງ instance ຂອງ OpenProject ຂອງທ່ານໃນສ່ວນຫົວຂອງ Nextcloud.",
     "Allows you to search OpenProject work packages via the universal search bar in Nextcloud." : "ຊ່ວຍໃຫ້ທ່ານສາມາດຄົ້ນຫາແພັກເກດງານຂອງ OpenProject ຜ່ານແຖບຄົ້ນຫາລວມໃນ Nextcloud.",
     "Two-way OAuth 2.0 authorization code flow" : "ຂະບວນການ OAuth 2.0 authorization code flow ສອງທາງ",
-    "Single-Sign-On through OpenID Connect Identity Provider" : "ການເຂົ້າສູ່ລະບົບຄັ້ງດຽວ (Single-Sign-On) ຜ່ານຜູ້ໃຫ້ບໍລິການຢືນຢັນຕົວຕົນ OpenID Connect",
-    "Failed to perform revoke request due to connection error with the OpenProject server" : "ສົ່ງຄຳຂໍຖອນສິດບໍ່ສຳເລັດ ເນື່ອງຈາກການເຊື່ອມຕໍ່ກັບເຊີບເວີ OpenProject ຜິດພາດ",
-    "Failed to revoke some users' OpenProject OAuth access tokens" : "ຖອນສິດ OAuth access token ຂອງ OpenProject ຂອງຜູ້ໃຊ້ບາງຄົນບໍ່ສຳເລັດ",
-    "Successfully revoked users' OpenProject OAuth access tokens" : "ຖອນສິດ OAuth access token ຂອງ OpenProject ຂອງຜູ້ໃຊ້ສຳເລັດແລ້ວ"
+    "Single-Sign-On through OpenID Connect Identity Provider" : "ການເຂົ້າສູ່ລະບົບຄັ້ງດຽວ (Single-Sign-On) ຜ່ານຜູ້ໃຫ້ບໍລິການຢືນຢັນຕົວຕົນ OpenID Connect"
 },
 "nplurals=1; plural=0;");

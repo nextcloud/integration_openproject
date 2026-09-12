@@ -118,9 +118,6 @@ OC.L10N.register(
     "Retry setup OpenProject user, group and folder" : "Reintentar configurar usuario, grupo y carpeta de OpenProject",
     "Failed to link file to work package" : "Error al vincular archivo con el paquete de trabajo",
     "Successfully connected to OpenProject!" : "¡Conectado con éxito a OpenProject!",
-    "OAuth access token could not be obtained:" : "No se pudo obtener el token de acceso de OAuth:",
-    "Failed to perform revoke request due to connection error with the OpenProject server" : "Error al realizar la solicitud de revocación debido a un error de conexión con el servidor de OpenProject",
-    "Failed to revoke some users' OpenProject OAuth access tokens" : "Error al revocar algunos tokens de acceso OAuth de OpenProject de los usuarios",
-    "Successfully revoked users' OpenProject OAuth access tokens" : "Tokens de acceso OAuth de OpenProject de algunos usuarios revocados con éxito"
+    "OAuth access token could not be obtained:" : "No se pudo obtener el token de acceso de OAuth:"
 },
 "nplurals=3; plural=n == 1 ? 0 : n != 0 && n % 1000000 == 0 ? 1 : 2;");

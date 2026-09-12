@@ -210,9 +210,6 @@ OC.L10N.register(
     "Displays a link to your OpenProject instance in the Nextcloud header." : "Muestra un enlace a su instancia de OpenProject en el encabezado de Nextcloud.",
     "Allows you to search OpenProject work packages via the universal search bar in Nextcloud." : "Le permite buscar paquetes de trabajo de OpenProject a través de la barra de búsqueda universal en Nextcloud.",
     "Two-way OAuth 2.0 authorization code flow" : "Flujo de código de autorización OAuth 2.0 de dos vías",
-    "Single-Sign-On through OpenID Connect Identity Provider" : "Usar Single-Sign-On a través del Proveedor de Identidad de OpenID Connect",
-    "Failed to perform revoke request due to connection error with the OpenProject server" : "Fallo al ejecutar la solicitud de revocación ya que hubo un problema de conexión con el servidor OpenProject",
-    "Failed to revoke some users' OpenProject OAuth access tokens" : "Fallo al revocar los tokens de acceso OAuth de OpenProject de algunos usuarios",
-    "Successfully revoked users' OpenProject OAuth access tokens" : "Se revocaron los tokens de acceso OAuth de OpenProject de los usuarios de manera exitosa"
+    "Single-Sign-On through OpenID Connect Identity Provider" : "Usar Single-Sign-On a través del Proveedor de Identidad de OpenID Connect"
 },
 "nplurals=3; plural=n == 1 ? 0 : n != 0 && n % 1000000 == 0 ? 1 : 2;");

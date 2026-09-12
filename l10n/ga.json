@@ -209,9 +209,6 @@
     "Displays a link to your OpenProject instance in the Nextcloud header." : "Taispeánann sé nasc chuig do shampla OpenProject sa cheanntásc Nextcloud.",
     "Allows you to search OpenProject work packages via the universal search bar in Nextcloud." : "Ligeann sé duit pacáistí oibre OpenProject a chuardach tríd an mbarra cuardaigh uilíoch in Nextcloud.",
     "Two-way OAuth 2.0 authorization code flow" : "Sreabhadh cód údaraithe OAuth 2.0 dhá bhealach",
-    "Single-Sign-On through OpenID Connect Identity Provider" : "Sínigh Aonair trí Sholáthraí Aitheantais Nasc OpenID",
-    "Failed to perform revoke request due to connection error with the OpenProject server" : "Theip ar an iarratas cúlghairme a dhéanamh mar gheall ar earráid cheangail leis an bhfreastalaí OpenProject",
-    "Failed to revoke some users' OpenProject OAuth access tokens" : "Theip ar chomharthaí rochtana OpenProject OAuth roinnt úsáideoirí a chúlghairm",
-    "Successfully revoked users' OpenProject OAuth access tokens" : "D'éirigh leis na comharthaí rochtana OpenProject OAuth úsáideoirí a chúlghairm"
+    "Single-Sign-On through OpenID Connect Identity Provider" : "Sínigh Aonair trí Sholáthraí Aitheantais Nasc OpenID"
 },"pluralForm" :"nplurals=5; plural=(n==1 ? 0 : n==2 ? 1 : n<7 ? 2 : n<11 ? 3 : 4);"
 }
