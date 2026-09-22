@@ -1,34 +1,32 @@
 <?php
 
+declare(strict_types=1);
+
 /**
  * SPDX-FileCopyrightText: 2021-2022 Jankari Tech Pvt. Ltd.
  * SPDX-License-Identifier: AGPL-3.0-or-later
  */
 
-define('PHPUNIT_RUN', 1);
 use Composer\Autoload\ClassLoader;
 
-include_once __DIR__.'/vendor/autoload.php';
+define('PHPUNIT_RUN', 1);
 
-$serverPath = getenv('SERVER_PATH') ?: __DIR__ . '/server';
+$rootDir = __DIR__;
+$serverPath = getenv('SERVER_PATH') ?: $rootDir . '/server';
 $serverBaseFile = '/lib/base.php';
 
 if (!file_exists($serverPath . $serverBaseFile)) {
-	$serverPath = __DIR__ . '/../..';
+	$serverPath = $rootDir . '/../..';
 }
 
 if (!file_exists($serverPath . $serverBaseFile)) {
-	throw new RuntimeException('Server files not found at ' . $serverPath);
+	throw new RuntimeException('Server files not found.');
 }
 
-include_once $serverPath.'/3rdparty/autoload.php';
-require_once $serverPath. $serverBaseFile;
+require_once $rootDir . '/vendor/autoload.php';
+require_once $serverPath . $serverBaseFile;
+require_once $serverPath . '/tests/autoload.php';
 
 $classLoader = new ClassLoader();
-$classLoader->addPsr4("OCA\\OpenProject\\", __DIR__ . '/lib', true);
-$classLoader->addPsr4("OCP\\", $serverPath . '/lib/public', true);
-$classLoader->addPsr4("OC\\", $serverPath . '/lib/private', true);
-$classLoader->addPsr4("OCA\\Files\\", $serverPath . '/apps/files/lib', true);
+$classLoader->addPsr4("OCA\\OpenProject\\", $rootDir . '/lib', true);
 $classLoader->register();
-
-set_include_path(get_include_path() . PATH_SEPARATOR . '/usr/share/php');
