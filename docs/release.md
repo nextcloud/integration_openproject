@@ -23,11 +23,11 @@ On the release branch:
 4. Update the minimum and maximum Nextcloud version support in:
    - [appinfo/info.xml](../appinfo/info.xml)
    - [php unit and api ci](../.github/workflows/php-unit-api.yml)
-   - [nightly ci release branch](../.github/workflows/nightly-ci-release-{version}.yml)
+   - [nightly ci release branch](../.github/workflows/nightly-ci-release-3.yml)
    - [release CI](../.github/workflows/release.yml)
 5. Add the new release branch in `.tx/backport` to allow transifex commits.
 6. Update `CHANGELOG.md` with the changes and the version to be released.
-7. Update the new release branch in the [nightly CI](../.github/workflows/nightly-ci-release-{version}.yml).
+7. Update the new release branch in the [nightly CI](../.github/workflows/nightly-ci-release-3.yml).
 8. Perform confirmatory testing (Changelogs) - by the OpenProject team.
 9. Perform [smoke testing](testing/smoke_testing.md) - by the OpenProject team.
 
@@ -43,7 +43,7 @@ On the current release branch:
 3. Update the minimum and maximum Nextcloud version support in:
    - [appinfo/info.xml](../appinfo/info.xml)
    - [php unit and api ci](../.github/workflows/php-unit-api.yml)
-   - [nightly ci release branch](../.github/workflows/nightly-ci-release-{version}.yml)
+   - [nightly ci release branch](../.github/workflows/nightly-ci-release-3.yml)
    - [release CI](../.github/workflows/release.yml)
 4. Perform confirmatory testing (Changelogs) - by the OpenProject team.
 5. Perform [smoke testing](testing/smoke_testing.md) - by the OpenProject team.
@@ -85,28 +85,8 @@ On the current release branch:
 For each release:
 
 - Add the release notes to the newly created [GitHub release](https://github.com/nextcloud/integration_openproject/releases).
-
-For `>=3.x` release branch:
-
 - Merge the necessary commits from the release branch into the `master` branch.
 - In the `master` branch, bump the app version to the next minor version (e.g.: `X.(Y+1).0-dev`).
   - `info.xml`
   - `package.json`
   - `package-lock.json` (use `npm install` command)
-
-For `2.x` release branch:
-
-- Create a new release branch for the next minor version (e.g.: `release/2.(Y+1)`).
-- Bump the app version in the new release branch to the next minor version (e.g.: `2.(Y+1).0-dev`).
-  - `info.xml`
-  - `package.json`
-  - `package-lock.json` (use `npm install` command)
-- In the `master` branch, add the translations backport branch to the new release branch.
-
-  ```diff
-  # .tx/backport
-
-    release/2.Y
-  + release/2.(Y+1)
-    release/3.0
-  ```
