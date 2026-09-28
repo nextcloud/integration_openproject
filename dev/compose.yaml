@@ -185,7 +185,7 @@ services:
       context: ./keycloak
       args:
         IMAGE_REPO: ${KC_IMAGE_REPO:-quay.io/keycloak/keycloak}
-        IMAGE_TAG: ${KC_IMAGE_TAG:-26}
+        IMAGE_TAG: ${KC_IMAGE_TAG:-26.7}
     restart: unless-stopped
     command: ['--proxy-headers', 'xforwarded', '--spi-connections-http-client-default-disable-trust-manager=true']
     environment:
