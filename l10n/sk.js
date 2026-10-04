@@ -160,7 +160,7 @@ OC.L10N.register(
     "assignee" : "vlastník",
     "accountable" : "zodpovedný",
     "watcher" : "pozorovateľ",
-    "commented" : "comentované",
+    "commented" : "okomentované",
     "mentioned" : "spomenuté",
     "Notifications associated with Work package marked as read" : "Upozornenie priradené k Pracovnému balíku bolo označené ako prečítané",
     "Failed to mark notifications as read" : "Nepodarilo sa označiť upozornenie ako prečítané",
