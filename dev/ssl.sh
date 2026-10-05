@@ -15,11 +15,21 @@ sudo cp "$tmp_cert" /usr/local/share/ca-certificates/Step_Root_CA.crt
 sudo update-ca-certificates
 
 cert_db="$HOME/.pki/nssdb"
-# delete existing cert
-certutil -D -n "NC-OP Integration Root CA" -d sql:"$cert_db"
+
+# create and initialise the NSS db if doesn't exist
+if [ ! -d "$cert_db" ]; then
+	mkdir -p "$cert_db"
+	certutil -N -d sql:"$cert_db" --empty-password
+fi
+
+cert_name="NC-OP Integration Root C"
+# delete existing cert if exists
+if certutil -L -d sql:"$cert_db" -n "$cert_name" >/dev/null 2>&1; then
+	certutil -D -n "$cert_name" -d sql:"$cert_db"
+fi
+
 # add root CA to cert db
-certutil -A -n "NC-OP Integration Root CA" -t TC -d sql:"$cert_db" -i "$tmp_cert"
-# update/rebuild cert db
-certutil -M -d sql:"$cert_db"
+certutil -A -n "$cert_name" -t TC -d sql:"$cert_db" -i "$tmp_cert"
+
 # list certs
 certutil -L -d sql:"$cert_db"
