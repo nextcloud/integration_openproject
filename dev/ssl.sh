@@ -30,7 +30,6 @@ fi
 
 # add root CA to cert db
 certutil -A -n "$cert_name" -t TC -d sql:"$cert_db" -i "$tmp_cert"
-# update/rebuild cert db
-certutil -M -d sql:"$cert_db"
+
 # list certs
 certutil -L -d sql:"$cert_db"
