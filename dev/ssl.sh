@@ -22,10 +22,14 @@ if [ ! -d "$cert_db" ]; then
 	certutil -N -d sql:"$cert_db" --empty-password
 fi
 
-# delete existing cert
-certutil -D -n "NC-OP Integration Root CA" -d sql:"$cert_db"
+cert_name="NC-OP Integration Root C"
+# delete existing cert if exists
+if certutil -L -d sql:"$cert_db" -n "$cert_name" >/dev/null 2>&1; then
+	certutil -D -n "$cert_name" -d sql:"$cert_db"
+fi
+
 # add root CA to cert db
-certutil -A -n "NC-OP Integration Root CA" -t TC -d sql:"$cert_db" -i "$tmp_cert"
+certutil -A -n "$cert_name" -t TC -d sql:"$cert_db" -i "$tmp_cert"
 # update/rebuild cert db
 certutil -M -d sql:"$cert_db"
 # list certs
