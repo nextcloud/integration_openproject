@@ -196,11 +196,13 @@ class FilesController extends OCSController {
 				$mimeType = $file->getMimeType();
 				$path = $path[2];
 			}
+			$ownerFileName = basename($internalPath);
 			return [
 				'status' => 'OK',
 				'statuscode' => 200,
 				'id' => $file->getId(),
-				'name' => basename($internalPath),
+				'name' => $ownerFileName,
+				'owner_file_name' => $ownerFileName,
 				'mtime' => $file->getMTime(),
 				'ctime' => $file->getCreationTime(),
 				'mimetype' => $mimeType,
