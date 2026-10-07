@@ -154,38 +154,60 @@ class DirectUploadController extends ApiController {
 		try {
 			if (strlen($token) !== 64 || !preg_match('/^[a-zA-Z0-9]*/', $token)) {
 				$this->databaseService->deleteToken($token);
-				throw new NotFoundException('invalid token');
+				throw new OpenprojectUnauthorizedUserException('invalid token');
 			}
-			$tokenInfo = $this->directUploadService->getTokenInfo($token);
+
+			$postMaxSize = ini_get('post_max_size');
+			$postMaxSizeInBytes = (int)\OCP\Util::computerFileSize($postMaxSize);
+			$contentLength = (int)$this->request->getHeader('Content-Length');
+			if ($postMaxSizeInBytes > 0 && $contentLength > $postMaxSizeInBytes) {
+				throw new OpenprojectFileNotUploadedException(
+					'File was not uploaded. The request exceeds the maximum post size.',
+				);
+			}
+
 			$directUploadFile = $this->request->getUploadedFile('file');
 			if (empty($directUploadFile)) {
-				throw new OpenprojectFileNotUploadedException(
-					'File was not uploaded. post_max_size exceeded?'
+				throw new \InvalidArgumentException(
+					'No file is present to upload.'
 				);
 			}
+
+			$phpFileUploadErrors = [
+				UPLOAD_ERR_OK => 'The file was uploaded',
+				UPLOAD_ERR_INI_SIZE => 'The uploaded file exceeds the upload_max_filesize directive in php.ini',
+				UPLOAD_ERR_FORM_SIZE => 'The uploaded file exceeds the MAX_FILE_SIZE directive that was specified in the HTML form',
+				UPLOAD_ERR_PARTIAL => 'The file was only partially uploaded',
+				UPLOAD_ERR_NO_FILE => 'No file was uploaded',
+				UPLOAD_ERR_NO_TMP_DIR => 'Missing a temporary folder',
+				UPLOAD_ERR_CANT_WRITE => 'Could not write file to disk',
+				UPLOAD_ERR_EXTENSION => 'A PHP extension stopped the file upload',
+			];
+
+			if (array_key_exists('error', $directUploadFile) && $directUploadFile['error'] !== UPLOAD_ERR_OK) {
+				throw new OpenprojectFileNotUploadedException(
+					$phpFileUploadErrors[$directUploadFile['error']],
+				);
+			}
+
 			$fileName = trim($directUploadFile['name']);
 			$this->scanForInvalidCharacters($fileName, "\\/");
-			if (empty($directUploadFile['tmp_name']) || $directUploadFile['error'] === 1) {
-				throw new OpenprojectFileNotUploadedException(
-					'File was not uploaded. upload_max_filesize exceeded?'
-				);
-			}
-			$tmpPath = $directUploadFile['tmp_name'];
 			if (Filesystem::isFileBlacklisted($fileName)) {
 				throw new ForbiddenException('invalid file name');
 			}
+			$tmpPath = $directUploadFile['tmp_name'];
+
 			$overwrite = $this->request->getParam('overwrite');
 			if (isset($overwrite)) {
 				$acceptedOverwriteValues = ['true','false'];
 				$overwrite = strtolower($overwrite);
-				if (in_array($overwrite, $acceptedOverwriteValues)) {
-					$overwrite = $overwrite === 'true';
-				} else {
+				if (!in_array($overwrite, $acceptedOverwriteValues)) {
 					throw new \InvalidArgumentException('invalid overwrite value');
 				}
-			} else {
-				$overwrite = null;
+				$overwrite = $overwrite === 'true';
 			}
+
+			$tokenInfo = $this->directUploadService->getTokenInfo($token);
 			$user = $this->userManager->get($tokenInfo['user_id']);
 			$this->userSession->setUser($user);
 			$userFolder = $this->rootFolder->getUserFolder($user->getUID());
@@ -269,8 +291,7 @@ class DirectUploadController extends ApiController {
 			], Http::STATUS_INSUFFICIENT_STORAGE);
 		} catch (OpenprojectFileNotUploadedException $e) {
 			return new DataResponse([
-				'error' => $this->l->t($e->getMessage()),
-				'upload_limit' => \OCP\Util::uploadLimit()
+				'error' => $this->l->t($e->getMessage())
 			], Http::STATUS_REQUEST_ENTITY_TOO_LARGE);
 		} catch (InvalidContentException $e) { // files_antivirus throws this exception
 			return new DataResponse([
