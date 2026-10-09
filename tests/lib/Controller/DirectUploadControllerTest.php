@@ -113,7 +113,7 @@ class DirectUploadControllerTest extends TestCase {
 			],
 			$result->getData()
 		);
-		assertSame(404, $result->getStatus());
+		assertSame(401, $result->getStatus());
 	}
 
 	public function testDirectUploadNotEnoughSpace():void {
@@ -142,35 +142,60 @@ class DirectUploadControllerTest extends TestCase {
 	 */
 	public function fileNotUploadedDataProvider() {
 		return [
-			['', 1],
-			['some name', 1],
-			['', 0],
+			[UPLOAD_ERR_INI_SIZE, 'The uploaded file exceeds the upload_max_filesize directive in php.ini'],
+			[UPLOAD_ERR_FORM_SIZE, 'The uploaded file exceeds the MAX_FILE_SIZE directive that was specified in the HTML form'],
+			[UPLOAD_ERR_PARTIAL, 'The file was only partially uploaded'],
+			[UPLOAD_ERR_NO_FILE, 'No file was uploaded'],
+			[UPLOAD_ERR_NO_TMP_DIR, 'Missing a temporary folder'],
+			[UPLOAD_ERR_CANT_WRITE, 'Could not write file to disk'],
+			[UPLOAD_ERR_EXTENSION, 'A PHP extension stopped the file upload'],
 		];
 	}
 	/**
-	 * @param string $tmpName
 	 * @param int $error
+	 * @param string $expectedErrorMessage
 	 * @return void
 	 * @dataProvider fileNotUploadedDataProvider
 	 */
-	public function testDirectUploadFileNotUploaded(string $tmpName, int $error):void {
+	public function testDirectUploadFileNotUploaded(int $error, string $expectedErrorMessage):void {
 		$nodeMock = $this->getNodeMock('folder');
 
 		$userFolderMock = $this->getFolderMock();
 		$userFolderMock->method('getById')->willReturn($nodeMock);
 		$directUploadController = $this->createDirectUploadController(
-			$userFolderMock, 100, $tmpName, $error
+			$userFolderMock, 100, '', $error
 		);
 		$result = $directUploadController->directUpload(
 			'WampxL5Z97CndGwB7qLPfotosDT5mXk7oFyGLa64nmY35ANtkzT7zDQwYyXrbdC3'
 		);
 		$resultArray = $result->getData();
 		assertSame(
-			'File was not uploaded. upload_max_filesize exceeded?',
+			$expectedErrorMessage,
 			$resultArray['error']
 		);
-		self::assertIsNumeric($resultArray['upload_limit']);
 		assertSame(413, $result->getStatus());
+	}
+
+	/**
+	 * @return void
+	 */
+	public function testDirectUploadNoFile():void {
+		$nodeMock = $this->getNodeMock('folder');
+
+		$userFolderMock = $this->getFolderMock();
+		$userFolderMock->method('getById')->willReturn($nodeMock);
+		$directUploadController = $this->createDirectUploadController(
+			folderMock: $userFolderMock, noUploadedFile: true
+		);
+		$result = $directUploadController->directUpload(
+			'WampxL5Z97CndGwB7qLPfotosDT5mXk7oFyGLa64nmY35ANtkzT7zDQwYyXrbdC3'
+		);
+		$resultArray = $result->getData();
+		assertSame(
+			'No file is present to upload.',
+			$resultArray['error']
+		);
+		assertSame(400, $result->getStatus());
 	}
 
 	/**
@@ -248,13 +273,15 @@ class DirectUploadControllerTest extends TestCase {
 	 * @param int $uploadedFileSize
 	 * @param string $uploadedFileTmpName
 	 * @param int $uploadedFileError
+	 * @param bool $noUploadedFile
 	 * @return DirectUploadController
 	 */
 	private function createDirectUploadController(
 		mixed $folderMock,
 		int $uploadedFileSize = 9999,
 		string $uploadedFileTmpName = '/tmp/andjashd',
-		int $uploadedFileError = 0
+		int $uploadedFileError = 0,
+		bool $noUploadedFile = false
 	): DirectUploadController {
 		$storageMock = $this->getMockBuilder('\OCP\Files\IRootFolder')->getMock();
 		$storageMock->method('getUserFolder')->willReturn($folderMock);
@@ -294,7 +321,7 @@ class DirectUploadControllerTest extends TestCase {
 
 		$requestMock = $this->getMockBuilder(IRequest::class)->disableOriginalConstructor()->getMock();
 
-		$requestMock->method('getUploadedFile')->willReturn([
+		$requestMock->method('getUploadedFile')->willReturn($noUploadedFile ? null : [
 			'name' => 'file.txt',
 			'tmp_name' => $uploadedFileTmpName,
 			'size' => $uploadedFileSize,
