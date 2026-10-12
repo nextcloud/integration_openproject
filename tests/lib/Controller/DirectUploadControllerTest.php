@@ -7,12 +7,18 @@
 
 namespace OCA\OpenProject\Controller;
 
+use OCA\OpenProject\Service\DatabaseService;
+use OCA\OpenProject\Service\DirectUploadService;
 use OCP\Files\Folder;
 use OCP\Files\ForbiddenException as FileAccessForbiddenException;
 use OCP\Files\InvalidContentException;
+use OCP\Files\IRootFolder;
 use OCP\Files\IUserFolder;
 use OCP\IL10N;
 use OCP\IRequest;
+use OCP\IUser;
+use OCP\IUserManager;
+use OCP\IUserSession;
 use PHPUnit\Framework\TestCase;
 use function PHPUnit\Framework\assertSame;
 
@@ -124,7 +130,7 @@ class DirectUploadControllerTest extends TestCase {
 		$userFolderMock = $this->getFolderMock();
 		$userFolderMock->method('getById')->willReturn($nodeMock);
 		$directUploadController = $this->createDirectUploadController(
-			$userFolderMock, 101
+			folderMock: $userFolderMock, uploadedFileSize: 101,
 		);
 		$result = $directUploadController->directUpload(
 			self::TOKEN,
@@ -246,7 +252,7 @@ class DirectUploadControllerTest extends TestCase {
 		$userFolderMock = $this->getFolderMock();
 		$userFolderMock->method('getById')->willReturn($nodeMock);
 		$directUploadController = $this->createDirectUploadController(
-			$userFolderMock, 0, $tmpFileName);
+			folderMock: $userFolderMock, uploadedFileSize: 0, uploadedFileTmpName:  $tmpFileName);
 		$result = $directUploadController->directUpload(
 			self::TOKEN,
 		);
@@ -306,20 +312,19 @@ class DirectUploadControllerTest extends TestCase {
 		string $uploadedFileTmpName = '/tmp/andjashd',
 		int $uploadedFileError = 0,
 		string $contentLength = '100',
-		bool $noUploadedFile = false
+		bool $noUploadedFile = false,
 	): DirectUploadController {
-		$storageMock = $this->getMockBuilder('\OCP\Files\IRootFolder')->getMock();
+		$storageMock = $this->createMock(IRootFolder::class);
 		$storageMock->method('getUserFolder')->willReturn($folderMock);
 
-		$userMock = $this->getMockBuilder('\OCP\IUser')->getMock();
+		$userMock = $this->createMock(IUser::class);
 		$userMock->method('getUID')->willReturn('testUser');
 
-		$userSessionMock = $this->getMockBuilder('\OCP\IUserSession')->getMock();
+		$userSessionMock = $this->createMock(IUserSession::class);
 		$userSessionMock->method('getUser')->willReturn($userMock);
 
-		$directUploadServiceMock = $this->getMockBuilder(
-			'OCA\OpenProject\Service\DirectUploadService'
-		)->disableOriginalConstructor()->getMock();
+		$directUploadServiceMock = $this->createMock(
+			DirectUploadService::class);
 
 		$directUploadServiceMock->method('getTokenForDirectUpload')
 			->willReturn([
@@ -341,10 +346,10 @@ class DirectUploadControllerTest extends TestCase {
 				'folder_id' => 123
 			]
 		);
-		$userManagerMock = $this->getMockBuilder('OCP\IUserManager')->disableOriginalConstructor()->getMock();
+		$userManagerMock = $this->createMock(IUserManager::class);
 		$userManagerMock->method('get')->willReturn($userMock);
 
-		$requestMock = $this->getMockBuilder(IRequest::class)->disableOriginalConstructor()->getMock();
+		$requestMock = $this->createMock(IRequest::class);
 		$requestMock->method('getHeader')->willReturnCallback(
 			function (string $name) use ($contentLength) {
 				return $name === 'Content-Length' ? $contentLength : '';
@@ -364,7 +369,7 @@ class DirectUploadControllerTest extends TestCase {
 			$userSessionMock,
 			$userManagerMock,
 			$directUploadServiceMock,
-			$this->getMockBuilder('OCA\OpenProject\Service\DatabaseService')->disableOriginalConstructor()->getMock(),
+			$this->createMock(DatabaseService::class),
 			$this->l,
 			'testUser',
 		);
