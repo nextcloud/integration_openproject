@@ -8,10 +8,8 @@
 namespace OCA\OpenProject\Controller;
 
 use \OCP\AppFramework\ApiController;
-use DateTime;
 use InvalidArgumentException;
 use OC\Files\Filesystem;
-use OC\Files\Node\Folder;
 use OC\ForbiddenException;
 use OC\User\NoUserException;
 use OCA\OpenProject\Exception\OpenprojectFileNotUploadedException;
@@ -195,7 +193,6 @@ class DirectUploadController extends ApiController {
 			if (Filesystem::isFileBlacklisted($fileName)) {
 				throw new ForbiddenException('invalid file name');
 			}
-			$tmpPath = $directUploadFile['tmp_name'];
 
 			$overwrite = $this->request->getParam('overwrite');
 			if (isset($overwrite)) {
@@ -206,63 +203,7 @@ class DirectUploadController extends ApiController {
 				}
 				$overwrite = $overwrite === 'true';
 			}
-
-			$tokenInfo = $this->directUploadService->getTokenInfo($token);
-			$user = $this->userManager->get($tokenInfo['user_id']);
-			$this->userSession->setUser($user);
-			$userFolder = $this->rootFolder->getUserFolder($user->getUID());
-			$nodes = $userFolder->getById($tokenInfo['folder_id']);
-			if (empty($nodes)) {
-				throw new NotFoundException('folder not found or not enough permissions');
-			}
-			/**
-			 * @var Folder $folderNode
-			 */
-			$folderNode = array_shift($nodes);
-			if (!$folderNode->isCreatable() && !$overwrite) {
-				throw new ForbiddenException('not enough permissions');
-			}
-			$freeSpace = $folderNode->getFreeSpace();
-
-			// this is also true if we try to overwrite
-			// to overwrite a file we need enough free quota for the new data
-			// otherwise `putContent()` fails,
-			// if freeSpace is smaller than 0 then treat it as a unlimited space
-			// and don't throw an error
-			if ($directUploadFile['size'] > $freeSpace && $freeSpace >= 0) {
-				throw new NotEnoughSpaceException('insufficient quota');
-			}
-			if ($folderNode->nodeExists($fileName) && $overwrite) {
-				/**
-				 * @var File $file
-				 */
-				$file = $folderNode->get($fileName);
-				if ($file->getType() === FileInfo::TYPE_FOLDER) {
-					throw new Conflict('overwrite is not allowed on non-files');
-				}
-				if (!$file->isUpdateable()) {
-					throw new ForbiddenException('not enough permissions');
-				}
-				// overwrite the file
-				$file->putContent(fopen($tmpPath, 'r'));
-				$fileId = $file->getId();
-				return new DataResponse([
-					'file_name' => $fileName,
-					'file_id' => $fileId
-				], Http::STATUS_OK);
-			} elseif ($folderNode->nodeExists($fileName) && $overwrite === false) {
-				// get unique name for duplicate file with number suffix
-				$fileName = $folderNode->getNonExistingName($fileName);
-			} elseif ($folderNode->nodeExists($fileName)) {
-				throw new Conflict('conflict, file name already exists');
-			}
-			$fileInfo = $folderNode->newFile($fileName, fopen($tmpPath, 'r'));
-			$fileId = $fileInfo->getId();
-			// setting the creation time for the uploaded file
-			$creationTime = (new DateTime())->getTimestamp();
-			$fileInfo->getStorage()->getCache()->update($fileId, [
-				'creation_time' => $creationTime
-			]);
+			$result = $this->directUploadService->uploadFile($token, $directUploadFile, $overwrite);
 		} catch (OpenprojectUnauthorizedUserException $e) {
 			return new DataResponse([
 				'error' => $this->l->t($e->getMessage())
@@ -306,10 +247,11 @@ class DirectUploadController extends ApiController {
 				'error' => $this->l->t($e->getMessage())
 			], Http::STATUS_INTERNAL_SERVER_ERROR);
 		}
+		$statusCode = $result['overwritten'] ? Http::STATUS_OK : Http::STATUS_CREATED;
 		return new DataResponse([
-			'file_name' => $fileName,
-			'file_id' => $fileId
-		], Http::STATUS_CREATED);
+			'file_name' => $result['file_name'],
+			'file_id' => $result['file_id'],
+		], $statusCode);
 	}
 
 	/**
