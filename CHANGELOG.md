@@ -21,13 +21,16 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ### Removed
 
-## 3.2.0-20260820-nightly
+## 3.3.0-20260922-nightly
 
 ### Added
+
 - Support Nextcloud 35
 
-### Changed
+### Fixed
+
 - Make OAuth2 Client class usage compatible with older Nextcloud versions [#1148](https://github.com/nextcloud/integration_openproject/pull/1148)
+- Keep the admin settings when Nextcloud replays the migrations to check the database schema (`occ db:schema:check`, every `occ upgrade` on Nextcloud 35)
 
 ## 3.2.0 - 2026-09-10
 
