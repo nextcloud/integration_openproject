@@ -31,7 +31,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ### Removed
 
-## 3.3.0-20260922-nightly
+## 3.3.0-20261015-nightly
 
 ### Added
 
