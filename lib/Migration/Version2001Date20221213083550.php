@@ -37,6 +37,12 @@ class Version2001Date20221213083550 extends SimpleMigrationStep {
 	 * @return null|ISchemaWrapper
 	 */
 	public function changeSchema(IOutput $output, Closure $schemaClosure, array $options): ?ISchemaWrapper {
+		// nothing to migrate once the old keys are gone (changeSchema() is also replayed by the schema check)
+		$oldKeys = ['oauth_instance_url', 'client_id', 'client_secret'];
+		if (array_intersect($oldKeys, $this->config->getAppKeys(Application::APP_ID)) === []) {
+			return null;
+		}
+
 		$oldOpenProjectOauthUrl = $this->config->getAppValue(
 			Application::APP_ID, 'oauth_instance_url', ''
 		);

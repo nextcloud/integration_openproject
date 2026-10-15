@@ -37,9 +37,12 @@ class Version2400Date20230504144300 extends SimpleMigrationStep {
 	 * @return null|ISchemaWrapper
 	 */
 	public function changeSchema(IOutput $output, Closure $schemaClosure, array $options): ?ISchemaWrapper {
-		$this->config->setAppValue(
-			Application::APP_ID, 'fresh_project_folder_setup', "1"
-		);
+		// set only once, as changeSchema() is also replayed by the schema check
+		if (!in_array('fresh_project_folder_setup', $this->config->getAppKeys(Application::APP_ID), true)) {
+			$this->config->setAppValue(
+				Application::APP_ID, 'fresh_project_folder_setup', "1"
+			);
+		}
 		return null;
 	}
 }
