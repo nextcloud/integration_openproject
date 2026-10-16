@@ -17,6 +17,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - Support Nextcloud 35
 
 ### Fixed
+- Keep the admin settings when Nextcloud replays the migrations to check the database schema (`occ db:schema:check`, every `occ upgrade` on Nextcloud 35)
 
 ### Changed
 - Make OAuth2 Client class usage compatible with older Nextcloud versions [#1148](https://github.com/nextcloud/integration_openproject/pull/1148)
