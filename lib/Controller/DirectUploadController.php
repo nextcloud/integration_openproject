@@ -8,10 +8,8 @@
 namespace OCA\OpenProject\Controller;
 
 use \OCP\AppFramework\ApiController;
-use DateTime;
 use InvalidArgumentException;
 use OC\Files\Filesystem;
-use OC\Files\Node\Folder;
 use OC\ForbiddenException;
 use OC\User\NoUserException;
 use OCA\OpenProject\Exception\OpenprojectFileNotUploadedException;
@@ -154,93 +152,58 @@ class DirectUploadController extends ApiController {
 		try {
 			if (strlen($token) !== 64 || !preg_match('/^[a-zA-Z0-9]*/', $token)) {
 				$this->databaseService->deleteToken($token);
-				throw new NotFoundException('invalid token');
+				throw new OpenprojectUnauthorizedUserException('invalid token');
 			}
-			$tokenInfo = $this->directUploadService->getTokenInfo($token);
+
+			$postMaxSize = ini_get('post_max_size');
+			$postMaxSizeInBytes = (int)\OCP\Util::computerFileSize($postMaxSize);
+			$contentLength = (int)$this->request->getHeader('Content-Length');
+			if ($postMaxSizeInBytes > 0 && $contentLength > $postMaxSizeInBytes) {
+				throw new OpenprojectFileNotUploadedException(
+					'File was not uploaded. The request exceeds the maximum post size.',
+				);
+			}
+
 			$directUploadFile = $this->request->getUploadedFile('file');
 			if (empty($directUploadFile)) {
-				throw new OpenprojectFileNotUploadedException(
-					'File was not uploaded. post_max_size exceeded?'
+				throw new \InvalidArgumentException(
+					'No file is present to upload.'
 				);
 			}
+
+			$phpFileUploadErrors = [
+				UPLOAD_ERR_OK => 'The file was uploaded',
+				UPLOAD_ERR_INI_SIZE => 'The uploaded file exceeds the upload_max_filesize directive in php.ini',
+				UPLOAD_ERR_FORM_SIZE => 'The uploaded file exceeds the MAX_FILE_SIZE directive that was specified in the HTML form',
+				UPLOAD_ERR_PARTIAL => 'The file was only partially uploaded',
+				UPLOAD_ERR_NO_FILE => 'No file was uploaded',
+				UPLOAD_ERR_NO_TMP_DIR => 'Missing a temporary folder',
+				UPLOAD_ERR_CANT_WRITE => 'Could not write file to disk',
+				UPLOAD_ERR_EXTENSION => 'A PHP extension stopped the file upload',
+			];
+
+			if (array_key_exists('error', $directUploadFile) && $directUploadFile['error'] !== UPLOAD_ERR_OK) {
+				throw new OpenprojectFileNotUploadedException(
+					$phpFileUploadErrors[$directUploadFile['error']],
+				);
+			}
+
 			$fileName = trim($directUploadFile['name']);
 			$this->scanForInvalidCharacters($fileName, "\\/");
-			if (empty($directUploadFile['tmp_name']) || $directUploadFile['error'] === 1) {
-				throw new OpenprojectFileNotUploadedException(
-					'File was not uploaded. upload_max_filesize exceeded?'
-				);
-			}
-			$tmpPath = $directUploadFile['tmp_name'];
 			if (Filesystem::isFileBlacklisted($fileName)) {
 				throw new ForbiddenException('invalid file name');
 			}
+
 			$overwrite = $this->request->getParam('overwrite');
 			if (isset($overwrite)) {
 				$acceptedOverwriteValues = ['true','false'];
 				$overwrite = strtolower($overwrite);
-				if (in_array($overwrite, $acceptedOverwriteValues)) {
-					$overwrite = $overwrite === 'true';
-				} else {
+				if (!in_array($overwrite, $acceptedOverwriteValues)) {
 					throw new \InvalidArgumentException('invalid overwrite value');
 				}
-			} else {
-				$overwrite = null;
+				$overwrite = $overwrite === 'true';
 			}
-			$user = $this->userManager->get($tokenInfo['user_id']);
-			$this->userSession->setUser($user);
-			$userFolder = $this->rootFolder->getUserFolder($user->getUID());
-			$nodes = $userFolder->getById($tokenInfo['folder_id']);
-			if (empty($nodes)) {
-				throw new NotFoundException('folder not found or not enough permissions');
-			}
-			/**
-			 * @var Folder $folderNode
-			 */
-			$folderNode = array_shift($nodes);
-			if (!$folderNode->isCreatable() && !$overwrite) {
-				throw new ForbiddenException('not enough permissions');
-			}
-			$freeSpace = $folderNode->getFreeSpace();
-
-			// this is also true if we try to overwrite
-			// to overwrite a file we need enough free quota for the new data
-			// otherwise `putContent()` fails,
-			// if freeSpace is smaller than 0 then treat it as a unlimited space
-			// and don't throw an error
-			if ($directUploadFile['size'] > $freeSpace && $freeSpace >= 0) {
-				throw new NotEnoughSpaceException('insufficient quota');
-			}
-			if ($folderNode->nodeExists($fileName) && $overwrite) {
-				/**
-				 * @var File $file
-				 */
-				$file = $folderNode->get($fileName);
-				if ($file->getType() === FileInfo::TYPE_FOLDER) {
-					throw new Conflict('overwrite is not allowed on non-files');
-				}
-				if (!$file->isUpdateable()) {
-					throw new ForbiddenException('not enough permissions');
-				}
-				// overwrite the file
-				$file->putContent(fopen($tmpPath, 'r'));
-				$fileId = $file->getId();
-				return new DataResponse([
-					'file_name' => $fileName,
-					'file_id' => $fileId
-				], Http::STATUS_OK);
-			} elseif ($folderNode->nodeExists($fileName) && $overwrite === false) {
-				// get unique name for duplicate file with number suffix
-				$fileName = $folderNode->getNonExistingName($fileName);
-			} elseif ($folderNode->nodeExists($fileName)) {
-				throw new Conflict('conflict, file name already exists');
-			}
-			$fileInfo = $folderNode->newFile($fileName, fopen($tmpPath, 'r'));
-			$fileId = $fileInfo->getId();
-			// setting the creation time for the uploaded file
-			$creationTime = (new DateTime())->getTimestamp();
-			$fileInfo->getStorage()->getCache()->update($fileId, [
-				'creation_time' => $creationTime
-			]);
+			$result = $this->directUploadService->uploadFile($token, $directUploadFile, $overwrite);
 		} catch (OpenprojectUnauthorizedUserException $e) {
 			return new DataResponse([
 				'error' => $this->l->t($e->getMessage())
@@ -269,8 +232,7 @@ class DirectUploadController extends ApiController {
 			], Http::STATUS_INSUFFICIENT_STORAGE);
 		} catch (OpenprojectFileNotUploadedException $e) {
 			return new DataResponse([
-				'error' => $this->l->t($e->getMessage()),
-				'upload_limit' => \OCP\Util::uploadLimit()
+				'error' => $this->l->t($e->getMessage())
 			], Http::STATUS_REQUEST_ENTITY_TOO_LARGE);
 		} catch (InvalidContentException $e) { // files_antivirus throws this exception
 			return new DataResponse([
@@ -285,10 +247,11 @@ class DirectUploadController extends ApiController {
 				'error' => $this->l->t($e->getMessage())
 			], Http::STATUS_INTERNAL_SERVER_ERROR);
 		}
+		$statusCode = $result['overwritten'] ? Http::STATUS_OK : Http::STATUS_CREATED;
 		return new DataResponse([
-			'file_name' => $fileName,
-			'file_id' => $fileId
-		], Http::STATUS_CREATED);
+			'file_name' => $result['file_name'],
+			'file_id' => $result['file_id'],
+		], $statusCode);
 	}
 
 	/**
