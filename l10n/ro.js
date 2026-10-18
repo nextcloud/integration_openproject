@@ -13,6 +13,7 @@ OC.L10N.register(
     "Documentation" : "Documentație",
     "Active" : "Activ",
     "Copied!" : "S-a copiat!",
+    "Copied to the clipboard" : "Copiat în clipboard",
     "Details" : "Detalii",
     "Start typing to search" : "Tastați pentru căutare",
     "Description" : "Descriere",
