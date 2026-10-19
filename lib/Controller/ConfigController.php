@@ -295,10 +295,12 @@ class ConfigController extends Controller {
 		$resetOpenProjectClient = ((key_exists('openproject_client_id', $values) && $values['openproject_client_id'] !== $oldClientId) ||
 			(key_exists('openproject_client_secret', $values) && $values['openproject_client_secret'] !== $oldClientSecret));
 
+		$usersDisconnected = false;
 		if ($resetOpenProjectClient || $runningFullResetWithOAuth2Auth || $switchingOAuthToOIDC) {
 			$this->userManager->callForAllUsers(function (IUser $user) {
 				$this->clearUserInfo($user->getUID());
 			});
+			$usersDisconnected = true;
 
 			if ($switchingOAuthToOIDC) {
 				$this->resetOauth2Configs();
@@ -308,6 +310,7 @@ class ConfigController extends Controller {
 			$this->userManager->callForAllUsers(function (IUser $user) {
 				$this->clearUserInfo($user->getUID());
 			});
+			$usersDisconnected = true;
 		}
 
 		// whenever doing full reset we want the project folder switch state to be "on" in the UI
@@ -317,11 +320,27 @@ class ConfigController extends Controller {
 			$this->openprojectAPIService->logToAuditLog(
 				Operation::IntegrationReset,
 				'OpenProject Integration admin configuration has been reset in application ' . Application::APP_ID,
+				['usersDisconnected' => $usersDisconnected],
 			);
 		} elseif (key_exists('setup_app_password', $values) && key_exists('setup_project_folder', $values)) {
 			// for other cases when api has key 'setup_app_password' and 'setup_project_folder' we set it to false
 			// assuming user has either fully set the integration or partially without project folder/app password
 			$this->config->setAppValue(Application::APP_ID, 'fresh_project_folder_setup', "0");
+		}
+
+		$savedSettings = array_values(array_diff(array_keys($values), ['setup_project_folder', 'setup_app_password']));
+		if (!$runningFullReset && $savedSettings !== []) {
+			// only the names of the settings are logged, never the OpenProject client secret
+			$this->openprojectAPIService->logToAuditLog(
+				Operation::IntegrationConfigured,
+				"OpenProject integration settings %s have been saved for the OpenProject instance '%s' in application " . Application::APP_ID,
+				[
+					'settings' => implode(', ', $savedSettings),
+					'openprojectUrl' => key_exists('openproject_instance_url', $values) ? (string)$values['openproject_instance_url'] : $oldOpenProjectOauthUrl,
+					'authorizationMethod' => key_exists('authorization_method', $values) ? (string)$values['authorization_method'] : $oldAuthMethod,
+					'usersDisconnected' => $usersDisconnected,
+				],
+			);
 		}
 
 		return [
@@ -349,26 +368,6 @@ class ConfigController extends Controller {
 				}
 			}
 			$result = $this->setIntegrationConfig($values);
-			$isOPOAuthCrdentialSet = key_exists('openproject_client_id', $values) &&
-				key_exists('openproject_client_secret', $values) &&
-				$values['openproject_client_id'] &&
-				$values['openproject_client_secret'];
-
-			if (key_exists('openproject_instance_url', $values) &&
-				$values['openproject_instance_url'] && !$isOPOAuthCrdentialSet) {
-				// sending admin audit log if admin has changed or added the openproject host url
-				$this->openprojectAPIService->logToAuditLog(
-					Operation::IntegrationConfigured,
-					"OpenProject host url has been set to '%s' in application " . Application::APP_ID,
-					['openprojectUrl' => (string)$values['openproject_instance_url']],
-				);
-			}
-			if ($isOPOAuthCrdentialSet) {
-				$this->openprojectAPIService->logToAuditLog(
-					Operation::IntegrationConfigured,
-					"OpenProject OAuth credential 'openproject_client_id' and 'openproject_client_secret' has been set in application " . Application::APP_ID,
-				);
-			}
 			return new DataResponse($result);
 		} catch (OpenprojectGroupfolderSetupConflictException $e) {
 			return new DataResponse([
@@ -507,14 +506,13 @@ class ConfigController extends Controller {
 	 */
 	public function autoOauthCreation(): DataResponse {
 		$result = $this->recreateOauthClientInformation();
-		$this->openprojectAPIService->logToAuditLog(
-			Operation::OauthClientCreated,
-			'Nextcloud OAuth credential has been set in application ' . Application::APP_ID,
-		);
 		return new DataResponse($result);
 	}
 
-	private function deleteOauthClient(): void {
+	/**
+	 * @return bool whether an OAuth client was configured
+	 */
+	private function deleteOauthClient(): bool {
 		$oauthClientInternalId = $this->config->getAppValue(
 			Application::APP_ID, 'nc_oauth_client_id', ''
 		);
@@ -525,7 +523,9 @@ class ConfigController extends Controller {
 			} catch (ClientNotFoundException $e) {
 			}
 			$this->config->deleteAppValue(Application::APP_ID, 'nc_oauth_client_id');
+			return true;
 		}
+		return false;
 	}
 
 	/**
@@ -699,10 +699,17 @@ class ConfigController extends Controller {
 	 * @return array<mixed>
 	 */
 	private function recreateOauthClientInformation(): array {
-		$this->deleteOauthClient();
+		$replaced = $this->deleteOauthClient();
 		$opUrl = $this->config->getAppValue(Application::APP_ID, 'openproject_instance_url', '');
 		$clientInfo = $this->oauthService->createNcOauthClient('OpenProject client', rtrim($opUrl, '/') .'/oauth_clients/%s/callback');
 		$this->config->setAppValue(Application::APP_ID, 'nc_oauth_client_id', $clientInfo['id']);
+		$this->openprojectAPIService->logToAuditLog(
+			Operation::OauthClientCreated,
+			$replaced
+				? 'Nextcloud OAuth client %s for OpenProject has replaced the previous one in application ' . Application::APP_ID
+				: 'Nextcloud OAuth client %s for OpenProject has been created in application ' . Application::APP_ID,
+			['oauthClientId' => (int)$clientInfo['id'], 'replaced' => $replaced],
+		);
 		unset($clientInfo['id']);
 		return $clientInfo;
 	}
