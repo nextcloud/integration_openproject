@@ -20,7 +20,9 @@ enum Operation: string {
 	case OauthClientCreated = 'integration_openproject.oauth_client.created';
 	case AppPasswordCreated = 'integration_openproject.app_password.created';
 	case AppPasswordDeleted = 'integration_openproject.app_password.deleted';
+	case ProjectFolderCreated = 'integration_openproject.project_folder.created';
 	case ProjectFolderDeactivated = 'integration_openproject.project_folder.deactivated';
+	case TermsOfServiceSigned = 'integration_openproject.terms_of_service.signed';
 
 	/**
 	 * Short description of when the operation is logged, used for the documentation
@@ -32,7 +34,9 @@ enum Operation: string {
 			self::OauthClientCreated => 'An admin created or replaced the Nextcloud OAuth client used by OpenProject',
 			self::AppPasswordCreated => 'An app password was created or replaced for the OpenProject system user',
 			self::AppPasswordDeleted => 'The app password of the OpenProject system user was deleted',
+			self::ProjectFolderCreated => 'The project folder setup created the OpenProject system user and groups, made the user their group admin and created the project groupfolder',
 			self::ProjectFolderDeactivated => 'An admin deactivated the project folder setup',
+			self::TermsOfServiceSigned => 'Terms of service were signed on behalf of the OpenProject system user, by an admin, during the project folder setup or automatically when the terms change',
 		};
 	}
 }

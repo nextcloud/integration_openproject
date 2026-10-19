@@ -1072,11 +1072,12 @@ class OpenProjectAPIService {
 	}
 
 	/**
+	 * @return int the ID of the created groupfolder
 	 * @throws NotPermittedException
 	 * @throws NotFoundException
 	 * @throws NoUserException
 	 */
-	public function createGroupfolder(): void {
+	public function createGroupfolder(): int {
 		$groupfoldersFolderManager = Server::get(FolderManager::class);
 		$folderId = $groupfoldersFolderManager->createFolder(
 			Application::OPEN_PROJECT_ENTITIES_NAME
@@ -1096,6 +1097,7 @@ class OpenProjectAPIService {
 			Application::OPEN_PROJECT_ENTITIES_NAME,
 			true
 		);
+		return $folderId;
 	}
 
 	public function getGroupFolderManager(): FolderManager {
@@ -1247,8 +1249,10 @@ class OpenProjectAPIService {
 	/**
 	 * @throws \OCP\DB\Exception
 	 */
-	public function signTermsOfServiceForUserOpenProject(): void {
-		$signatoryMapper = new SignatoryMapper($this->db);
+	public function signTermsOfServiceForUserOpenProject(?SignatoryMapper $signatoryMapper = null): void {
+		if ($signatoryMapper === null) {
+			$signatoryMapper = new SignatoryMapper($this->db);
+		}
 		// get all the available terms of services
 		$terms = $this->getAllTermsOfServiceAvailable();
 		$alreadySignedTermsIdForUserOpenProject = $this->getAllTermsOfServiceSignedByUserOpenProject($signatoryMapper);
@@ -1256,13 +1260,25 @@ class OpenProjectAPIService {
 			$termId = $term->id;
 			// sign only not signed TOS for user "OpenProject"
 			if (!in_array($termId, $alreadySignedTermsIdForUserOpenProject)) {
-				$signatory = new Signatory();
-				$signatory->setUserId(Application::OPEN_PROJECT_ENTITIES_NAME);
-				$signatory->setTermsId($termId);
-				$signatory->setTimestamp(time());
-				$signatoryMapper->insert($signatory);
+				$signatoryMapper->insert($this->createSignatoryForUserOpenProject($termId));
+				$this->logToAuditLog(
+					Operation::TermsOfServiceSigned,
+					"Terms of service %s have been signed for user '%s' in application " . Application::APP_ID,
+					['termsId' => $termId, 'userId' => Application::OPEN_PROJECT_ENTITIES_NAME],
+				);
 			}
 		}
+	}
+
+	/**
+	 * @param int $termId
+	 */
+	protected function createSignatoryForUserOpenProject($termId) {
+		$signatory = new Signatory();
+		$signatory->setUserId(Application::OPEN_PROJECT_ENTITIES_NAME);
+		$signatory->setTermsId($termId);
+		$signatory->setTimestamp(time());
+		return $signatory;
 	}
 
 	public function isUserPartOfAndAdminOfGroup():bool {

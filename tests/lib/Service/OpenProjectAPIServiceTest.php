@@ -4386,6 +4386,44 @@ class OpenProjectAPIServiceTest extends TestCase {
 		$this->assertSame($expectedResult, $result);
 	}
 
+	public function signTermsOfServiceDataProvider(): array {
+		return [
+			'one term not signed yet' => [[1], [2]],
+			'no term signed yet' => [[], [1, 2]],
+			'all terms already signed' => [[1, 2], []],
+		];
+	}
+
+	/**
+	 * @dataProvider signTermsOfServiceDataProvider
+	 * @param list<int> $alreadySignedTermIds
+	 * @param list<int> $expectedSignedTermIds
+	 */
+	public function testSignTermsOfServiceForUserOpenProjectLogsSignedTerms(array $alreadySignedTermIds, array $expectedSignedTermIds): void {
+		$signatoryMapperBuilder = $this->getMockBuilder(SignatoryMapper::class)->disableOriginalConstructor();
+		// the terms_of_service app is optional, so its mapper might not exist
+		$signatoryMapperMock = method_exists(SignatoryMapper::class, 'insert')
+			? $signatoryMapperBuilder->onlyMethods(['insert'])->getMock()
+			: $signatoryMapperBuilder->addMethods(['insert'])->getMock();
+		$signatoryMapperMock->expects($this->exactly(count($expectedSignedTermIds)))->method('insert');
+		$auditEvents = [];
+		$service = $this->getOpenProjectAPIServiceMock(
+			['getAllTermsOfServiceAvailable', 'getAllTermsOfServiceSignedByUserOpenProject', 'createSignatoryForUserOpenProject'],
+			['eventDispatcher' => $this->getEventDispatcherMockCollectingAuditEvents($auditEvents)],
+		);
+		$service->method('getAllTermsOfServiceAvailable')->willReturn([(object)['id' => 1], (object)['id' => 2]]);
+		$service->method('getAllTermsOfServiceSignedByUserOpenProject')->willReturn($alreadySignedTermIds);
+		$service->method('createSignatoryForUserOpenProject')->willReturn(new \stdClass());
+
+		$service->signTermsOfServiceForUserOpenProject($signatoryMapperMock);
+
+		$this->assertAuditEvents(array_map(static fn (int $termId): array => [
+			Operation::TermsOfServiceSigned,
+			"Terms of service %s have been signed for user '%s' in application integration_openproject",
+			['termsId' => $termId, 'userId' => Application::OPEN_PROJECT_ENTITIES_NAME],
+		], $expectedSignedTermIds), $auditEvents);
+	}
+
 	public function testGetSubline(): void {
 		$configMock = $this->getMockBuilder(IConfig::class)->getMock();
 		$configMock->method('getUserValue')
