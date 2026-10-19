@@ -23,6 +23,8 @@ enum Operation: string {
 	case ProjectFolderCreated = 'integration_openproject.project_folder.created';
 	case ProjectFolderDeactivated = 'integration_openproject.project_folder.deactivated';
 	case TermsOfServiceSigned = 'integration_openproject.terms_of_service.signed';
+	case AccountConnected = 'integration_openproject.account.connected';
+	case AccountDisconnected = 'integration_openproject.account.disconnected';
 
 	/**
 	 * Short description of when the operation is logged, used for the documentation
@@ -37,6 +39,8 @@ enum Operation: string {
 			self::ProjectFolderCreated => 'The project folder setup created the OpenProject system user and groups, made the user their group admin and created the project groupfolder',
 			self::ProjectFolderDeactivated => 'An admin deactivated the project folder setup',
 			self::TermsOfServiceSigned => 'Terms of service were signed on behalf of the OpenProject system user, by an admin, during the project folder setup or automatically when the terms change',
+			self::AccountConnected => 'A user connected their OpenProject account through OAuth or a personal access token',
+			self::AccountDisconnected => 'A user disconnected their OpenProject account',
 		};
 	}
 }

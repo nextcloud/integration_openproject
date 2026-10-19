@@ -99,6 +99,7 @@ class ConfigControllerTest extends TestCase {
 				['testUser', 'integration_openproject', 'code_verifier', false, $codeVerifier],
 				['testUser', 'integration_openproject', 'oauth_journey_starting_page', '', $startingPage],
 				['testUser', 'integration_openproject', 'refresh_token', false, 'oAuthRefreshToken'],
+				['testUser', 'integration_openproject', 'user_id', '', '7'],
 			]);
 		return $configMock;
 	}
@@ -238,6 +239,13 @@ class ConfigControllerTest extends TestCase {
 		$apiServiceMock
 			->method('requestOAuthAccessToken')
 			->willReturn(['access_token' => 'oAuthAccessToken', 'refresh_token' => 'oAuthRefreshToken']);
+		$apiServiceMock->expects($this->once())
+			->method('logToAuditLog')
+			->with(
+				Operation::AccountConnected,
+				'User %s has connected the OpenProject account %s in application integration_openproject',
+				['userId' => 'testUser', 'openprojectUserId' => '7'],
+			);
 
 		$constructArgs = $this->getConfigControllerConstructArgs([
 			'config' => $configMock,
@@ -322,8 +330,12 @@ class ConfigControllerTest extends TestCase {
 			[['testUser', 'integration_openproject', 'oauth_connection_error_message', 'Error during OAuth exchanges', null], null],
 		]);
 
+		$apiServiceMock = $this->createMock(OpenProjectAPIService::class);
+		$apiServiceMock->expects($this->never())->method('logToAuditLog');
+
 		$constructArgs = $this->getConfigControllerConstructArgs([
 			'config' => $configMock,
+			'openprojectAPIService' => $apiServiceMock,
 		]);
 		$configController = new ConfigController(...$constructArgs);
 
@@ -482,6 +494,7 @@ class ConfigControllerTest extends TestCase {
 		$apiServiceMock
 			->method('requestOAuthAccessToken')
 			->willReturn($oauthResponse);
+		$apiServiceMock->expects($this->never())->method('logToAuditLog');
 		$configMock = $this->getConfigMock(
 			str_repeat("A", 128), str_repeat("S", 50)
 		);
@@ -2126,5 +2139,64 @@ class ConfigControllerTest extends TestCase {
 		$result = $controller->setAdminConfig(['setup_app_password' => true]);
 
 		$this->assertSame(Http::STATUS_OK, $result->getStatus());
+	}
+
+	public function testSetConfigWithTokenLogsConnectedAccountWithoutToken(): void {
+		$auditEntries = [];
+		$apiService = $this->getApiServiceMockCollectingAuditEntries($auditEntries);
+		$apiService->method('initUserInfo')->with('testUser', 'personal-token')->willReturn(['user_name' => 'Some User']);
+		$configMock = $this->createMock(IConfig::class);
+		$configMock->method('getUserValue')->willReturnMap([
+			['testUser', Application::APP_ID, 'user_id', '', '7'],
+		]);
+		$controller = $this->getConfigControllerForAuditLog($auditEntries, [], [
+			'config' => $configMock,
+			'openprojectAPIService' => $apiService,
+		]);
+
+		$result = $controller->setConfig(['token' => 'personal-token']);
+
+		$this->assertSame(Http::STATUS_OK, $result->getStatus());
+		$this->assertSame([[
+			Operation::AccountConnected,
+			'User %s has connected the OpenProject account %s in application integration_openproject',
+			['userId' => 'testUser', 'openprojectUserId' => '7'],
+		]], $auditEntries);
+		$this->assertStringNotContainsString('personal-token', json_encode($auditEntries));
+	}
+
+	public function testSetConfigWithInvalidTokenDoesNotLog(): void {
+		$auditEntries = [];
+		$apiService = $this->getApiServiceMockCollectingAuditEntries($auditEntries);
+		$apiService->method('initUserInfo')->willReturn(['error' => 'Unauthorized']);
+		$controller = $this->getConfigControllerForAuditLog($auditEntries, [], ['openprojectAPIService' => $apiService]);
+
+		$result = $controller->setConfig(['token' => 'invalid-token']);
+
+		$this->assertSame(Http::STATUS_UNAUTHORIZED, $result->getStatus());
+		$this->assertSame([], $auditEntries);
+	}
+
+	public function testSetConfigWithEmptyTokenLogsDisconnectedAccount(): void {
+		$auditEntries = [];
+		$controller = $this->getConfigControllerForAuditLog($auditEntries, []);
+
+		$result = $controller->setConfig(['token' => '']);
+
+		$this->assertSame(Http::STATUS_OK, $result->getStatus());
+		$this->assertSame([[
+			Operation::AccountDisconnected,
+			'User %s has disconnected the OpenProject account in application integration_openproject',
+			['userId' => 'testUser'],
+		]], $auditEntries);
+	}
+
+	public function testSetConfigWithoutTokenDoesNotLog(): void {
+		$auditEntries = [];
+		$controller = $this->getConfigControllerForAuditLog($auditEntries, []);
+
+		$controller->setConfig(['search_enabled' => '1']);
+
+		$this->assertSame([], $auditEntries);
 	}
 }

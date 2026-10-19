@@ -115,6 +115,20 @@ class ConfigController extends Controller {
 	}
 
 	/**
+	 * Only the OpenProject user ID is logged, never the access or refresh token
+	 */
+	private function logAccountConnected(): void {
+		$this->openprojectAPIService->logToAuditLog(
+			Operation::AccountConnected,
+			'User %s has connected the OpenProject account %s in application ' . Application::APP_ID,
+			[
+				'userId' => $this->userId,
+				'openprojectUserId' => (string)$this->config->getUserValue($this->userId, Application::APP_ID, 'user_id'),
+			],
+		);
+	}
+
+	/**
 	 * @return void
 	 */
 	public function resetOauth2Configs(): void {
@@ -149,8 +163,16 @@ class ConfigController extends Controller {
 		if (isset($values['token'])) {
 			if ($values['token']) {
 				$result = $this->openprojectAPIService->initUserInfo($this->userId, $values['token']);
+				if (!isset($result['error'])) {
+					$this->logAccountConnected();
+				}
 			} else {
 				$this->clearUserInfo();
+				$this->openprojectAPIService->logToAuditLog(
+					Operation::AccountDisconnected,
+					'User %s has disconnected the OpenProject account in application ' . Application::APP_ID,
+					['userId' => $this->userId],
+				);
 				$result = [
 					'user_name' => '',
 				];
@@ -472,6 +494,7 @@ class ConfigController extends Controller {
 					$this->config->setUserValue(
 						$this->userId, Application::APP_ID, 'oauth_connection_result', 'success'
 					);
+					$this->logAccountConnected();
 				}
 				return new RedirectResponse($newUrl);
 			}
