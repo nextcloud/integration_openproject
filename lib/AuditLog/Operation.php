@@ -25,6 +25,8 @@ enum Operation: string {
 	case TermsOfServiceSigned = 'integration_openproject.terms_of_service.signed';
 	case AccountConnected = 'integration_openproject.account.connected';
 	case AccountDisconnected = 'integration_openproject.account.disconnected';
+	case FileLinkCreated = 'integration_openproject.file_link.created';
+	case FileLinkDeleted = 'integration_openproject.file_link.deleted';
 
 	/**
 	 * Short description of when the operation is logged, used for the documentation
@@ -41,6 +43,8 @@ enum Operation: string {
 			self::TermsOfServiceSigned => 'Terms of service were signed on behalf of the OpenProject system user, by an admin, during the project folder setup or automatically when the terms change',
 			self::AccountConnected => 'A user connected their OpenProject account through OAuth or a personal access token',
 			self::AccountDisconnected => 'A user disconnected their OpenProject account',
+			self::FileLinkCreated => 'A user linked a file to an OpenProject work package, which shares the file ID, name and type with OpenProject',
+			self::FileLinkDeleted => 'A user removed the link between a file and an OpenProject work package',
 		};
 	}
 }

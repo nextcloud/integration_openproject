@@ -1924,6 +1924,42 @@ class OpenProjectAPIServiceTest extends TestCase {
 		$this->assertSame([2456], $result);
 	}
 
+	public function testLinkWorkPackageToFileLogsEachLinkedFile(): void {
+		$auditEvents = [];
+		$service = $this->getOpenProjectAPIServiceMock(['request', 'getNode'], [
+			'eventDispatcher' => $this->getEventDispatcherMockCollectingAuditEvents($auditEvents),
+		]);
+		$service->method('getNode')->willReturn($this->getNodeMock());
+		$service->method('request')
+			->willReturn(['_type' => 'Collection', '_embedded' => ['elements' => [['id' => 2456], ['id' => 2457], ['id' => 2458]]]]);
+
+		$service->linkWorkPackageToFile($this->multipleFileInformation, 'user');
+
+		$message = 'File %s has been linked to OpenProject work package %s by user %s in application integration_openproject';
+		$this->assertAuditEvents([
+			[Operation::FileLinkCreated, $message, ['fileId' => 5503, 'workPackageId' => 123, 'userId' => 'user', 'fileLinkId' => 2456]],
+			[Operation::FileLinkCreated, $message, ['fileId' => 5504, 'workPackageId' => 123, 'userId' => 'user', 'fileLinkId' => 2457]],
+			[Operation::FileLinkCreated, $message, ['fileId' => 5505, 'workPackageId' => 123, 'userId' => 'user', 'fileLinkId' => 2458]],
+		], $auditEvents);
+	}
+
+	public function testLinkWorkPackageToFileWithMalformedResponseDoesNotLog(): void {
+		$auditEvents = [];
+		$service = $this->getOpenProjectAPIServiceMock(['request', 'getNode'], [
+			'eventDispatcher' => $this->getEventDispatcherMockCollectingAuditEvents($auditEvents),
+		]);
+		$service->method('getNode')->willReturn($this->getNodeMock());
+		$service->method('request')
+			->willReturn(['_type' => 'Collection', '_embedded' => ['elements' => [['id' => 2456]]]]);
+
+		try {
+			$service->linkWorkPackageToFile($this->multipleFileInformation, 'user');
+			$this->fail('Expected OpenprojectResponseException');
+		} catch (OpenprojectResponseException $e) {
+		}
+		$this->assertSame([], $auditEvents);
+	}
+
 	/**
 	 * @return void
 	 */
@@ -3860,13 +3896,36 @@ class OpenProjectAPIServiceTest extends TestCase {
 	 * @return void
 	 */
 	public function testDeleteFileLinkErrorResponse(): void {
-		$service = $this->getOpenProjectAPIServiceMock();
+		$auditEvents = [];
+		$service = $this->getOpenProjectAPIServiceMock(['request'], [
+			'eventDispatcher' => $this->getEventDispatcherMockCollectingAuditEvents($auditEvents),
+		]);
 		$service->method('request')
 			->willReturn([
 				'error' => 'something went wrong',
 			]);
-		$this->expectException(OpenprojectErrorException::class);
+		try {
+			$service->deleteFileLink(7, 'user');
+			$this->fail('Expected OpenprojectErrorException');
+		} catch (OpenprojectErrorException $e) {
+		}
+		$this->assertSame([], $auditEvents);
+	}
+
+	public function testDeleteFileLinkLogsDeletion(): void {
+		$auditEvents = [];
+		$service = $this->getOpenProjectAPIServiceMock(['request'], [
+			'eventDispatcher' => $this->getEventDispatcherMockCollectingAuditEvents($auditEvents),
+		]);
+		$service->method('request')->willReturn(['success' => true]);
+
 		$service->deleteFileLink(7, 'user');
+
+		$this->assertAuditEvents([[
+			Operation::FileLinkDeleted,
+			'OpenProject file link %s has been deleted by user %s in application integration_openproject',
+			['fileLinkId' => 7, 'userId' => 'user'],
+		]], $auditEvents);
 	}
 
 	/**

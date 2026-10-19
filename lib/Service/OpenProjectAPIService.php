@@ -816,6 +816,18 @@ class OpenProjectAPIService {
 			}
 			$fileIds [] = $result['_embedded']['elements'][$i]['id'];
 		}
+		foreach (array_values($fileInfos) as $i => $fileInfo) {
+			$this->logToAuditLog(
+				Operation::FileLinkCreated,
+				'File %s has been linked to OpenProject work package %s by user %s in application ' . Application::APP_ID,
+				[
+					'fileId' => $fileInfo['id'],
+					'workPackageId' => $values['workpackageId'],
+					'userId' => $userId,
+					'fileLinkId' => $fileIds[$i],
+				],
+			);
+		}
 		return $fileIds;
 	}
 
@@ -886,6 +898,11 @@ class OpenProjectAPIService {
 		if (!isset($result['success'])) {
 			throw new OpenprojectResponseException('Malformed response');
 		}
+		$this->logToAuditLog(
+			Operation::FileLinkDeleted,
+			'OpenProject file link %s has been deleted by user %s in application ' . Application::APP_ID,
+			['fileLinkId' => $fileLinkId, 'userId' => $userId],
+		);
 		return $result;
 	}
 

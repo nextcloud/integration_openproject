@@ -18,6 +18,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - Log integration settings saved through the setup API and every new Nextcloud OAuth client for OpenProject to the audit log
 - Log the project folder setup and terms of service signed for the OpenProject user to the audit log
 - Log users connecting and disconnecting their OpenProject account to the audit log
+- Log files linked to and unlinked from OpenProject work packages to the audit log
 
 ### Fixed
 - Keep the admin settings when Nextcloud replays the migrations to check the database schema (`occ db:schema:check`, every `occ upgrade` on Nextcloud 35)
