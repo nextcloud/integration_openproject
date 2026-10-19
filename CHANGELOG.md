@@ -22,6 +22,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ### Changed
 - Make OAuth2 Client class usage compatible with older Nextcloud versions [#1148](https://github.com/nextcloud/integration_openproject/pull/1148)
 - Add owner_file_name property in filesInfo endpoint response [#1189](https://github.com/nextcloud/integration_openproject/pull/1189)
+- Write the audit log entries through the admin_audit app, with an operation and named parameters, whenever the app is enabled
 
 ### Removed
 

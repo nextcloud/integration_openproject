@@ -14,6 +14,7 @@ use OC\User\NoUserException;
 use OCA\OAuth2\Exceptions\ClientNotFoundException;
 use OCA\OAuth2\Service\ClientService;
 use OCA\OpenProject\AppInfo\Application;
+use OCA\OpenProject\AuditLog\Operation;
 use OCA\OpenProject\Exception\OpenprojectGroupfolderSetupConflictException;
 use OCA\OpenProject\Service\OauthService;
 use OCA\OpenProject\Service\OpenProjectAPIService;
@@ -185,16 +186,7 @@ class ConfigController extends Controller {
 			if (!$this->userManager->userExists(Application::OPEN_PROJECT_ENTITIES_NAME)) {
 				throw new NoUserException('User "' . Application::OPEN_PROJECT_ENTITIES_NAME . '" does not exists to create application password');
 			}
-			$appPassword = $this->openprojectAPIService->generateAppPasswordTokenForUser();
-			if ($isAppPasswordBeingReplaced) {
-				$this->openprojectAPIService->logToAuditFile(
-					"Application password for user 'OpenProject has been replaced' with new password in application " . Application::APP_ID
-				);
-			} else {
-				$this->openprojectAPIService->logToAuditFile(
-					"New application password for user 'OpenProject' has been created in application " . Application::APP_ID
-				);
-			}
+			$appPassword = $this->openprojectAPIService->generateAppPasswordTokenForUser($isAppPasswordBeingReplaced);
 		}
 		$oldClientId = $oldClientSecret = '';
 		$oldOpenProjectOauthUrl = $this->config->getAppValue(
@@ -293,8 +285,9 @@ class ConfigController extends Controller {
 		if (key_exists('setup_app_password', $values) && $values['setup_app_password'] === false) {
 			$this->openprojectAPIService->deleteAppPassword();
 			if (!$runningFullReset) {
-				$this->openprojectAPIService->logToAuditFile(
-					"Project folder setup has been deactivated in application " . Application::APP_ID
+				$this->openprojectAPIService->logToAuditLog(
+					Operation::ProjectFolderDeactivated,
+					'Project folder setup has been deactivated in application ' . Application::APP_ID,
 				);
 			}
 		}
@@ -321,8 +314,9 @@ class ConfigController extends Controller {
 		// so setting `fresh_project_folder_setup` as true
 		if ($runningFullReset) {
 			$this->config->setAppValue(Application::APP_ID, 'fresh_project_folder_setup', "1");
-			$this->openprojectAPIService->logToAuditFile(
-				"OpenProject Integration admin configuration has been reset in application " . Application::APP_ID
+			$this->openprojectAPIService->logToAuditLog(
+				Operation::IntegrationReset,
+				'OpenProject Integration admin configuration has been reset in application ' . Application::APP_ID,
 			);
 		} elseif (key_exists('setup_app_password', $values) && key_exists('setup_project_folder', $values)) {
 			// for other cases when api has key 'setup_app_password' and 'setup_project_folder' we set it to false
@@ -363,13 +357,16 @@ class ConfigController extends Controller {
 			if (key_exists('openproject_instance_url', $values) &&
 				$values['openproject_instance_url'] && !$isOPOAuthCrdentialSet) {
 				// sending admin audit log if admin has changed or added the openproject host url
-				$this->openprojectAPIService->logToAuditFile(
-					"OpenProject host url has been set to '" . $values['openproject_instance_url'] . "' in application " . Application::APP_ID
+				$this->openprojectAPIService->logToAuditLog(
+					Operation::IntegrationConfigured,
+					"OpenProject host url has been set to '%s' in application " . Application::APP_ID,
+					['openprojectUrl' => (string)$values['openproject_instance_url']],
 				);
 			}
 			if ($isOPOAuthCrdentialSet) {
-				$this->openprojectAPIService->logToAuditFile(
-					"OpenProject OAuth credential 'openproject_client_id' and 'openproject_client_secret' has been set in application " . Application::APP_ID
+				$this->openprojectAPIService->logToAuditLog(
+					Operation::IntegrationConfigured,
+					"OpenProject OAuth credential 'openproject_client_id' and 'openproject_client_secret' has been set in application " . Application::APP_ID,
 				);
 			}
 			return new DataResponse($result);
@@ -510,8 +507,9 @@ class ConfigController extends Controller {
 	 */
 	public function autoOauthCreation(): DataResponse {
 		$result = $this->recreateOauthClientInformation();
-		$this->openprojectAPIService->logToAuditFile(
-			"Nextcloud OAuth credential has been set in application " . Application::APP_ID
+		$this->openprojectAPIService->logToAuditLog(
+			Operation::OauthClientCreated,
+			'Nextcloud OAuth credential has been set in application ' . Application::APP_ID,
 		);
 		return new DataResponse($result);
 	}
