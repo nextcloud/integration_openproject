@@ -13,6 +13,7 @@ use OCA\OAuth2\Db\Client;
 use OCA\OAuth2\Db\ClientMapper;
 use OCA\OAuth2\Service\ClientService;
 use OCA\OpenProject\AppInfo\Application;
+use OCA\OpenProject\AuditLog\Operation;
 use OCA\OpenProject\Service\OauthService;
 use OCA\OpenProject\Service\OpenProjectAPIService;
 use OCA\OpenProject\Service\SettingsService;
@@ -98,6 +99,7 @@ class ConfigControllerTest extends TestCase {
 				['testUser', 'integration_openproject', 'code_verifier', false, $codeVerifier],
 				['testUser', 'integration_openproject', 'oauth_journey_starting_page', '', $startingPage],
 				['testUser', 'integration_openproject', 'refresh_token', false, 'oAuthRefreshToken'],
+				['testUser', 'integration_openproject', 'user_id', '', '7'],
 			]);
 		return $configMock;
 	}
@@ -237,6 +239,13 @@ class ConfigControllerTest extends TestCase {
 		$apiServiceMock
 			->method('requestOAuthAccessToken')
 			->willReturn(['access_token' => 'oAuthAccessToken', 'refresh_token' => 'oAuthRefreshToken']);
+		$apiServiceMock->expects($this->once())
+			->method('logToAuditLog')
+			->with(
+				Operation::AccountConnected,
+				'User %s has connected the OpenProject account %s in application integration_openproject',
+				['userId' => 'testUser', 'openprojectUserId' => '7'],
+			);
 
 		$constructArgs = $this->getConfigControllerConstructArgs([
 			'config' => $configMock,
@@ -321,8 +330,12 @@ class ConfigControllerTest extends TestCase {
 			[['testUser', 'integration_openproject', 'oauth_connection_error_message', 'Error during OAuth exchanges', null], null],
 		]);
 
+		$apiServiceMock = $this->createMock(OpenProjectAPIService::class);
+		$apiServiceMock->expects($this->never())->method('logToAuditLog');
+
 		$constructArgs = $this->getConfigControllerConstructArgs([
 			'config' => $configMock,
+			'openprojectAPIService' => $apiServiceMock,
 		]);
 		$configController = new ConfigController(...$constructArgs);
 
@@ -481,6 +494,7 @@ class ConfigControllerTest extends TestCase {
 		$apiServiceMock
 			->method('requestOAuthAccessToken')
 			->willReturn($oauthResponse);
+		$apiServiceMock->expects($this->never())->method('logToAuditLog');
 		$configMock = $this->getConfigMock(
 			str_repeat("A", 128), str_repeat("S", 50)
 		);
@@ -1851,5 +1865,338 @@ class ConfigControllerTest extends TestCase {
 			$this->assertArrayHasKey('nextcloud_client_secret', $data);
 			$this->assertArrayHasKey('openproject_redirect_uri', $data);
 		}
+	}
+
+	/**
+	 * @param list<array{Operation, string, array<string, mixed>}> $auditEntries filled with the audit log entries written through the service
+	 */
+	private function getApiServiceMockCollectingAuditEntries(array &$auditEntries): OpenProjectAPIService&MockObject {
+		$apiService = $this->createMock(OpenProjectAPIService::class);
+		$apiService->method('logToAuditLog')
+			->willReturnCallback(function (Operation $operation, string $message, array $parameters = []) use (&$auditEntries): void {
+				$auditEntries[] = [$operation, $message, $parameters];
+			});
+		return $apiService;
+	}
+
+	/**
+	 * @param array<string, string> $appValues
+	 */
+	private function getConfigMockWithAppValues(array $appValues): IConfig&MockObject {
+		$configMock = $this->createMock(IConfig::class);
+		$configMock->method('getAppValue')
+			->willReturnCallback(fn (string $app, string $key, string $default = '') => $appValues[$key] ?? $default);
+		return $configMock;
+	}
+
+	/**
+	 * @param array<string, mixed> $constructParams
+	 */
+	private function getConfigControllerForAuditLog(array &$auditEntries, array $appValues, array $constructParams = []): ConfigController {
+		$constructArgs = $this->getConfigControllerConstructArgs(array_merge([
+			'config' => $this->getConfigMockWithAppValues($appValues),
+			'userManager' => $this->createMock(IUserManager::class),
+			'openprojectAPIService' => $this->getApiServiceMockCollectingAuditEntries($auditEntries),
+		], $constructParams));
+		return new ConfigController(...$constructArgs);
+	}
+
+	public function testSetAdminConfigLogsSavedSettings(): void {
+		$auditEntries = [];
+		$controller = $this->getConfigControllerForAuditLog($auditEntries, [
+			'openproject_instance_url' => 'https://old.example.com',
+			'authorization_method' => Application::AUTH_METHOD_OAUTH,
+			'nc_oauth_client_id' => '12',
+		]);
+
+		$result = $controller->setAdminConfig(['openproject_instance_url' => 'https://openproject.example.com']);
+
+		$this->assertSame(Http::STATUS_OK, $result->getStatus());
+		$this->assertSame([[
+			Operation::IntegrationConfigured,
+			"OpenProject integration settings %s have been saved for the OpenProject instance '%s' in application integration_openproject",
+			[
+				'settings' => 'openproject_instance_url',
+				'openprojectUrl' => 'https://openproject.example.com',
+				'authorizationMethod' => Application::AUTH_METHOD_OAUTH,
+				'usersDisconnected' => false,
+			],
+		]], $auditEntries);
+	}
+
+	public function testSetAdminConfigLogsOpenProjectOauthCredentialsWithoutSecret(): void {
+		$auditEntries = [];
+		$userManagerMock = $this->createMock(IUserManager::class);
+		$userManagerMock->expects($this->once())->method('callForAllUsers');
+		$controller = $this->getConfigControllerForAuditLog($auditEntries, [
+			'openproject_instance_url' => 'https://openproject.example.com',
+			'authorization_method' => Application::AUTH_METHOD_OAUTH,
+			'openproject_client_id' => 'old-client-id',
+			'openproject_client_secret' => 'old-client-secret',
+		], ['userManager' => $userManagerMock]);
+
+		$result = $controller->setAdminConfig([
+			'openproject_instance_url' => 'https://openproject.example.com',
+			'openproject_client_id' => 'op-client-id',
+			'openproject_client_secret' => 'op-client-secret',
+		]);
+
+		$this->assertSame(Http::STATUS_OK, $result->getStatus());
+		$this->assertSame([[
+			Operation::IntegrationConfigured,
+			"OpenProject integration settings %s have been saved for the OpenProject instance '%s' in application integration_openproject",
+			[
+				'settings' => 'openproject_instance_url, openproject_client_id, openproject_client_secret',
+				'openprojectUrl' => 'https://openproject.example.com',
+				'authorizationMethod' => Application::AUTH_METHOD_OAUTH,
+				'usersDisconnected' => true,
+			],
+		]], $auditEntries);
+		$this->assertStringNotContainsString('op-client-secret', json_encode($auditEntries));
+	}
+
+	public function testSetAdminConfigLogsProjectFolderDeactivation(): void {
+		$auditEntries = [];
+		$controller = $this->getConfigControllerForAuditLog($auditEntries, [
+			'openproject_instance_url' => 'https://openproject.example.com',
+			'authorization_method' => Application::AUTH_METHOD_OAUTH,
+		]);
+
+		// only the project folder flag is sent, so no settings are logged as saved
+		$result = $controller->setAdminConfig(['setup_app_password' => false]);
+
+		$this->assertSame(Http::STATUS_OK, $result->getStatus());
+		$this->assertSame([[
+			Operation::ProjectFolderDeactivated,
+			'Project folder setup has been deactivated in application integration_openproject',
+			[],
+		]], $auditEntries);
+	}
+
+	public function testSetAdminConfigWithUnknownSettingDoesNotLog(): void {
+		$auditEntries = [];
+		$controller = $this->getConfigControllerForAuditLog($auditEntries, []);
+
+		$result = $controller->setAdminConfig(['openproject_instance_url' => 'https://openproject.example.com', 'unknown' => 'value']);
+
+		$this->assertSame(Http::STATUS_BAD_REQUEST, $result->getStatus());
+		$this->assertSame([], $auditEntries);
+	}
+
+	public function testResetIntegrationLogsReset(): void {
+		$auditEntries = [];
+		$controller = $this->getConfigControllerForAuditLog($auditEntries, [
+			'openproject_instance_url' => 'https://openproject.example.com',
+			'authorization_method' => Application::AUTH_METHOD_OAUTH,
+		]);
+
+		$result = $controller->resetIntegration();
+
+		$this->assertSame(Http::STATUS_OK, $result->getStatus());
+		$this->assertSame([[
+			Operation::IntegrationReset,
+			'OpenProject Integration admin configuration has been reset in application integration_openproject',
+			['usersDisconnected' => true],
+		]], $auditEntries);
+	}
+
+	public function testSetUpIntegrationLogsSettingsAndOauthClient(): void {
+		$auditEntries = [];
+		$oauthServiceMock = $this->createMock(OauthService::class);
+		$oauthServiceMock->method('createNcOauthClient')->willReturn([
+			'id' => 34,
+			'nextcloud_oauth_client_name' => 'OpenProject client',
+			'openproject_redirect_uri' => 'https://openproject.example.com/oauth_clients/client-id/callback',
+			'nextcloud_client_id' => 'client-id',
+			'nextcloud_client_secret' => 'nc-client-secret',
+		]);
+		$settingsServiceMock = $this->createMock(SettingsService::class);
+		$controller = $this->getConfigControllerForAuditLog($auditEntries, [], [
+			'oauthService' => $oauthServiceMock,
+			'settingsService' => $settingsServiceMock,
+		]);
+
+		$result = $controller->setUpIntegration([
+			'openproject_instance_url' => 'https://openproject.example.com',
+			'authorization_method' => Application::AUTH_METHOD_OAUTH,
+			'openproject_client_id' => 'op-client-id',
+			'openproject_client_secret' => 'op-client-secret',
+			'default_enable_navigation' => false,
+			'default_enable_unified_search' => false,
+			'setup_project_folder' => false,
+			'setup_app_password' => false,
+		]);
+
+		$this->assertSame(Http::STATUS_OK, $result->getStatus());
+		$this->assertSame([
+			[
+				Operation::ProjectFolderDeactivated,
+				'Project folder setup has been deactivated in application integration_openproject',
+				[],
+			],
+			[
+				Operation::IntegrationConfigured,
+				"OpenProject integration settings %s have been saved for the OpenProject instance '%s' in application integration_openproject",
+				[
+					'settings' => 'openproject_instance_url, authorization_method, openproject_client_id, openproject_client_secret, default_enable_navigation, default_enable_unified_search',
+					'openprojectUrl' => 'https://openproject.example.com',
+					'authorizationMethod' => Application::AUTH_METHOD_OAUTH,
+					'usersDisconnected' => true,
+				],
+			],
+			[
+				Operation::OauthClientCreated,
+				'Nextcloud OAuth client %s for OpenProject has been created in application integration_openproject',
+				['oauthClientId' => 34, 'replaced' => false],
+			],
+		], $auditEntries);
+		$encodedEntries = json_encode($auditEntries);
+		$this->assertStringNotContainsString('op-client-secret', $encodedEntries);
+		$this->assertStringNotContainsString('nc-client-secret', $encodedEntries);
+	}
+
+	public function testUpdateIntegrationLogsSavedSettings(): void {
+		$auditEntries = [];
+		$oauthServiceMock = $this->createMock(OauthService::class);
+		$oauthServiceMock->method('getClientInfo')->willReturn(['id' => 12]);
+		$oauthServiceMock->expects($this->never())->method('createNcOauthClient');
+		$controller = $this->getConfigControllerForAuditLog($auditEntries, [
+			'openproject_instance_url' => 'https://openproject.example.com',
+			'authorization_method' => Application::AUTH_METHOD_OAUTH,
+			'nc_oauth_client_id' => '12',
+		], [
+			'oauthService' => $oauthServiceMock,
+			'settingsService' => $this->createMock(SettingsService::class),
+		]);
+
+		$result = $controller->updateIntegration(['default_enable_navigation' => true]);
+
+		$this->assertSame(Http::STATUS_OK, $result->getStatus());
+		$this->assertSame([[
+			Operation::IntegrationConfigured,
+			"OpenProject integration settings %s have been saved for the OpenProject instance '%s' in application integration_openproject",
+			[
+				'settings' => 'default_enable_navigation',
+				'openprojectUrl' => 'https://openproject.example.com',
+				'authorizationMethod' => Application::AUTH_METHOD_OAUTH,
+				'usersDisconnected' => false,
+			],
+		]], $auditEntries);
+	}
+
+	public function testUpdateIntegrationWithInvalidSettingsDoesNotLog(): void {
+		$auditEntries = [];
+		$settingsServiceMock = $this->createMock(SettingsService::class);
+		$settingsServiceMock->method('validateAdminSettingsForm')->willThrowException(new \InvalidArgumentException('invalid'));
+		$controller = $this->getConfigControllerForAuditLog($auditEntries, [], ['settingsService' => $settingsServiceMock]);
+
+		$result = $controller->updateIntegration(['openproject_instance_url' => 'invalid']);
+
+		$this->assertSame(Http::STATUS_BAD_REQUEST, $result->getStatus());
+		$this->assertSame([], $auditEntries);
+	}
+
+	public function testAutoOauthCreationLogsOauthClientCreation(): void {
+		$auditEntries = [];
+		$oauthServiceMock = $this->createMock(OauthService::class);
+		$oauthServiceMock->method('createNcOauthClient')->willReturn([
+			'id' => 34,
+			'nextcloud_oauth_client_name' => 'OpenProject client',
+			'openproject_redirect_uri' => 'https://openproject.example.com/oauth_clients/client-id/callback',
+			'nextcloud_client_id' => 'client-id',
+			'nextcloud_client_secret' => 'client-secret',
+		]);
+		$controller = $this->getConfigControllerForAuditLog($auditEntries, [
+			'openproject_instance_url' => 'https://openproject.example.com',
+			'nc_oauth_client_id' => '12',
+		], ['oauthService' => $oauthServiceMock]);
+
+		$controller->autoOauthCreation();
+
+		$this->assertSame([[
+			Operation::OauthClientCreated,
+			'Nextcloud OAuth client %s for OpenProject has replaced the previous one in application integration_openproject',
+			['oauthClientId' => 34, 'replaced' => true],
+		]], $auditEntries);
+		$this->assertStringNotContainsString('client-secret', json_encode($auditEntries));
+	}
+
+	public function testSetAdminConfigPassesAppPasswordReplacementToService(): void {
+		$auditEntries = [];
+		$apiService = $this->getApiServiceMockCollectingAuditEntries($auditEntries);
+		$apiService->method('hasAppPassword')->willReturn(true);
+		$apiService->expects($this->once())
+			->method('generateAppPasswordTokenForUser')
+			->with(true)
+			->willReturn('app-password');
+		$userManagerMock = $this->createMock(IUserManager::class);
+		$userManagerMock->method('userExists')->willReturn(true);
+		$controller = $this->getConfigControllerForAuditLog($auditEntries, [
+			'openproject_instance_url' => 'https://openproject.example.com',
+			'authorization_method' => Application::AUTH_METHOD_OAUTH,
+		], ['openprojectAPIService' => $apiService, 'userManager' => $userManagerMock]);
+
+		$result = $controller->setAdminConfig(['setup_app_password' => true]);
+
+		$this->assertSame(Http::STATUS_OK, $result->getStatus());
+	}
+
+	public function testSetConfigWithTokenLogsConnectedAccountWithoutToken(): void {
+		$auditEntries = [];
+		$apiService = $this->getApiServiceMockCollectingAuditEntries($auditEntries);
+		$apiService->method('initUserInfo')->with('testUser', 'personal-token')->willReturn(['user_name' => 'Some User']);
+		$configMock = $this->createMock(IConfig::class);
+		$configMock->method('getUserValue')->willReturnMap([
+			['testUser', Application::APP_ID, 'user_id', '', '7'],
+		]);
+		$controller = $this->getConfigControllerForAuditLog($auditEntries, [], [
+			'config' => $configMock,
+			'openprojectAPIService' => $apiService,
+		]);
+
+		$result = $controller->setConfig(['token' => 'personal-token']);
+
+		$this->assertSame(Http::STATUS_OK, $result->getStatus());
+		$this->assertSame([[
+			Operation::AccountConnected,
+			'User %s has connected the OpenProject account %s in application integration_openproject',
+			['userId' => 'testUser', 'openprojectUserId' => '7'],
+		]], $auditEntries);
+		$this->assertStringNotContainsString('personal-token', json_encode($auditEntries));
+	}
+
+	public function testSetConfigWithInvalidTokenDoesNotLog(): void {
+		$auditEntries = [];
+		$apiService = $this->getApiServiceMockCollectingAuditEntries($auditEntries);
+		$apiService->method('initUserInfo')->willReturn(['error' => 'Unauthorized']);
+		$controller = $this->getConfigControllerForAuditLog($auditEntries, [], ['openprojectAPIService' => $apiService]);
+
+		$result = $controller->setConfig(['token' => 'invalid-token']);
+
+		$this->assertSame(Http::STATUS_UNAUTHORIZED, $result->getStatus());
+		$this->assertSame([], $auditEntries);
+	}
+
+	public function testSetConfigWithEmptyTokenLogsDisconnectedAccount(): void {
+		$auditEntries = [];
+		$controller = $this->getConfigControllerForAuditLog($auditEntries, []);
+
+		$result = $controller->setConfig(['token' => '']);
+
+		$this->assertSame(Http::STATUS_OK, $result->getStatus());
+		$this->assertSame([[
+			Operation::AccountDisconnected,
+			'User %s has disconnected the OpenProject account in application integration_openproject',
+			['userId' => 'testUser'],
+		]], $auditEntries);
+	}
+
+	public function testSetConfigWithoutTokenDoesNotLog(): void {
+		$auditEntries = [];
+		$controller = $this->getConfigControllerForAuditLog($auditEntries, []);
+
+		$controller->setConfig(['search_enabled' => '1']);
+
+		$this->assertSame([], $auditEntries);
 	}
 }

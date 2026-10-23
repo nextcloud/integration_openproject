@@ -9,6 +9,7 @@ namespace OCA\OpenProject\Service;
 
 use InvalidArgumentException;
 use OCA\OpenProject\AppInfo\Application;
+use OCA\OpenProject\AuditLog\Operation;
 use OCP\Group\ISubAdmin;
 use OCP\IGroup;
 use OCP\IGroupManager;
@@ -437,7 +438,20 @@ class SettingsServiceTest extends TestCase {
 
 			$opApiService
 				->expects($this->once())
-				->method('createGroupfolder');
+				->method('createGroupfolder')
+				->willReturn(7);
+			$opApiService
+				->expects($this->once())
+				->method('logToAuditLog')
+				->with(
+					Operation::ProjectFolderCreated,
+					"Project folder %s has been set up for user '%s', who manages the groups %s, in application integration_openproject",
+					[
+						'groupfolderId' => 7,
+						'userId' => Application::OPEN_PROJECT_ENTITIES_NAME,
+						'groupIds' => Application::OPEN_PROJECT_ENTITIES_NAME . ', ' . Application::OPENPROJECT_ALL_GROUP_NAME,
+					],
+				);
 			$opApiService
 				->expects($this->once())
 				->method('isTermsOfServiceAppEnabled')
@@ -458,6 +472,9 @@ class SettingsServiceTest extends TestCase {
 			$opApiService
 				->expects($this->never())
 				->method('createGroupfolder');
+			$opApiService
+				->expects($this->never())
+				->method('logToAuditLog');
 			$opApiService
 				->expects($this->never())
 				->method('isTermsOfServiceAppEnabled');

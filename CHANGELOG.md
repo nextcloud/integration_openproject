@@ -15,6 +15,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ### Added
 - Support Nextcloud 35
+- Log integration settings saved through the setup API and every new Nextcloud OAuth client for OpenProject to the audit log
+- Log the project folder setup and terms of service signed for the OpenProject user to the audit log
+- Log users connecting and disconnecting their OpenProject account to the audit log
+- Log files linked to and unlinked from OpenProject work packages to the audit log
 
 ### Fixed
 - Keep the admin settings when Nextcloud replays the migrations to check the database schema (`occ db:schema:check`, every `occ upgrade` on Nextcloud 35)
@@ -22,6 +26,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ### Changed
 - Make OAuth2 Client class usage compatible with older Nextcloud versions [#1148](https://github.com/nextcloud/integration_openproject/pull/1148)
 - Add owner_file_name property in filesInfo endpoint response [#1189](https://github.com/nextcloud/integration_openproject/pull/1189)
+- Write the audit log entries through the admin_audit app, with an operation and named parameters, whenever the app is enabled
 
 ### Removed
 
