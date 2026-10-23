@@ -1,6 +1,7 @@
 OC.L10N.register(
     "integration_openproject",
     {
+    "OpenProject" : "OpenProject",
     "Error getting OAuth access token" : "Eroare în obținerea token-ului OAuth",
     "Error during OAuth exchanges" : "Eroare în schimbarea OAuth",
     "Bad HTTP method" : "Metodă HTTP nepotrivită",
@@ -8,6 +9,7 @@ OC.L10N.register(
     "Cancel" : "Anulare",
     "Reset" : "Resetare",
     "Enable navigation link" : "Pornește link-ul de navifare",
+    "Connected as {user}" : "Conectat ca {user}",
     "Authentication method" : "Modul de autentificare",
     "Save" : "Salvează",
     "Documentation" : "Documentație",
