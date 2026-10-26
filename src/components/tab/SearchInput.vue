@@ -5,7 +5,8 @@
 -->
 <template>
 	<div id="searchBar">
-		<NcSelect ref="workPackageSelect"
+		<NcSelect
+			ref="workPackageSelect"
 			class="searchInput"
 			input-id="searchInput"
 			:placeholder="placeholder"
@@ -17,7 +18,7 @@
 			:clear-search-on-blur="() => false"
 			:disabled="isDisabled"
 			@search="asyncFind"
-			@option:selected="linkWorkPackageToFile">
+			@option:selected="selectWorkPackage">
 			<template #option="option">
 				<WorkPackage :key="option.id"
 					:workpackage="option"
@@ -102,7 +103,7 @@ export default {
 			default: false,
 		},
 	},
-	emits: ['submit', 'close'],
+	emits: ['close'],
 	data: () => ({
 		state: STATE.OK,
 		searchResults: [],
@@ -190,7 +191,7 @@ export default {
 			if (data.openProjectEventName === 'work_package_creation_success') {
 				showSuccess(t('integration_openproject', 'Work package created successfully.'))
 				this.newWorkpackageCreated = true
-				await this.linkWorkPackageToFile(data.openProjectEventPayload)
+				await this.linkWorkPackage(data.openProjectEventPayload)
 			}
 		},
 		onCloseCreateWorkPackageModalEvent() {
@@ -222,19 +223,18 @@ export default {
 				await this.debounceMakeSearchRequest(query, null)
 			}
 		},
-		async getWorkPackageLink(selectedOption) {
-			return this.openprojectUrl.replace(/^\/+|\/+$/g, '') + '/wp/' + selectedOption.id
+		getWorkPackageLink(workPackageID) {
+			return this.openprojectUrl.replace(/^\/+|\/+$/g, '') + '/wp/' + workPackageID
 		},
 		debounceMakeSearchRequest: debounce(function(...args) {
 			if (args[0].length < SEARCH_CHAR_LIMIT) return
 			return this.makeSearchRequest(...args)
 		}, DEBOUNCE_THRESHOLD),
-		async linkWorkPackageToFile(selectedOption) {
-			if (this.isSmartPicker) {
-				const link = await this.getWorkPackageLink(selectedOption)
-				this.$emit('submit', link)
-				return
-			}
+		submitSelectedWorkPackageSmartPicker(workPackageID) {
+			const link = this.getWorkPackageLink(workPackageID)
+			this.$el.dispatchEvent(new CustomEvent('submit', { detail: link, bubbles: true }))
+		},
+		async linkWorkPackage(selectedOption) {
 			// since we can link multiple files now we send file information required in an array (whether it's only one value or multiple)
 			if (this.searchOrigin === WORKPACKAGES_SEARCH_ORIGIN.PROJECT_TAB) {
 				if (this.newWorkpackageCreated && this.searchOrigin === WORKPACKAGES_SEARCH_ORIGIN.PROJECT_TAB) {
@@ -245,17 +245,27 @@ export default {
 				}
 				await workpackageHelper.linkFileToWorkPackageWithSingleRequest([this.fileInfo], selectedOption, t('integration_openproject', 'Link to work package created successfully!'), this)
 				this.resetState()
-			} else if (this.searchOrigin === WORKPACKAGES_SEARCH_ORIGIN.LINK_MULTIPLE_FILES_MODAL) {
+				return
+			}
+
+			if (this.searchOrigin === WORKPACKAGES_SEARCH_ORIGIN.LINK_MULTIPLE_FILES_MODAL) {
 				if (this.fileInfo.length <= 20) {
 					await workpackageHelper.linkFileToWorkPackageWithSingleRequest(this.fileInfo, selectedOption, t('integration_openproject', 'Links to work package created successfully for selected files!'), this)
 					this.$emit('close', selectedOption)
 					this.resetState()
-				} else {
-					// the selected files will be linked in chunks
-					await workpackageHelper.linkMultipleFilesToWorkPackageWithChunking(this.fileInfo, selectedOption, false, this)
-					this.resetState()
+					return
 				}
+				// the selected files will be linked in chunks
+				await workpackageHelper.linkMultipleFilesToWorkPackageWithChunking(this.fileInfo, selectedOption, false, this)
+				this.resetState()
 			}
+		},
+		async selectWorkPackage(selectedOption) {
+			if (this.isSmartPicker) {
+				this.submitSelectedWorkPackageSmartPicker(selectedOption?.id)
+				return
+			}
+			await this.linkWorkPackage(selectedOption)
 		},
 		async makeSearchRequest(search, fileId) {
 			this.state = STATE.LOADING
