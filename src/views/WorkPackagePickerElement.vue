@@ -12,8 +12,7 @@
 			:is-smart-picker="true"
 			:file-info="fileInfo"
 			:is-disabled="isLoading || !enableSearchInput || !isStateOk"
-			:linked-work-packages="linkedWorkPackages"
-			@submit="onSubmit" />
+			:linked-work-packages="linkedWorkPackages" />
 		<div id="openproject-empty-content">
 			<NcLoadingIcon v-if="isLoading" class="loading-spinner" :size="90" />
 			<EmptyContent
@@ -44,18 +43,6 @@ export default {
 		SearchInput,
 		NcLoadingIcon,
 	},
-
-	props: {
-		providerId: {
-			type: String,
-			required: true,
-		},
-		accessible: {
-			type: Boolean,
-			default: false,
-		},
-	},
-	emits: ['submit'],
 	data() {
 		return {
 			fileInfo: {},
@@ -85,9 +72,6 @@ export default {
 		this.checkIfOpenProjectIsAvailable()
 	},
 	methods: {
-		onSubmit(data) {
-			this.$emit('submit', data)
-		},
 		async checkIfOpenProjectIsAvailable() {
 			if (!this.adminConfigState.isAdminConfigOk) {
 				this.state = STATE.ERROR
