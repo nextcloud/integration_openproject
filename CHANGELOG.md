@@ -19,6 +19,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - Log the project folder setup and terms of service signed for the OpenProject user to the audit log
 - Log users connecting and disconnecting their OpenProject account to the audit log
 - Log files linked to and unlinked from OpenProject work packages to the audit log
+- Handle exceeding post_max_size and upload_max_filesize [#1190](https://github.com/nextcloud/integration_openproject/pull/1190)
 
 ### Fixed
 
