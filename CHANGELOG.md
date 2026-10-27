@@ -24,7 +24,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ### Fixed
 
 - Keep the admin settings when Nextcloud replays the migrations to check the database schema (`occ db:schema:check`, every `occ upgrade` on Nextcloud 35)
-- Selecting an OpenProject work package does not insert the reference [#1200](https://github.com/nextcloud/integration_openproject/pull/1200)
+- Selecting an OpenProject work package does not insert the reference in the Smart Picker [#1200](https://github.com/nextcloud/integration_openproject/pull/1200)
 
 ### Changed
 

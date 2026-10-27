@@ -103,7 +103,7 @@ export default {
 			default: false,
 		},
 	},
-	emits: ['close'],
+	emits: ['submit', 'close'],
 	data: () => ({
 		state: STATE.OK,
 		searchResults: [],
@@ -232,7 +232,7 @@ export default {
 		}, DEBOUNCE_THRESHOLD),
 		submitSelectedWorkPackageSmartPicker(workPackageID) {
 			const link = this.getWorkPackageLink(workPackageID)
-			this.$el.dispatchEvent(new CustomEvent('submit', { detail: link, bubbles: true }))
+			this.$emit('submit', link)
 		},
 		async linkWorkPackage(selectedOption) {
 			// since we can link multiple files now we send file information required in an array (whether it's only one value or multiple)

@@ -15,8 +15,8 @@ __webpack_nonce__ = btoa(OC.requestToken)
 /* eslint-disable-next-line no-undef */
 __webpack_public_path__ = OC.linkTo(APP_ID, 'js/')
 
-const workpackageCards = new WeakMap()
-// INFO: this is where we associate our widget component with the richobjects
+const workPackageCards = new WeakMap()
+// INFO: this is where we associate our widget component with the rich-objects
 //       that we return in the reference provider.
 // Link preview card in the chat.
 registerWidget(`${APP_ID}_work_package`, async (el, { richObjectType, richObject, accessible }) => {
@@ -31,10 +31,10 @@ registerWidget(`${APP_ID}_work_package`, async (el, { richObjectType, richObject
 	})
 	setupGlobalProperties(widget)
 	widget.mount(el)
-	workpackageCards.set(el, widget)
+	workPackageCards.set(el, widget)
 }, (el) => {
-	workpackageCards.get(el)?.unmount()
-	workpackageCards.delete(el)
+	workPackageCards.get(el)?.unmount()
+	workPackageCards.delete(el)
 })
 
 // INFO: register OpenProject work packages search component inside the Smart Picker.
