@@ -12,7 +12,8 @@
 			:is-smart-picker="true"
 			:file-info="fileInfo"
 			:is-disabled="isLoading || !enableSearchInput || !isStateOk"
-			:linked-work-packages="linkedWorkPackages" />
+			:linked-work-packages="linkedWorkPackages"
+			@submit="onSubmit" />
 		<div id="openproject-empty-content">
 			<NcLoadingIcon v-if="isLoading" class="loading-spinner" :size="90" />
 			<EmptyContent
@@ -72,6 +73,9 @@ export default {
 		this.checkIfOpenProjectIsAvailable()
 	},
 	methods: {
+		onSubmit(data) {
+			this.$el.dispatchEvent(new CustomEvent('submit', { detail: data }))
+		},
 		async checkIfOpenProjectIsAvailable() {
 			if (!this.adminConfigState.isAdminConfigOk) {
 				this.state = STATE.ERROR
