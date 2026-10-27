@@ -41,7 +41,7 @@ class DirectUploadControllerTest extends TestCase {
 	/**
 	 * @return void
 	 */
-	public function testprepareDirectUpload() {
+	public function testPrepareDirectUpload() {
 		$folderMock = $this->getFolderMock();
 		$folderMock->method('getById')->willReturn($this->getNodeMock('dir'));
 		$directUploadController = $this->createDirectUploadController($folderMock);
@@ -59,7 +59,7 @@ class DirectUploadControllerTest extends TestCase {
 	/**
 	 * @return void
 	 */
-	public function testprepareDirectUploadTypeFile(): void {
+	public function testPrepareDirectUploadTypeFile(): void {
 		$folderMock = $this->getFolderMock();
 		$folderMock->method('getById')->willReturn($this->getNodeMock('file'));
 		$directUploadController = $this->createDirectUploadController($folderMock);
@@ -73,7 +73,7 @@ class DirectUploadControllerTest extends TestCase {
 		assertSame(404, $result->getStatus());
 	}
 
-	public function testprepareDirectUploadException(): void {
+	public function testPrepareDirectUploadException(): void {
 		$folderMock = $this->getFolderMock();
 		$folderMock->method('getById')
 			->will($this->throwException(new \Exception('something bad happened')));
