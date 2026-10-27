@@ -20,9 +20,11 @@ use OC\Http\Client\Response;
 use OCA\GroupFolders\Folder\FolderManager;
 use OCA\OIDCIdentityProvider\Db\Client as OIDCClient;
 use OCA\OpenProject\AppInfo\Application;
+use OCA\OpenProject\AuditLog\Operation;
 use OCA\OpenProject\Exception\OpenprojectErrorException;
 use OCA\OpenProject\Exception\OpenprojectResponseException;
 use OCA\OpenProject\OIDCClientMapper;
+use OCA\OpenProject\Tests\AuditLog\AuditEvents;
 use OCA\OpenProject\TokenEventFactory;
 use OCA\TermsOfService\Db\Mapper\SignatoryMapper;
 use OCA\UserOIDC\Event\ExchangedTokenRequestedEvent;
@@ -33,6 +35,7 @@ use OCA\UserOIDC\User\Backend as OIDCBackend;
 use OCP\App\IAppManager;
 use OCP\AppFramework\Http;
 use OCP\Encryption\IManager;
+use OCP\EventDispatcher\Event;
 use OCP\EventDispatcher\IEventDispatcher;
 use OCP\Files\Folder;
 use OCP\Files\IRootFolder;
@@ -56,7 +59,7 @@ use OCP\IURLGenerator;
 use OCP\IUser;
 use OCP\IUserManager;
 use OCP\IUserSession;
-use OCP\Log\ILogFactory;
+use OCP\Log\Audit\CriticalActionPerformedEvent;
 use OCP\Security\ISecureRandom;
 use OCP\UserInterface;
 use phpmock\phpunit\PHPMock;
@@ -690,7 +693,6 @@ class OpenProjectAPIServiceTest extends TestCase {
 			'eventDispatcher' => $this->createMock(IEventDispatcher::class),
 			'subAdmin' => $this->createMock(ISubAdmin::class),
 			'dbConnection' => $this->createMock(IDBConnection::class),
-			'logFactory' => $this->createMock(ILogFactory::class),
 			'manager' => $this->createMock(IManager::class),
 			'tokenEventFactory' => $this->createMock(TokenEventFactory::class),
 			'userSession' => $this->createMock(IUserSession::class),
@@ -1922,6 +1924,42 @@ class OpenProjectAPIServiceTest extends TestCase {
 		$this->assertSame([2456], $result);
 	}
 
+	public function testLinkWorkPackageToFileLogsEachLinkedFile(): void {
+		$auditEvents = [];
+		$service = $this->getOpenProjectAPIServiceMock(['request', 'getNode'], [
+			'eventDispatcher' => $this->getEventDispatcherMockCollectingAuditEvents($auditEvents),
+		]);
+		$service->method('getNode')->willReturn($this->getNodeMock());
+		$service->method('request')
+			->willReturn(['_type' => 'Collection', '_embedded' => ['elements' => [['id' => 2456], ['id' => 2457], ['id' => 2458]]]]);
+
+		$service->linkWorkPackageToFile($this->multipleFileInformation, 'user');
+
+		$message = 'File %s has been linked to OpenProject work package %s by user %s in application integration_openproject';
+		$this->assertAuditEvents([
+			[Operation::FileLinkCreated, $message, ['fileId' => 5503, 'workPackageId' => 123, 'userId' => 'user', 'fileLinkId' => 2456]],
+			[Operation::FileLinkCreated, $message, ['fileId' => 5504, 'workPackageId' => 123, 'userId' => 'user', 'fileLinkId' => 2457]],
+			[Operation::FileLinkCreated, $message, ['fileId' => 5505, 'workPackageId' => 123, 'userId' => 'user', 'fileLinkId' => 2458]],
+		], $auditEvents);
+	}
+
+	public function testLinkWorkPackageToFileWithMalformedResponseDoesNotLog(): void {
+		$auditEvents = [];
+		$service = $this->getOpenProjectAPIServiceMock(['request', 'getNode'], [
+			'eventDispatcher' => $this->getEventDispatcherMockCollectingAuditEvents($auditEvents),
+		]);
+		$service->method('getNode')->willReturn($this->getNodeMock());
+		$service->method('request')
+			->willReturn(['_type' => 'Collection', '_embedded' => ['elements' => [['id' => 2456]]]]);
+
+		try {
+			$service->linkWorkPackageToFile($this->multipleFileInformation, 'user');
+			$this->fail('Expected OpenprojectResponseException');
+		} catch (OpenprojectResponseException $e) {
+		}
+		$this->assertSame([], $auditEvents);
+	}
+
 	/**
 	 * @return void
 	 */
@@ -2499,6 +2537,91 @@ class OpenProjectAPIServiceTest extends TestCase {
 		$this->assertFalse($service->isProjectFoldersSetupComplete());
 	}
 
+	/**
+	 * @param list<CriticalActionPerformedEvent> $auditEvents filled with the audit log events dispatched through the returned mock
+	 */
+	private function getEventDispatcherMockCollectingAuditEvents(array &$auditEvents): IEventDispatcher&MockObject {
+		$eventDispatcherMock = $this->createMock(IEventDispatcher::class);
+		$eventDispatcherMock->method('dispatchTyped')
+			->willReturnCallback(function (Event $event) use (&$auditEvents): void {
+				if ($event instanceof CriticalActionPerformedEvent) {
+					$auditEvents[] = $event;
+				}
+			});
+		return $eventDispatcherMock;
+	}
+
+	/**
+	 * @param list<array{Operation, string, array<string, mixed>}> $expected
+	 * @param list<CriticalActionPerformedEvent> $auditEvents
+	 */
+	private function assertAuditEvents(array $expected, array $auditEvents): void {
+		$this->assertSame(
+			array_map(static fn (array $entry): array => [$entry[1], $entry[2]], $expected),
+			array_map(
+				static fn (CriticalActionPerformedEvent $event): array => [$event->getLogMessage(), $event->getParameters()],
+				$auditEvents,
+			),
+		);
+		foreach ($auditEvents as $index => $event) {
+			$this->assertTrue(AuditEvents::hasOperation($event, $expected[$index][0]));
+			$this->assertFalse($event->getObfuscateParameters());
+		}
+	}
+
+	public function testLogToAuditLog(): void {
+		$auditEvents = [];
+		$service = $this->getOpenProjectAPIServiceMock([], [
+			'eventDispatcher' => $this->getEventDispatcherMockCollectingAuditEvents($auditEvents),
+		]);
+
+		$service->logToAuditLog(Operation::IntegrationReset, 'Message with %s', ['value' => 'parameter', 'extra' => true]);
+
+		$this->assertAuditEvents([
+			[Operation::IntegrationReset, 'Message with %s', ['value' => 'parameter', 'extra' => true]],
+		], $auditEvents);
+	}
+
+	public function generateAppPasswordAuditLogDataProvider(): array {
+		return [
+			'new app password' => [
+				false,
+				"New application password for user '%s' has been created in application integration_openproject",
+			],
+			'replaced app password' => [
+				true,
+				"Application password for user '%s' has been replaced with new password in application integration_openproject",
+			],
+		];
+	}
+
+	/**
+	 * @dataProvider generateAppPasswordAuditLogDataProvider
+	 */
+	public function testGenerateAppPasswordTokenForUserLogsWithoutPassword(bool $replacesExisting, string $expectedMessage): void {
+		$userMock = $this->createMock(IUser::class);
+		$userMock->method('getUID')->willReturn(Application::OPEN_PROJECT_ENTITIES_NAME);
+		$userManagerMock = $this->createMock(IUserManager::class);
+		$userManagerMock->method('get')->willReturn($userMock);
+		$secureRandomMock = $this->createMock(ISecureRandom::class);
+		$secureRandomMock->method('generate')->willReturn('generated-app-password');
+		$tokenProviderMock = $this->createMock(IProvider::class);
+		$tokenProviderMock->method('generateToken')->willReturn($this->createMock(IToken::class));
+		$auditEvents = [];
+		$service = $this->getOpenProjectAPIServiceMock([], [
+			'userManager' => $userManagerMock,
+			'secureRandom' => $secureRandomMock,
+			'provider' => $tokenProviderMock,
+			'eventDispatcher' => $this->getEventDispatcherMockCollectingAuditEvents($auditEvents),
+		]);
+
+		$this->assertSame('generated-app-password', $service->generateAppPasswordTokenForUser($replacesExisting));
+
+		$this->assertAuditEvents([
+			[Operation::AppPasswordCreated, $expectedMessage, ['userId' => Application::OPEN_PROJECT_ENTITIES_NAME, 'replaced' => $replacesExisting]],
+		], $auditEvents);
+	}
+
 	public function testGenerateAppPasswordTokenForUser(): void {
 		$userMock = $this->getMockBuilder(IUser::class)->getMock();
 		$userMock
@@ -2812,10 +2935,12 @@ class OpenProjectAPIServiceTest extends TestCase {
 			->method('getTokenByUser')
 			->with(Application::OPEN_PROJECT_ENTITIES_NAME)
 			->willReturn([$tokenMock1,$tokenMock2,$tokenMock3,$tokenMock4,$tokenMock5]);
+		$auditEvents = [];
 		$service = $this->getOpenProjectAPIServiceMock(
 			['hasAppPassword'],
 			[
 				'provider' => $tokenProviderMock,
+				'eventDispatcher' => $this->getEventDispatcherMockCollectingAuditEvents($auditEvents),
 			],
 		);
 		$service->method('hasAppPassword')->willReturn(true);
@@ -2828,6 +2953,30 @@ class OpenProjectAPIServiceTest extends TestCase {
 				]
 			);
 		$service->deleteAppPassword();
+		$deletedEntry = [
+			Operation::AppPasswordDeleted,
+			"Application password for user '%s' has been deleted in application integration_openproject",
+			['userId' => Application::OPEN_PROJECT_ENTITIES_NAME],
+		];
+		$this->assertAuditEvents([$deletedEntry, $deletedEntry], $auditEvents);
+	}
+
+	public function testDeleteAppPasswordWithoutAppPasswordDoesNotLog(): void {
+		$tokenProviderMock = $this->createMock(IProvider::class);
+		$tokenProviderMock->expects($this->never())->method('invalidateTokenById');
+		$auditEvents = [];
+		$service = $this->getOpenProjectAPIServiceMock(
+			['hasAppPassword'],
+			[
+				'provider' => $tokenProviderMock,
+				'eventDispatcher' => $this->getEventDispatcherMockCollectingAuditEvents($auditEvents),
+			],
+		);
+		$service->method('hasAppPassword')->willReturn(false);
+
+		$service->deleteAppPassword();
+
+		$this->assertSame([], $auditEvents);
 	}
 
 	/**
@@ -3747,13 +3896,36 @@ class OpenProjectAPIServiceTest extends TestCase {
 	 * @return void
 	 */
 	public function testDeleteFileLinkErrorResponse(): void {
-		$service = $this->getOpenProjectAPIServiceMock();
+		$auditEvents = [];
+		$service = $this->getOpenProjectAPIServiceMock(['request'], [
+			'eventDispatcher' => $this->getEventDispatcherMockCollectingAuditEvents($auditEvents),
+		]);
 		$service->method('request')
 			->willReturn([
 				'error' => 'something went wrong',
 			]);
-		$this->expectException(OpenprojectErrorException::class);
+		try {
+			$service->deleteFileLink(7, 'user');
+			$this->fail('Expected OpenprojectErrorException');
+		} catch (OpenprojectErrorException $e) {
+		}
+		$this->assertSame([], $auditEvents);
+	}
+
+	public function testDeleteFileLinkLogsDeletion(): void {
+		$auditEvents = [];
+		$service = $this->getOpenProjectAPIServiceMock(['request'], [
+			'eventDispatcher' => $this->getEventDispatcherMockCollectingAuditEvents($auditEvents),
+		]);
+		$service->method('request')->willReturn(['success' => true]);
+
 		$service->deleteFileLink(7, 'user');
+
+		$this->assertAuditEvents([[
+			Operation::FileLinkDeleted,
+			'OpenProject file link %s has been deleted by user %s in application integration_openproject',
+			['fileLinkId' => 7, 'userId' => 'user'],
+		]], $auditEvents);
 	}
 
 	/**
@@ -4273,6 +4445,44 @@ class OpenProjectAPIServiceTest extends TestCase {
 		$this->assertSame($expectedResult, $result);
 	}
 
+	public function signTermsOfServiceDataProvider(): array {
+		return [
+			'one term not signed yet' => [[1], [2]],
+			'no term signed yet' => [[], [1, 2]],
+			'all terms already signed' => [[1, 2], []],
+		];
+	}
+
+	/**
+	 * @dataProvider signTermsOfServiceDataProvider
+	 * @param list<int> $alreadySignedTermIds
+	 * @param list<int> $expectedSignedTermIds
+	 */
+	public function testSignTermsOfServiceForUserOpenProjectLogsSignedTerms(array $alreadySignedTermIds, array $expectedSignedTermIds): void {
+		$signatoryMapperBuilder = $this->getMockBuilder(SignatoryMapper::class)->disableOriginalConstructor();
+		// the terms_of_service app is optional, so its mapper might not exist
+		$signatoryMapperMock = method_exists(SignatoryMapper::class, 'insert')
+			? $signatoryMapperBuilder->onlyMethods(['insert'])->getMock()
+			: $signatoryMapperBuilder->addMethods(['insert'])->getMock();
+		$signatoryMapperMock->expects($this->exactly(count($expectedSignedTermIds)))->method('insert');
+		$auditEvents = [];
+		$service = $this->getOpenProjectAPIServiceMock(
+			['getAllTermsOfServiceAvailable', 'getAllTermsOfServiceSignedByUserOpenProject', 'createSignatoryForUserOpenProject'],
+			['eventDispatcher' => $this->getEventDispatcherMockCollectingAuditEvents($auditEvents)],
+		);
+		$service->method('getAllTermsOfServiceAvailable')->willReturn([(object)['id' => 1], (object)['id' => 2]]);
+		$service->method('getAllTermsOfServiceSignedByUserOpenProject')->willReturn($alreadySignedTermIds);
+		$service->method('createSignatoryForUserOpenProject')->willReturn(new \stdClass());
+
+		$service->signTermsOfServiceForUserOpenProject($signatoryMapperMock);
+
+		$this->assertAuditEvents(array_map(static fn (int $termId): array => [
+			Operation::TermsOfServiceSigned,
+			"Terms of service %s have been signed for user '%s' in application integration_openproject",
+			['termsId' => $termId, 'userId' => Application::OPEN_PROJECT_ENTITIES_NAME],
+		], $expectedSignedTermIds), $auditEvents);
+	}
+
 	public function testGetSubline(): void {
 		$configMock = $this->getMockBuilder(IConfig::class)->getMock();
 		$configMock->method('getUserValue')
@@ -4389,99 +4599,25 @@ class OpenProjectAPIServiceTest extends TestCase {
 
 	public function auditLogDataProvider(): array {
 		return [
-			[
-				// log level less than 1
-				0,
-				\OC::$SERVERROOT . '/data/audit.log',
-				[],
-				true,
-				false
-			],
-			[
-				// wrong path to audit file
-				1,
-				'wrong-path-to-audit-log/audit.log',
-				[],
-				true,
-				false
-			],
-			[
-				// no audit apps in apps section
-				1,
-				'/audit.log',
-				['apps' => ['no_audit_app']],
-				true,
-				false
-			],
-			[
-				// multiple values including apps with no audit apps in apps section
-				1,
-				'/audit.log',
-				['apps' => ['no_audit_app'], 'others' => []],
-				true,
-				false
-			],
-			[
-				// all values configured correctly
-				1,
-				'/audit.log',
-				['apps' => ['admin_audit']],
-				true,
-				true
-			],
-			[
-				// admin_audit app not installed
-				1,
-				'/audit.log',
-				['apps' => ['admin_audit']],
-				false,
-				false
-			],
+			'admin_audit app enabled' => [true],
+			'admin_audit app not enabled' => [false],
 		];
 	}
 
 	/**
 	 * @dataProvider auditLogDataProvider
-	 * @param int $logLevel
-	 * @param string $pathToAuditLog
-	 * @param array<mixed> $logCondition
-	 * @param bool $isAdminAuditAppInstalled
-	 * @param bool $expectedResult
-	 *
-	 * @return void
 	 */
-
-	public function testIsAdminAuditConfigSetCorrectly(
-		int $logLevel,
-		string $pathToAuditLog,
-		array $logCondition,
-		bool $isAdminAuditAppInstalled,
-		bool $expectedResult
-	): void {
-		$configMock = $this->getMockBuilder(IConfig::class)->getMock();
+	public function testIsAdminAuditConfigSetCorrectly(bool $isAdminAuditAppInstalled): void {
 		$iAppManagerMock = $this->getMockBuilder(IAppManager::class)->getMock();
-		$configMock
-			->method('getSystemValue')
-			->willReturnMap([
-				['loglevel', '', $logLevel],
-				['logfile_audit', '', $pathToAuditLog],
-				['log.condition', '', $logCondition]
-			]
-			);
-		$userManagerMock = $this->getMockBuilder(IUserManager::class)
-			->getMock();
 		$iAppManagerMock->method('isInstalled')->with('admin_audit')
 			->willReturn($isAdminAuditAppInstalled);
 		$service = $this->getOpenProjectAPIServiceMock(
 			[],
 			[
-				'userManager' => $userManagerMock,
 				'appManager' => $iAppManagerMock,
-				'config' => $configMock,
 			],
 		);
-		$actualResult = $service->isAdminAuditConfigSetCorrectly();
-		$this->assertEquals($expectedResult, $actualResult);
+		$this->assertSame($isAdminAuditAppInstalled, $service->isAdminAuditConfigSetCorrectly());
 	}
 
 	public function serverSideEncryptionEnabledDataProvider(): array {

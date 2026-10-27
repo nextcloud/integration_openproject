@@ -18,10 +18,10 @@ use InvalidArgumentException;
 use OC\Authentication\Events\AppPasswordCreatedEvent;
 use OC\Authentication\Token\IProvider;
 use OC\User\NoUserException;
-use OCA\AdminAudit\AuditLogger;
 use OCA\GroupFolders\Folder\FolderManager;
 use OCA\OIDCIdentityProvider\Exceptions\ClientNotFoundException;
 use OCA\OpenProject\AppInfo\Application;
+use OCA\OpenProject\AuditLog\Operation;
 use OCA\OpenProject\Exception\OpenprojectAvatarErrorException;
 use OCA\OpenProject\Exception\OpenprojectErrorException;
 use OCA\OpenProject\Exception\OpenprojectGroupfolderSetupConflictException;
@@ -56,7 +56,7 @@ use OCP\IURLGenerator;
 use OCP\IUser;
 use OCP\IUserManager;
 use OCP\IUserSession;
-use OCP\Log\ILogFactory;
+use OCP\Log\Audit\CriticalActionPerformedEvent;
 use OCP\PreConditionNotMetException;
 use OCP\Security\ISecureRandom;
 use OCP\Server;
@@ -126,7 +126,6 @@ class OpenProjectAPIService {
 	 */
 	private ISubAdmin $subAdminManager;
 	private IDBConnection $db;
-	private ILogFactory $logFactory;
 	private IManager $encryptionManager;
 
 	/**
@@ -143,7 +142,6 @@ class OpenProjectAPIService {
 	private IProvider $tokenProvider;
 	private ISecureRandom $random;
 	private IEventDispatcher $eventDispatcher;
-	private AuditLogger $auditLogger;
 	private TokenEventFactory $tokenEventFactory;
 
 	public function __construct(
@@ -164,7 +162,6 @@ class OpenProjectAPIService {
 		IEventDispatcher $eventDispatcher,
 		ISubAdmin $subAdminManager,
 		IDBConnection $db,
-		ILogFactory $logFactory,
 		IManager $encryptionManager,
 		TokenEventFactory $tokenEventFactory,
 		IUserSession $userSession,
@@ -187,7 +184,6 @@ class OpenProjectAPIService {
 		$this->random = $random;
 		$this->eventDispatcher = $eventDispatcher;
 		$this->db = $db;
-		$this->logFactory = $logFactory;
 		$this->encryptionManager = $encryptionManager;
 		$this->tokenEventFactory = $tokenEventFactory;
 		$this->userSession = $userSession;
@@ -820,6 +816,18 @@ class OpenProjectAPIService {
 			}
 			$fileIds [] = $result['_embedded']['elements'][$i]['id'];
 		}
+		foreach (array_values($fileInfos) as $i => $fileInfo) {
+			$this->logToAuditLog(
+				Operation::FileLinkCreated,
+				'File %s has been linked to OpenProject work package %s by user %s in application ' . Application::APP_ID,
+				[
+					'fileId' => $fileInfo['id'],
+					'workPackageId' => $values['workpackageId'],
+					'userId' => $userId,
+					'fileLinkId' => $fileIds[$i],
+				],
+			);
+		}
 		return $fileIds;
 	}
 
@@ -890,6 +898,11 @@ class OpenProjectAPIService {
 		if (!isset($result['success'])) {
 			throw new OpenprojectResponseException('Malformed response');
 		}
+		$this->logToAuditLog(
+			Operation::FileLinkDeleted,
+			'OpenProject file link %s has been deleted by user %s in application ' . Application::APP_ID,
+			['fileLinkId' => $fileLinkId, 'userId' => $userId],
+		);
 		return $result;
 	}
 
@@ -1076,11 +1089,12 @@ class OpenProjectAPIService {
 	}
 
 	/**
+	 * @return int the ID of the created groupfolder
 	 * @throws NotPermittedException
 	 * @throws NotFoundException
 	 * @throws NoUserException
 	 */
-	public function createGroupfolder(): void {
+	public function createGroupfolder(): int {
 		$groupfoldersFolderManager = Server::get(FolderManager::class);
 		$folderId = $groupfoldersFolderManager->createFolder(
 			Application::OPEN_PROJECT_ENTITIES_NAME
@@ -1100,6 +1114,7 @@ class OpenProjectAPIService {
 			Application::OPEN_PROJECT_ENTITIES_NAME,
 			true
 		);
+		return $folderId;
 	}
 
 	public function getGroupFolderManager(): FolderManager {
@@ -1162,30 +1177,23 @@ class OpenProjectAPIService {
 	}
 
 	/**
-	 * @param $auditLogMessage
-	 * @return void
+	 * Writes an entry to the admin audit log, if the admin_audit app is enabled
+	 *
+	 * The operation is only passed on to servers whose CriticalActionPerformedEvent supports it
+	 *
+	 * @param string $message format string whose %s placeholders are filled by the first parameters, in order
+	 * @param array<string, scalar|null> $parameters
 	 */
-	public function logToAuditFile($auditLogMessage): void {
-		if ($this->isAdminAuditConfigSetCorrectly()) {
-			$this->auditLogger = new AuditLogger($this->logFactory, $this->config);
-			$this->auditLogger->info($auditLogMessage,
-				['app' => 'admin_audit']
-			);
+	public function logToAuditLog(Operation $operation, string $message, array $parameters = []): void {
+		$arguments = [$message, $parameters, false];
+		if (method_exists(CriticalActionPerformedEvent::class, 'getOperation')) {
+			$arguments[] = $operation->value;
 		}
+		$this->eventDispatcher->dispatchTyped(new CriticalActionPerformedEvent(...$arguments));
 	}
 
 	public function isAdminAuditConfigSetCorrectly(): bool {
-		$logLevel = $this->config->getSystemValue('loglevel');
-		$configAuditFile = $this->config->getSystemValue('logfile_audit');
-		$logCondition = $this->config->getSystemValue('log.condition');
-		// All the above config should be satisfied in order for admin audit log for the integration application
-		// if any of the config is failed to be set then we are not able to send the admin audit logging in the audit.log file
-		return (
-			$this->appManager->isInstalled('admin_audit') &&
-			$configAuditFile === $this->config->getSystemValue('datadirectory', \OC::$SERVERROOT . '/data') . '/audit.log' &&
-			(isset($logCondition["apps"]) && in_array('admin_audit', $logCondition["apps"])) &&
-			$logLevel >= 1
-		);
+		return $this->appManager->isInstalled('admin_audit');
 	}
 
 	public function isTermsOfServiceAppEnabled(): bool {
@@ -1258,8 +1266,10 @@ class OpenProjectAPIService {
 	/**
 	 * @throws \OCP\DB\Exception
 	 */
-	public function signTermsOfServiceForUserOpenProject(): void {
-		$signatoryMapper = new SignatoryMapper($this->db);
+	public function signTermsOfServiceForUserOpenProject(?SignatoryMapper $signatoryMapper = null): void {
+		if ($signatoryMapper === null) {
+			$signatoryMapper = new SignatoryMapper($this->db);
+		}
 		// get all the available terms of services
 		$terms = $this->getAllTermsOfServiceAvailable();
 		$alreadySignedTermsIdForUserOpenProject = $this->getAllTermsOfServiceSignedByUserOpenProject($signatoryMapper);
@@ -1267,13 +1277,25 @@ class OpenProjectAPIService {
 			$termId = $term->id;
 			// sign only not signed TOS for user "OpenProject"
 			if (!in_array($termId, $alreadySignedTermsIdForUserOpenProject)) {
-				$signatory = new Signatory();
-				$signatory->setUserId(Application::OPEN_PROJECT_ENTITIES_NAME);
-				$signatory->setTermsId($termId);
-				$signatory->setTimestamp(time());
-				$signatoryMapper->insert($signatory);
+				$signatoryMapper->insert($this->createSignatoryForUserOpenProject($termId));
+				$this->logToAuditLog(
+					Operation::TermsOfServiceSigned,
+					"Terms of service %s have been signed for user '%s' in application " . Application::APP_ID,
+					['termsId' => $termId, 'userId' => Application::OPEN_PROJECT_ENTITIES_NAME],
+				);
 			}
 		}
+	}
+
+	/**
+	 * @param int $termId
+	 */
+	protected function createSignatoryForUserOpenProject($termId) {
+		$signatory = new Signatory();
+		$signatory->setUserId(Application::OPEN_PROJECT_ENTITIES_NAME);
+		$signatory->setTermsId($termId);
+		$signatory->setTimestamp(time());
+		return $signatory;
 	}
 
 	public function isUserPartOfAndAdminOfGroup():bool {
@@ -1330,9 +1352,10 @@ class OpenProjectAPIService {
 	}
 
 	/**
+	 * @param bool $replacesExisting whether an existing app password was deleted to create this one
 	 * @return string
 	 */
-	public function generateAppPasswordTokenForUser(): string {
+	public function generateAppPasswordTokenForUser(bool $replacesExisting = false): string {
 		$user = $this->userManager->get(Application::OPEN_PROJECT_ENTITIES_NAME);
 		$userID = $user->getUID();
 		$token = $this->random->generate(self::getPasswordLength(), ISecureRandom::CHAR_ALPHANUMERIC.ISecureRandom::CHAR_SYMBOLS);
@@ -1346,6 +1369,13 @@ class OpenProjectAPIService {
 		);
 		$this->eventDispatcher->dispatchTyped(
 			new AppPasswordCreatedEvent($generatedToken)
+		);
+		$this->logToAuditLog(
+			Operation::AppPasswordCreated,
+			$replacesExisting
+				? "Application password for user '%s' has been replaced with new password in application " . Application::APP_ID
+				: "New application password for user '%s' has been created in application " . Application::APP_ID,
+			['userId' => $userID, 'replaced' => $replacesExisting],
 		);
 		return $token;
 	}
@@ -1361,8 +1391,10 @@ class OpenProjectAPIService {
 			foreach ($tokens as $token) {
 				if ($token->getName() === Application::OPEN_PROJECT_ENTITIES_NAME) {
 					$this->tokenProvider->invalidateTokenById(Application::OPEN_PROJECT_ENTITIES_NAME, $token->getId());
-					$this->logToAuditFile(
-						"Application password for user 'OpenProject has been deleted' in application " . Application::APP_ID
+					$this->logToAuditLog(
+						Operation::AppPasswordDeleted,
+						"Application password for user '%s' has been deleted in application " . Application::APP_ID,
+						['userId' => Application::OPEN_PROJECT_ENTITIES_NAME],
 					);
 				}
 			}

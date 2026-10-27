@@ -29,4 +29,5 @@ require_once $serverPath . '/tests/autoload.php';
 
 $classLoader = new ClassLoader();
 $classLoader->addPsr4("OCA\\OpenProject\\", $rootDir . '/lib', true);
+$classLoader->addPsr4("OCA\\OpenProject\\Tests\\", $rootDir . '/tests/lib', true);
 $classLoader->register();

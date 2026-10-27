@@ -9,6 +9,7 @@ namespace OCA\OpenProject\Service;
 
 use InvalidArgumentException;
 use OCA\OpenProject\AppInfo\Application;
+use OCA\OpenProject\AuditLog\Operation;
 use OCP\Group\ISubAdmin;
 use OCP\IGroupManager;
 use OCP\IUserManager;
@@ -257,7 +258,16 @@ class SettingsService {
 			$allGroup->addUser($user);
 			$this->subAdmin->createSubAdmin($user, $group);
 			$this->subAdmin->createSubAdmin($user, $allGroup);
-			$this->openprojectAPIService->createGroupfolder();
+			$groupfolderId = $this->openprojectAPIService->createGroupfolder();
+			$this->openprojectAPIService->logToAuditLog(
+				Operation::ProjectFolderCreated,
+				"Project folder %s has been set up for user '%s', who manages the groups %s, in application " . Application::APP_ID,
+				[
+					'groupfolderId' => $groupfolderId,
+					'userId' => Application::OPEN_PROJECT_ENTITIES_NAME,
+					'groupIds' => Application::OPEN_PROJECT_ENTITIES_NAME . ', ' . Application::OPENPROJECT_ALL_GROUP_NAME,
+				],
+			);
 			if ($this->openprojectAPIService->isTermsOfServiceAppEnabled() && $this->userManager->userExists(Application::OPEN_PROJECT_ENTITIES_NAME)) {
 				$this->openprojectAPIService->signTermsOfServiceForUserOpenProject();
 			}
