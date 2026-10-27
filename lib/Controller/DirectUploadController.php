@@ -16,6 +16,7 @@ use OCA\OpenProject\Exception\OpenprojectFileNotUploadedException;
 use OCA\OpenProject\Exception\OpenprojectUnauthorizedUserException;
 use OCA\OpenProject\Service\DatabaseService;
 use OCA\OpenProject\Service\DirectUploadService;
+use OCA\OpenProject\Service\FileUploadAction;
 use OCP\AppFramework\Http;
 use OCP\AppFramework\Http\DataResponse;
 use OCP\Files\File;
@@ -33,6 +34,7 @@ use OCP\IUser;
 use OCP\IUserManager;
 use OCP\IUserSession;
 use OCP\Lock\LockedException;
+use OCP\Util;
 use Sabre\DAV\Exception\Conflict;
 
 class DirectUploadController extends ApiController {
@@ -75,6 +77,17 @@ class DirectUploadController extends ApiController {
 	 */
 
 	private $l;
+
+	private const PHP_FILE_UPLOAD_ERRORS = [
+		UPLOAD_ERR_OK => 'The file was uploaded',
+		UPLOAD_ERR_INI_SIZE => 'The uploaded file exceeds the upload_max_filesize directive in php.ini',
+		UPLOAD_ERR_FORM_SIZE => 'The uploaded file exceeds the MAX_FILE_SIZE directive that was specified in the HTML form',
+		UPLOAD_ERR_PARTIAL => 'The file was only partially uploaded',
+		UPLOAD_ERR_NO_FILE => 'No file was uploaded',
+		UPLOAD_ERR_NO_TMP_DIR => 'Missing a temporary folder',
+		UPLOAD_ERR_CANT_WRITE => 'Could not write file to disk',
+		UPLOAD_ERR_EXTENSION => 'A PHP extension stopped the file upload',
+	];
 
 	public function __construct(
 		string $appName,
@@ -155,8 +168,7 @@ class DirectUploadController extends ApiController {
 				throw new OpenprojectUnauthorizedUserException('invalid token');
 			}
 
-			$postMaxSize = ini_get('post_max_size');
-			$postMaxSizeInBytes = (int)\OCP\Util::computerFileSize($postMaxSize);
+			$postMaxSizeInBytes = (int)Util::computerFileSize(ini_get('post_max_size'));
 			$contentLength = (int)$this->request->getHeader('Content-Length');
 			if ($postMaxSizeInBytes > 0 && $contentLength > $postMaxSizeInBytes) {
 				throw new OpenprojectFileNotUploadedException(
@@ -171,20 +183,9 @@ class DirectUploadController extends ApiController {
 				);
 			}
 
-			$phpFileUploadErrors = [
-				UPLOAD_ERR_OK => 'The file was uploaded',
-				UPLOAD_ERR_INI_SIZE => 'The uploaded file exceeds the upload_max_filesize directive in php.ini',
-				UPLOAD_ERR_FORM_SIZE => 'The uploaded file exceeds the MAX_FILE_SIZE directive that was specified in the HTML form',
-				UPLOAD_ERR_PARTIAL => 'The file was only partially uploaded',
-				UPLOAD_ERR_NO_FILE => 'No file was uploaded',
-				UPLOAD_ERR_NO_TMP_DIR => 'Missing a temporary folder',
-				UPLOAD_ERR_CANT_WRITE => 'Could not write file to disk',
-				UPLOAD_ERR_EXTENSION => 'A PHP extension stopped the file upload',
-			];
-
 			if (array_key_exists('error', $directUploadFile) && $directUploadFile['error'] !== UPLOAD_ERR_OK) {
 				throw new OpenprojectFileNotUploadedException(
-					$phpFileUploadErrors[$directUploadFile['error']],
+					self::PHP_FILE_UPLOAD_ERRORS[$directUploadFile['error']],
 				);
 			}
 
@@ -195,15 +196,16 @@ class DirectUploadController extends ApiController {
 			}
 
 			$overwrite = $this->request->getParam('overwrite');
+			$fileUploadAction = FileUploadAction::Upload;
 			if (isset($overwrite)) {
 				$acceptedOverwriteValues = ['true','false'];
 				$overwrite = strtolower($overwrite);
 				if (!in_array($overwrite, $acceptedOverwriteValues)) {
 					throw new \InvalidArgumentException('invalid overwrite value');
 				}
-				$overwrite = $overwrite === 'true';
+				$fileUploadAction = $overwrite === 'true' ? FileUploadAction::Replace : FileUploadAction::KeepBoth;
 			}
-			$result = $this->directUploadService->uploadFile($token, $directUploadFile, $overwrite);
+			$result = $this->directUploadService->handleFileUpload($token, $directUploadFile, $fileUploadAction);
 		} catch (OpenprojectUnauthorizedUserException $e) {
 			return new DataResponse([
 				'error' => $this->l->t($e->getMessage())
@@ -247,7 +249,8 @@ class DirectUploadController extends ApiController {
 				'error' => $this->l->t($e->getMessage())
 			], Http::STATUS_INTERNAL_SERVER_ERROR);
 		}
-		$statusCode = $result['overwritten'] ? Http::STATUS_OK : Http::STATUS_CREATED;
+		// send status code 200 if the file has been overwritten
+		$statusCode = $result['overwrite'] ? Http::STATUS_OK : Http::STATUS_CREATED;
 		return new DataResponse([
 			'file_name' => $result['file_name'],
 			'file_id' => $result['file_id'],
