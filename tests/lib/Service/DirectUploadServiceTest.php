@@ -23,6 +23,7 @@ use OCP\IUserManager;
 use OCP\IUserSession;
 use OCP\Security\ISecureRandom;
 use PHPUnit\Framework\TestCase;
+use Sabre\DAV\Exception\Conflict;
 use function PHPUnit\Framework\assertSame;
 
 class DirectUploadServiceTest extends TestCase {
@@ -87,7 +88,7 @@ class DirectUploadServiceTest extends TestCase {
 	 * @param int $id
 	 * @return array<mixed>
 	 */
-	private function getNodeMock(string $type, int $id = 123): array {
+	private function getNodeMock(string $type, int $id = 123, bool $nodeExists = false, bool $creatable = true): array {
 		$ownerMock = $this->createMock(IUser::class);
 		$ownerMock->method('getDisplayName')->willReturn('Test User');
 		$ownerMock->method('getUID')->willReturn('3df8ff78-49cb-4d60-8d8b-171b29591fd3');
@@ -104,8 +105,8 @@ class DirectUploadServiceTest extends TestCase {
 		$folderMock = $this->getFolderMock();
 		$folderMock->method('getId')->willReturn($id);
 		$folderMock->method('getType')->willReturn($type);
-		$folderMock->method('isCreatable')->willReturn(true);
-		$folderMock->method('nodeExists')->willReturn(false);
+		$folderMock->method('isCreatable')->willReturn($creatable);
+		$folderMock->method('nodeExists')->willReturn($nodeExists);
 		$folderMock->method('newFile')->willReturn($fileMock);
 		return [$folderMock];
 	}
@@ -120,7 +121,7 @@ class DirectUploadServiceTest extends TestCase {
 		$directUploadServiceMock = $this->getDirectUploadService(time() + 1000, $userFolderMock);
 		$this->expectException(NotEnoughSpaceException::class);
 		$this->expectExceptionMessage('insufficient quota');
-		$directUploadServiceMock->uploadFile(self::TOKEN, [ 'name' => 'file.txt', 'tmp_name' => self::TMP_NAME, 'size' => 101], false);
+		$directUploadServiceMock->handleFileUpload(self::TOKEN, [ 'name' => 'file.txt', 'tmp_name' => self::TMP_NAME, 'size' => 101], FileUploadAction::Upload);
 	}
 
 	public function testNegativeFreeSpace(): void {
@@ -140,12 +141,12 @@ class DirectUploadServiceTest extends TestCase {
 		$userFolderMock->method('getById')->willReturn($nodeMock);
 
 		$directUploadServiceMock = $this->getDirectUploadService(time() + 1000, $userFolderMock);
-		$result = $directUploadServiceMock->uploadFile(self::TOKEN, [ 'name' => 'file.txt', 'tmp_name' => self::TMP_NAME, 'size' => 101], false);
+		$result = $directUploadServiceMock->handleFileUpload(self::TOKEN, [ 'name' => 'file.txt', 'tmp_name' => self::TMP_NAME, 'size' => 101], FileUploadAction::Upload);
 		assertSame(
 			[
 				'file_id' => 123,
 				'file_name' => 'file.txt',
-				'overwritten' => false
+				'overwrite' => false,
 			],
 			$result
 		);
@@ -178,6 +179,66 @@ class DirectUploadServiceTest extends TestCase {
 		$directUploadServiceMock = $this->getDirectUploadService(time() + 1000, $userFolderMock);
 		$this->expectException($exception::class);
 		$this->expectExceptionMessage($expectedErrorMessage);
-		$directUploadServiceMock->uploadFile(self::TOKEN, [ 'name' => 'file.txt', 'tmp_name' => self::TMP_NAME, 'size' => 0], false);
+		$directUploadServiceMock->handleFileUpload(self::TOKEN, [ 'name' => 'file.txt', 'tmp_name' => self::TMP_NAME, 'size' => 0], FileUploadAction::Upload);
+	}
+
+	public function testDirectUploadReplace(): void {
+		$fileMock = $this->createMock(File::class);
+		$fileMock->method('getId')->willReturn(55);
+		$fileMock->method('getType')->willReturn('file');
+		$fileMock->method('isUpdateable')->willReturn(true);
+
+		touch(self::TMP_NAME);
+		$nodeMock = $this->getNodeMock('folder', 123, true)[0];
+		$nodeMock->method('get')->willReturn($fileMock);
+		$nodeMock->method('getFreeSpace')->willReturn(100);
+
+		$userFolderMock = $this->getFolderMock();
+		$userFolderMock->method('getById')->willReturn([$nodeMock]);
+
+		$directUploadServiceMock = $this->getDirectUploadService(time() + 1000, $userFolderMock);
+		$result = $directUploadServiceMock->handleFileUpload(self::TOKEN, [ 'name' => 'file.txt', 'tmp_name' => self::TMP_NAME, 'size' => 10], FileUploadAction::Replace);
+		assertSame(['file_id' => 55, 'file_name' => 'file.txt', 'overwrite' => true], $result);
+	}
+
+	public function testDirectUploadReplaceNonExistingFile(): void {
+		touch(self::TMP_NAME);
+		$nodeMock = $this->getNodeMock('folder')[0];
+		$nodeMock->method('getFreeSpace')->willReturn(100);
+
+		$userFolderMock = $this->getFolderMock();
+		$userFolderMock->method('getById')->willReturn([$nodeMock]);
+
+		$directUploadServiceMock = $this->getDirectUploadService(time() + 1000, $userFolderMock);
+		$result = $directUploadServiceMock->handleFileUpload(self::TOKEN, [ 'name' => 'file.txt', 'tmp_name' => self::TMP_NAME, 'size' => 10], FileUploadAction::Replace);
+		assertSame(['file_id' => 123, 'file_name' => 'file.txt', 'overwrite' => false], $result);
+	}
+
+	public function testDirectUploadConflict(): void {
+		touch(self::TMP_NAME);
+		$nodeMock = $this->getNodeMock('folder', 123, true)[0];
+		$nodeMock->method('getFreeSpace')->willReturn(100);
+
+		$userFolderMock = $this->getFolderMock();
+		$userFolderMock->method('getById')->willReturn([$nodeMock]);
+
+		$directUploadServiceMock = $this->getDirectUploadService(time() + 1000, $userFolderMock);
+		$this->expectException(Conflict::class);
+		$this->expectExceptionMessage('conflict, file name already exists');
+		$directUploadServiceMock->handleFileUpload(self::TOKEN, [ 'name' => 'file.txt', 'tmp_name' => self::TMP_NAME, 'size' => 10], FileUploadAction::Upload);
+	}
+
+	public function testDirectUploadKeepBoth(): void {
+		touch(self::TMP_NAME);
+		$nodeMock = $this->getNodeMock('folder', 123, true)[0];
+		$nodeMock->method('getFreeSpace')->willReturn(100);
+		$nodeMock->method('getNonExistingName')->willReturn('file (2).txt');
+
+		$userFolderMock = $this->getFolderMock();
+		$userFolderMock->method('getById')->willReturn([$nodeMock]);
+
+		$directUploadServiceMock = $this->getDirectUploadService(time() + 1000, $userFolderMock);
+		$result = $directUploadServiceMock->handleFileUpload(self::TOKEN, [ 'name' => 'file.txt', 'tmp_name' => self::TMP_NAME, 'size' => 10], FileUploadAction::KeepBoth);
+		assertSame(['file_id' => 123, 'file_name' => 'file (2).txt', 'overwrite' => false], $result);
 	}
 }
