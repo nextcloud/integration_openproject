@@ -76,9 +76,9 @@ class DirectUploadServiceTest extends TestCase {
 	 */
 	public function testGetTokenInfoExpiredTime() {
 		//send an already expired time
-		$direcUploadService = $this->getDirectUploadService(1671537979);
+		$directUploadService = $this->getDirectUploadService(1671537979);
 		$this->expectException(NotFoundException::class);
-		$direcUploadService->getTokenInfo(self::TOKEN);
+		$directUploadService->getTokenInfo(self::TOKEN);
 	}
 
 	/**
