@@ -70,6 +70,7 @@ Feature: API endpoint for direct upload
     When an anonymous user sends a multipart form data POST request to the "direct-upload/%last-created-direct-upload-token%" endpoint with:
       | file_name | ""          |
       | data      | some data   |
+	# An empty file name means no file is received, so this is a bad request (400), not content too large (413)
     Then the HTTP status code should be "400"
     And the data of the response should match
     """"

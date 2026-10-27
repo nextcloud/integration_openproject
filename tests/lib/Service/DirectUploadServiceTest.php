@@ -120,7 +120,7 @@ class DirectUploadServiceTest extends TestCase {
 		$directUploadServiceMock = $this->getDirectUploadService(time() + 1000, $userFolderMock);
 		$this->expectException(NotEnoughSpaceException::class);
 		$this->expectExceptionMessage('insufficient quota');
-		$directUploadServiceMock->uploadFile(self::TOKEN, [ 'name' => 'file.txt', 'tmp_name' => self::TMP_NAME, 'size' => 101], false);
+		$directUploadServiceMock->handleFileUpload(self::TOKEN, [ 'name' => 'file.txt', 'tmp_name' => self::TMP_NAME, 'size' => 101], FileUploadAction::Upload);
 	}
 
 	public function testNegativeFreeSpace(): void {
@@ -140,12 +140,12 @@ class DirectUploadServiceTest extends TestCase {
 		$userFolderMock->method('getById')->willReturn($nodeMock);
 
 		$directUploadServiceMock = $this->getDirectUploadService(time() + 1000, $userFolderMock);
-		$result = $directUploadServiceMock->uploadFile(self::TOKEN, [ 'name' => 'file.txt', 'tmp_name' => self::TMP_NAME, 'size' => 101], false);
+		$result = $directUploadServiceMock->handleFileUpload(self::TOKEN, [ 'name' => 'file.txt', 'tmp_name' => self::TMP_NAME, 'size' => 101], FileUploadAction::Upload);
 		assertSame(
 			[
 				'file_id' => 123,
 				'file_name' => 'file.txt',
-				'overwritten' => false
+				'overwrite' => false,
 			],
 			$result
 		);
@@ -178,6 +178,6 @@ class DirectUploadServiceTest extends TestCase {
 		$directUploadServiceMock = $this->getDirectUploadService(time() + 1000, $userFolderMock);
 		$this->expectException($exception::class);
 		$this->expectExceptionMessage($expectedErrorMessage);
-		$directUploadServiceMock->uploadFile(self::TOKEN, [ 'name' => 'file.txt', 'tmp_name' => self::TMP_NAME, 'size' => 0], false);
+		$directUploadServiceMock->handleFileUpload(self::TOKEN, [ 'name' => 'file.txt', 'tmp_name' => self::TMP_NAME, 'size' => 0], FileUploadAction::Upload);
 	}
 }
