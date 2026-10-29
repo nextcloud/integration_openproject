@@ -7,8 +7,8 @@
 
 namespace OCA\OpenProject\Service;
 
-use OCA\OpenProject\AppInfo\Application;
 use OCP\DB\Exception;
+use OCP\Server;
 use PHPUnit\Framework\TestCase;
 
 class DatabaseServiceTest extends TestCase {
@@ -67,11 +67,7 @@ class DatabaseServiceTest extends TestCase {
 	];
 
 	protected function setUp(): void {
-		$app = new Application();
-		$c = $app->getContainer();
-
-		/** @var DatabaseService $databaseService */
-		$databaseService = $c->get(DatabaseService::class);
+		$databaseService = Server::get(DatabaseService::class);
 		$this->databaseService = $databaseService;
 	}
 

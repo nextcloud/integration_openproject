@@ -76,7 +76,6 @@ class DatabaseService {
 			$folderId = (int) $row['folder_id'];
 		}
 		$req->closeCursor();
-		$query->resetQueryParts();
 		$this->deleteToken($token);
 		return [
 			'user_id' => $userId,

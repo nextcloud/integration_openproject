@@ -12,7 +12,7 @@ namespace OCA\OpenProject\Migration;
 use Closure;
 use OCA\OpenProject\AppInfo\Application;
 use OCP\DB\ISchemaWrapper;
-use OCP\IConfig;
+use OCP\IAppConfig;
 use OCP\Migration\IOutput;
 use OCP\Migration\SimpleMigrationStep;
 
@@ -22,12 +22,12 @@ use OCP\Migration\SimpleMigrationStep;
 class Version2001Date20221213083550 extends SimpleMigrationStep {
 
 	/**
-	 * @var IConfig
+	 * @var IAppConfig
 	 */
-	private $config;
+	private $appConfig;
 
-	public function __construct(IConfig $config) {
-		$this->config = $config;
+	public function __construct(IAppConfig $appConfig) {
+		$this->appConfig = $appConfig;
 	}
 
 	/**
@@ -39,33 +39,33 @@ class Version2001Date20221213083550 extends SimpleMigrationStep {
 	public function changeSchema(IOutput $output, Closure $schemaClosure, array $options): ?ISchemaWrapper {
 		// nothing to migrate once the old keys are gone (changeSchema() is also replayed by the schema check)
 		$oldKeys = ['oauth_instance_url', 'client_id', 'client_secret'];
-		if (array_intersect($oldKeys, $this->config->getAppKeys(Application::APP_ID)) === []) {
+		if (array_intersect($oldKeys, $this->appConfig->getKeys(Application::APP_ID)) === []) {
 			return null;
 		}
 
-		$oldOpenProjectOauthUrl = $this->config->getAppValue(
+		$oldOpenProjectOauthUrl = $this->appConfig->getValueString(
 			Application::APP_ID, 'oauth_instance_url', ''
 		);
-		$oldClientId = $this->config->getAppValue(
+		$oldClientId = $this->appConfig->getValueString(
 			Application::APP_ID, 'client_id', ''
 		);
-		$oldClientSecret = $this->config->getAppValue(
+		$oldClientSecret = $this->appConfig->getValueString(
 			Application::APP_ID, 'client_secret', ''
 		);
 
-		$this->config->setAppValue(
+		$this->appConfig->setValueString(
 			Application::APP_ID, 'openproject_instance_url', $oldOpenProjectOauthUrl
 		);
-		$this->config->setAppValue(
+		$this->appConfig->setValueString(
 			Application::APP_ID, 'openproject_client_id', $oldClientId
 		);
-		$this->config->setAppValue(
+		$this->appConfig->setValueString(
 			Application::APP_ID, 'openproject_client_secret', $oldClientSecret
 		);
 
-		$this->config->deleteAppValue(Application::APP_ID, 'oauth_instance_url');
-		$this->config->deleteAppValue(Application::APP_ID, 'client_id');
-		$this->config->deleteAppValue(Application::APP_ID, 'client_secret');
+		$this->appConfig->deleteKey(Application::APP_ID, 'oauth_instance_url');
+		$this->appConfig->deleteKey(Application::APP_ID, 'client_id');
+		$this->appConfig->deleteKey(Application::APP_ID, 'client_secret');
 
 		return null;
 	}

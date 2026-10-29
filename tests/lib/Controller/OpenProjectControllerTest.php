@@ -16,8 +16,10 @@ use GuzzleHttp\Exception\ServerException;
 use GuzzleHttp\Psr7\Utils;
 use OCA\OpenProject\AppInfo\Application;
 use OCA\OpenProject\Service\OpenProjectAPIService;
+use OCP\Config\IUserConfig;
 use OCP\Http\Client\IResponse;
 use OCP\Http\Client\LocalServerException;
+use OCP\IAppConfig;
 use OCP\IConfig;
 use OCP\IRequest;
 use OCP\IURLGenerator;
@@ -34,6 +36,8 @@ class OpenProjectControllerTest extends TestCase {
 		$constructArgs = [
 			'request' => $this->createMock(IRequest::class),
 			'config' => $this->createMock(IConfig::class),
+			'appConfig' => $this->createMock(IAppConfig::class),
+			'userConfig' => $this->createMock(IUserConfig::class),
 			'openProjectAPIService' => $this->createMock(OpenProjectAPIService::class),
 			'urlGenerator' => $this->createMock(IURLGenerator::class),
 			'loggerInterface' => $this->createMock(LoggerInterface::class),
@@ -281,28 +285,27 @@ class OpenProjectControllerTest extends TestCase {
 			->onlyMethods([])
 			->getMock();
 
-		$configMock = $this->getMockBuilder(IConfig::class)->getMock();
-		$configMock
-			->method('getAppValue')
+		$appConfigMock = $this->createMock(IAppConfig::class);
+		$userConfigMock = $this->createMock(IUserConfig::class);
+		$appConfigMock
+			->method('getValueString')
 			->willReturnMap([
-				[Application::APP_ID, 'authorization_method', '', Application::AUTH_METHOD_OAUTH],
-				[Application::APP_ID, 'openproject_instance_url', '', 'http://openproject.org'],
-				[Application::APP_ID, 'openproject_client_id', '', 'myClientID'],
-				[Application::APP_ID, 'openproject_client_secret', '', 'myClientSecret'],
-				[Application::APP_ID, 'fresh_project_folder_setup', '', false],
-				[Application::APP_ID, 'nc_oauth_client_id', '', 'nc-client'],
+				[Application::APP_ID, 'authorization_method', '', false, Application::AUTH_METHOD_OAUTH],
+				[Application::APP_ID, 'openproject_instance_url', '', false, 'http://openproject.org'],
+				[Application::APP_ID, 'openproject_client_id', '', false, 'myClientID'],
+				[Application::APP_ID, 'openproject_client_secret', '', false, 'myClientSecret'],
+				[Application::APP_ID, 'fresh_project_folder_setup', '', false, ''],
+				[Application::APP_ID, 'nc_oauth_client_id', '', false, 'nc-client'],
 			]);
-		$configMock
+		$userConfigMock
 			->expects($this->exactly(2))
-			->method('setUserValue')
-			->willReturnMap([
-				['test', 'integration_openproject', 'oauth_state', $this->matchesRegularExpression('/[a-z0-9]{10}/'), null, null],
-				['test', 'integration_openproject', 'code_verifier', $this->matchesRegularExpression('/[A-Za-z0-9\-._~]{128}/'), null, null],
-			]);
+			->method('setValueString')
+			->willReturn(true);
 
 		$controller = $this->getOpenProjectControllerMock([
 			'openProjectAPIService' => $service,
-			'config' => $configMock,
+			'appConfig' => $appConfigMock,
+			'userConfig' => $userConfigMock,
 		]);
 		$result = $controller->getOpenProjectOauthURLWithStateAndPKCE();
 		$this->assertMatchesRegularExpression(

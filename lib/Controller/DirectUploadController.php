@@ -9,7 +9,7 @@ namespace OCA\OpenProject\Controller;
 
 use \OCP\AppFramework\ApiController;
 use InvalidArgumentException;
-use OC\Files\Filesystem;
+use OC\Files\FilenameValidator;
 use OC\ForbiddenException;
 use OC\User\NoUserException;
 use OCA\OpenProject\Exception\OpenprojectFileNotUploadedException;
@@ -75,8 +75,12 @@ class DirectUploadController extends ApiController {
 	/**
 	 * @var IL10N
 	 */
-
 	private $l;
+
+	/**
+	 * @var FilenameValidator
+	 */
+	private FilenameValidator $filenameValidator;
 
 	private const PHP_FILE_UPLOAD_ERRORS = [
 		UPLOAD_ERR_OK => 'The file was uploaded',
@@ -98,7 +102,8 @@ class DirectUploadController extends ApiController {
 		DirectUploadService $directUploadService,
 		DatabaseService $databaseService,
 		IL10N  $l,
-		?string $userId
+		?string $userId,
+		FilenameValidator $filenameValidator,
 	) {
 		parent::__construct($appName, $request, 'POST');
 		$this->userId = $userId;
@@ -109,6 +114,7 @@ class DirectUploadController extends ApiController {
 		$this->databaseService = $databaseService;
 		$this->userSession = $userSession;
 		$this->l = $l;
+		$this->filenameValidator = $filenameValidator;
 	}
 
 	/**
@@ -191,7 +197,7 @@ class DirectUploadController extends ApiController {
 
 			$fileName = trim($directUploadFile['name']);
 			$this->scanForInvalidCharacters($fileName, "\\/");
-			if (Filesystem::isFileBlacklisted($fileName)) {
+			if ($this->filenameValidator->isForbidden($fileName)) {
 				throw new ForbiddenException('invalid file name');
 			}
 
