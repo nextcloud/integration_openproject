@@ -13,7 +13,8 @@ namespace OCA\OpenProject\Search;
 use OCA\OpenProject\AppInfo\Application;
 use OCA\OpenProject\Service\OpenProjectAPIService;
 use OCP\App\IAppManager;
-use OCP\IConfig;
+use OCP\Config\IUserConfig;
+use OCP\IAppConfig;
 use OCP\IL10N;
 use OCP\IUser;
 use OCP\Search\IProvider;
@@ -29,9 +30,14 @@ class OpenProjectSearchProvider implements IProvider {
 	private $l10n;
 
 	/**
-	 * @var IConfig
+	 * @var IAppConfig
 	 */
-	private $config;
+	private $appConfig;
+
+	/**
+	 * @var IUserConfig
+	 */
+	private $userConfig;
 	/**
 	 * @var OpenProjectAPIService
 	 */
@@ -42,16 +48,19 @@ class OpenProjectSearchProvider implements IProvider {
 	 *
 	 * @param IAppManager $appManager
 	 * @param IL10N $l10n
-	 * @param IConfig $config
+	 * @param IAppConfig $appConfig
+	 * @param IUserConfig $userConfig
 	 * @param OpenProjectAPIService $service
 	 */
 	public function __construct(IAppManager $appManager,
 		IL10N $l10n,
-		IConfig $config,
+		IAppConfig $appConfig,
+		IUserConfig $userConfig,
 		OpenProjectAPIService $service) {
 		$this->appManager = $appManager;
 		$this->l10n = $l10n;
-		$this->config = $config;
+		$this->appConfig = $appConfig;
+		$this->userConfig = $userConfig;
 		$this->service = $service;
 	}
 
@@ -94,12 +103,12 @@ class OpenProjectSearchProvider implements IProvider {
 		$term = $query->getTerm();
 		$offset = $query->getCursor();
 		$offset = $offset ? intval($offset) : 0;
-		$openprojectUrl = OpenProjectAPIService::sanitizeUrl($this->config->getAppValue(Application::APP_ID, 'openproject_instance_url'));
+		$openprojectUrl = OpenProjectAPIService::sanitizeUrl($this->appConfig->getValueString(Application::APP_ID, 'openproject_instance_url'));
 
-		$searchEnabled = $this->config->getUserValue(
+		$searchEnabled = $this->userConfig->getValueString(
 			$user->getUID(),
 			Application::APP_ID, 'search_enabled',
-			$this->config->getAppValue(Application::APP_ID, 'default_enable_unified_search', '0')) === '1';
+			$this->appConfig->getValueString(Application::APP_ID, 'default_enable_unified_search', '0')) === '1';
 
 		$accessToken = $this->service->getAccessToken($user->getUID());
 		if (!$accessToken || !$searchEnabled) {

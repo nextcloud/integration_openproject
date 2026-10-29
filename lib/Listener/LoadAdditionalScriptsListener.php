@@ -12,7 +12,7 @@ use OCA\OpenProject\AppInfo\Application;
 use OCA\OpenProject\Service\OpenProjectAPIService;
 use OCP\EventDispatcher\Event;
 use OCP\EventDispatcher\IEventListener;
-use OCP\IConfig;
+use OCP\IAppConfig;
 use OCP\Util;
 
 /**
@@ -25,16 +25,16 @@ class LoadAdditionalScriptsListener implements IEventListener {
 	 */
 	private $openProjectAPIService;
 	/**
-	 * @var IConfig
+	 * @var IAppConfig
 	 */
-	private $config;
+	private $appConfig;
 
 	public function __construct(
-		IConfig $config,
+		IAppConfig $appConfig,
 		OpenProjectAPIService $openProjectAPIService,
 		private ?string $userId,
 	) {
-		$this->config = $config;
+		$this->appConfig = $appConfig;
 		$this->openProjectAPIService = $openProjectAPIService;
 	}
 
@@ -43,7 +43,7 @@ class LoadAdditionalScriptsListener implements IEventListener {
 		// then we need to hide the oidc based connection for the user
 		// so this check is required
 		if (
-			$this->config->getAppValue(Application::APP_ID, 'authorization_method', '') === Application::AUTH_METHOD_OIDC &&
+			$this->appConfig->getValueString(Application::APP_ID, 'authorization_method', '') === Application::AUTH_METHOD_OIDC &&
 			!$this->openProjectAPIService->getAccessToken($this->userId)
 		) {
 			return;

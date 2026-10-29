@@ -11,7 +11,6 @@ use OCA\OpenProject\AppInfo\Application;
 use OCA\OpenProject\Service\OauthService;
 use OCA\OpenProject\Service\OpenProjectAPIService;
 use OCP\AppFramework\Services\IInitialState;
-use OCP\IConfig;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 

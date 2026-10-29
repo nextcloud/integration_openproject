@@ -19,8 +19,9 @@ use OCP\AppFramework\Controller;
 use OCP\AppFramework\Http\Attribute\NoAdminRequired;
 use OCP\AppFramework\Http\Attribute\NoCSRFRequired;
 use OCP\AppFramework\Http\DataResponse;
+use OCP\Config\IUserConfig;
 use OCP\Http\Client\LocalServerException;
-
+use OCP\IAppConfig;
 use OCP\IConfig;
 use OCP\IRequest;
 use OCP\IURLGenerator;
@@ -31,6 +32,8 @@ class OpenProjectController extends Controller {
 	public function __construct(string $appName,
 		IRequest $request,
 		private IConfig $config,
+		private IUserConfig $userConfig,
+		private IAppConfig $appConfig,
 		private OpenProjectAPIService $openprojectAPIService,
 		private IURLGenerator $urlGenerator,
 		private LoggerInterface $logger,
@@ -197,10 +200,10 @@ class OpenProjectController extends Controller {
 	#[NoAdminRequired]
 	public function getOpenProjectOauthURLWithStateAndPKCE(): DataResponse {
 		$url = $this->openprojectAPIService::getOpenProjectOauthURL(
-			$this->config, $this->urlGenerator
+			$this->appConfig, $this->urlGenerator
 		);
 		$oauthState = bin2hex(random_bytes(5));
-		$this->config->setUserValue(
+		$this->userConfig->setValueString(
 			$this->userId,
 			Application::APP_ID,
 			'oauth_state',
@@ -209,7 +212,7 @@ class OpenProjectController extends Controller {
 		// this results in a random string of 192 char and after packing and encoding a 128 char verifier
 		$randomString = bin2hex(random_bytes(96));
 		$codeVerifier = $this->base64UrlEncode(pack('H*', $randomString));
-		$this->config->setUserValue(
+		$this->userConfig->setValueString(
 			$this->userId,
 			Application::APP_ID,
 			'code_verifier',

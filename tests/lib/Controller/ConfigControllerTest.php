@@ -20,7 +20,6 @@ use OCA\OpenProject\Service\SettingsService;
 use OCP\AppFramework\Http;
 use OCP\DB\Exception;
 use OCP\Group\ISubAdmin;
-use OCP\IConfig;
 use OCP\IGroup;
 use OCP\IGroupManager;
 use OCP\IL10N;

@@ -14,7 +14,8 @@ use OCP\Collaboration\Reference\Reference;
 use OC\Collaboration\Reference\ReferenceManager;
 use OCA\OpenProject\AppInfo\Application;
 use OCP\Collaboration\Reference\IReference;
-use OCP\IConfig;
+use OCP\IAppConfig;
+use OCP\Config\IUserConfig;
 use OCP\IL10N;
 use OCP\IURLGenerator;
 
@@ -22,7 +23,8 @@ class WorkPackageReferenceProvider extends ADiscoverableReferenceProvider {
 	private const RICH_OBJECT_TYPE = Application::APP_ID . '_work_package';
 
 	// as we know we are on NC >= 26, we can use Php 8 syntax for class attributes
-	public function __construct(private IConfig $config,
+	public function __construct(private IUserConfig $userConfig,
+								private IAppConfig $appConfig,
 								private IL10N $l10n,
 								private IURLGenerator $urlGenerator,
 								private ReferenceManager $referenceManager,
@@ -76,7 +78,7 @@ class WorkPackageReferenceProvider extends ADiscoverableReferenceProvider {
 			'\/projects\/[^\/\?]+\/(?:boards|calendars|team_planners)\/[^\/\?]+\/details\/([0-9]+)/');
 		// example links
 		// https://community.openproject.org/projects/nextcloud-integration/work_packages/40070
-		$openProjectUrl = rtrim($this->config->getAppValue(Application::APP_ID, 'openproject_instance_url'),'/');
+		$openProjectUrl = rtrim($this->appConfig->getValueString(Application::APP_ID, 'openproject_instance_url'),'/');
 		foreach ($patterns as $pattern) {
 			$patternString ='/^' . preg_quote($openProjectUrl, '/') . $pattern;
 			preg_match($patternString, $referenceText, $patternMatches);
@@ -91,12 +93,12 @@ class WorkPackageReferenceProvider extends ADiscoverableReferenceProvider {
 	 */
 	public function matchReference(string $referenceText): bool {
 		if ($this->userId !== null) {
-			$linkPreviewEnabled = $this->config->getUserValue($this->userId, Application::APP_ID, 'link_preview_enabled', '1') === '1';
+			$linkPreviewEnabled = $this->userConfig->getValueString($this->userId, Application::APP_ID, 'link_preview_enabled', '1') === '1';
 			if (!$linkPreviewEnabled) {
 				return false;
 			}
 		}
-		$adminLinkPreviewEnabled = $this->config->getAppValue(Application::APP_ID, 'link_preview_enabled', '1') === '1';
+		$adminLinkPreviewEnabled = $this->appConfig->getValueString(Application::APP_ID, 'link_preview_enabled', '1') === '1';
 		if (!$adminLinkPreviewEnabled) {
 			return false;
 		}
@@ -105,7 +107,7 @@ class WorkPackageReferenceProvider extends ADiscoverableReferenceProvider {
 	}
 
 	public function getIsAdminConfigOk(): bool {
-		return OpenProjectAPIService::isAdminConfigOk($this->config);
+		return OpenProjectAPIService::isAdminConfigOk($this->appConfig);
 	}
 
 	/**

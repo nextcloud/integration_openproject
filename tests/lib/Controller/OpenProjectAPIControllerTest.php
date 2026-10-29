@@ -16,7 +16,6 @@ use OCA\OpenProject\Service\OpenProjectAPIService;
 use OCP\AppFramework\Http;
 use OCP\Files\NotFoundException;
 use OCP\Files\NotPermittedException;
-use OCP\IConfig;
 use OCP\IRequest;
 use PHPUnit\Framework\TestCase;
 

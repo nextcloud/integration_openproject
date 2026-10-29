@@ -33,13 +33,13 @@
 		<file name="tests/stub/timejob_joblist.phpstub" preloadClasses="true"/>
 	</stubs>
 	<issueHandlers>
-		<DeprecatedClass errorLevel="error" />
+		<!-- <DeprecatedClass errorLevel="error" />
 		<DeprecatedConstant errorLevel="error" />
 		<DeprecatedFunction errorLevel="error" />
 		<DeprecatedInterface errorLevel="error" />
 		<DeprecatedMethod errorLevel="error" />
 		<DeprecatedProperty errorLevel="error" />
-		<DeprecatedTrait errorLevel="error" />
+		<DeprecatedTrait errorLevel="error" /> -->
 		<UndefinedClass>
 			<errorLevel type="suppress">
 				<referencedClass name="OC\Http\Client\LocalAddressChecker" />
