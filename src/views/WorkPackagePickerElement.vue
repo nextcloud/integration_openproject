@@ -44,18 +44,6 @@ export default {
 		SearchInput,
 		NcLoadingIcon,
 	},
-
-	props: {
-		providerId: {
-			type: String,
-			required: true,
-		},
-		accessible: {
-			type: Boolean,
-			default: false,
-		},
-	},
-	emits: ['submit'],
 	data() {
 		return {
 			fileInfo: {},
@@ -86,7 +74,7 @@ export default {
 	},
 	methods: {
 		onSubmit(data) {
-			this.$emit('submit', data)
+			this.$el.dispatchEvent(new CustomEvent('submit', { detail: data }))
 		},
 		async checkIfOpenProjectIsAvailable() {
 			if (!this.adminConfigState.isAdminConfigOk) {

@@ -15,7 +15,10 @@ __webpack_nonce__ = btoa(OC.requestToken)
 /* eslint-disable-next-line no-undef */
 __webpack_public_path__ = OC.linkTo(APP_ID, 'js/')
 
-// this is where we associate our widget component with the richobjects that we return in the reference provider
+const workPackageCards = new WeakMap()
+// INFO: this is where we associate our widget component with the rich-objects
+//       that we return in the reference provider.
+// Link preview card in the chat.
 registerWidget(`${APP_ID}_work_package`, async (el, { richObjectType, richObject, accessible }) => {
 	// here we lazy load the components so it does not slow down the initial page load
 	const { createApp } = await import(/* webpackChunkName: "reference-wp-lazy" */'vue')
@@ -28,20 +31,23 @@ registerWidget(`${APP_ID}_work_package`, async (el, { richObjectType, richObject
 	})
 	setupGlobalProperties(widget)
 	widget.mount(el)
+	workPackageCards.set(el, widget)
+}, (el) => {
+	workPackageCards.get(el)?.unmount()
+	workPackageCards.delete(el)
 })
 
+// INFO: register OpenProject work packages search component inside the Smart Picker.
+// Shows OpenProject smart picker when using "/" command in the chat
 registerCustomPickerElement('openproject-work-package-ref', async (el, { providerId, accessible }) => {
 	const { createApp } = await import(/* webpackChunkName: "reference-picker-lazy" */'vue')
 	const { default: WorkPackagePickerElement } = await import(/* webpackChunkName: "reference-picker-lazy" */'./views/WorkPackagePickerElement.vue')
 
-	const app = createApp(WorkPackagePickerElement, {
-		providerId,
-		accessible,
-	})
+	const app = createApp(WorkPackagePickerElement)
 	setupGlobalProperties(app)
 	const vueElement = app.mount(el)
 
-	return new NcCustomPickerRenderResult(vueElement.$el, vueElement)
+	return new NcCustomPickerRenderResult(vueElement.$el, app)
 }, (el, renderResult) => {
-	renderResult.object.$destroy()
+	renderResult.object.unmount()
 })
