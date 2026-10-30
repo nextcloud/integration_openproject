@@ -23,8 +23,9 @@ class WorkPackageReferenceProvider extends ADiscoverableReferenceProvider {
 	private const RICH_OBJECT_TYPE = Application::APP_ID . '_work_package';
 
 	// as we know we are on NC >= 26, we can use Php 8 syntax for class attributes
-	public function __construct(private IUserConfig $userConfig,
+	public function __construct(
 								private IAppConfig $appConfig,
+								private IUserConfig $userConfig,
 								private IL10N $l10n,
 								private IURLGenerator $urlGenerator,
 								private ReferenceManager $referenceManager,
