@@ -12,7 +12,6 @@ use OCA\OpenProject\AppInfo\Application;
 use OCA\OpenProject\Service\OpenProjectAPIService;
 use OCP\App\IAppManager;
 use OCP\AppFramework\Services\IInitialState;
-use OCP\IConfig;
 use OCP\IUserSession;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;

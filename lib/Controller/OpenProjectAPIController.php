@@ -23,7 +23,7 @@ use OCP\AppFramework\OCSController;
 use OCP\Files\NotFoundException;
 use OCP\Files\NotPermittedException;
 
-use OCP\IConfig;
+use OCP\IAppConfig;
 use OCP\IRequest;
 
 class OpenProjectAPIController extends OCSController {
@@ -32,12 +32,12 @@ class OpenProjectAPIController extends OCSController {
 
 	public function __construct(string $appName,
 		IRequest $request,
-		private IConfig $config,
+		private IAppConfig $appConfig,
 		private OpenProjectAPIService $openprojectAPIService,
 		private ?string $userId,
 	) {
 		parent::__construct($appName, $request);
-		$this->openprojectUrl = $config->getAppValue(Application::APP_ID, 'openproject_instance_url');
+		$this->openprojectUrl = $appConfig->getValueString(Application::APP_ID, 'openproject_instance_url');
 	}
 
 	private function validatePreRequestConditions(): array {

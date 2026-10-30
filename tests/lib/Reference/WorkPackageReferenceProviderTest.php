@@ -10,7 +10,6 @@ namespace OCA\OpenProject\Reference;
 use OC\Collaboration\Reference\ReferenceManager;
 use OCA\OpenProject\AppInfo\Application;
 use OCA\OpenProject\Service\OpenProjectAPIService;
-use OCP\IConfig;
 use OCP\IL10N;
 use OCP\IURLGenerator;
 use PHPUnit\Framework\MockObject\MockObject;

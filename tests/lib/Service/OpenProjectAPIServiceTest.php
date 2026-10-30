@@ -50,7 +50,6 @@ use OCP\Http\Client\IResponse;
 use OCP\IAvatarManager;
 use OCP\ICache;
 use OCP\ICacheFactory;
-use OCP\IConfig;
 use OCP\IDBConnection;
 use OCP\IGroup;
 use OCP\IGroupManager;

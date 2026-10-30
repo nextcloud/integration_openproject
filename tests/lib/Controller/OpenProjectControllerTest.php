@@ -18,7 +18,6 @@ use OCA\OpenProject\AppInfo\Application;
 use OCA\OpenProject\Service\OpenProjectAPIService;
 use OCP\Http\Client\IResponse;
 use OCP\Http\Client\LocalServerException;
-use OCP\IConfig;
 use OCP\IRequest;
 use OCP\IURLGenerator;
 use PHPUnit\Framework\TestCase;

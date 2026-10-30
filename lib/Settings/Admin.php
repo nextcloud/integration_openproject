@@ -14,15 +14,15 @@ use OCA\OpenProject\Service\OpenProjectAPIService;
 use OCP\AppFramework\Http\TemplateResponse;
 use OCP\AppFramework\Services\IInitialState;
 
-use OCP\IConfig;
+use OCP\IAppConfig;
 use OCP\Settings\ISettings;
 
 class Admin implements ISettings {
 
 	/**
-	 * @var IConfig
+	 * @var IAppConfig
 	 */
-	private $config;
+	private $appConfig;
 	/**
 	 * @var IInitialState
 	 */
@@ -37,12 +37,12 @@ class Admin implements ISettings {
 	 */
 	private $openProjectAPIService;
 
-	public function __construct(IConfig $config,
+	public function __construct(IAppConfig $appConfig,
 		OauthService $oauthService,
 		OpenProjectAPIService $openProjectAPIService,
 		IInitialState $initialStateService
 	) {
-		$this->config = $config;
+		$this->appConfig = $appConfig;
 		$this->initialStateService = $initialStateService;
 		$this->oauthService = $oauthService;
 		$this->openProjectAPIService = $openProjectAPIService;
@@ -52,13 +52,13 @@ class Admin implements ISettings {
 	 * @return TemplateResponse
 	 */
 	public function getForm(): TemplateResponse {
-		$clientID = $this->config->getAppValue(Application::APP_ID, 'openproject_client_id');
-		$clientSecret = $this->config->getAppValue(Application::APP_ID, 'openproject_client_secret');
-		$opUrl = $this->config->getAppValue(Application::APP_ID, 'openproject_instance_url');
+		$clientID = $this->appConfig->getValueString(Application::APP_ID, 'openproject_client_id');
+		$clientSecret = $this->appConfig->getValueString(Application::APP_ID, 'openproject_client_secret');
+		$opUrl = $this->appConfig->getValueString(Application::APP_ID, 'openproject_instance_url');
 
 		// get automatically created NC oauth client for OP
 		$clientInfo = null;
-		$oauthClientInternalId = $this->config->getAppValue(Application::APP_ID, 'nc_oauth_client_id', '');
+		$oauthClientInternalId = $this->appConfig->getValueString(Application::APP_ID, 'nc_oauth_client_id', '');
 		if ($oauthClientInternalId !== '') {
 			$id = (int)$oauthClientInternalId;
 			$clientInfo = $this->oauthService->getClientInfo($id);
@@ -70,10 +70,10 @@ class Admin implements ISettings {
 		// NOTE: for migration compatibility
 		// set 'authorization_method' to Oauth2 if authorization_method is not set
 		// and there is existing complete Oauth2 setup
-		$authenticationMethod = $this->config->getAppValue(Application::APP_ID, 'authorization_method', '');
-		if (!$authenticationMethod && OpenProjectAPIService::isAdminConfigOkForOauth2($this->config)) {
+		$authenticationMethod = $this->appConfig->getValueString(Application::APP_ID, 'authorization_method', '');
+		if (!$authenticationMethod && OpenProjectAPIService::isAdminConfigOkForOauth2($this->appConfig)) {
 			$authenticationMethod = Application::AUTH_METHOD_OAUTH;
-			$this->config->setAppValue(Application::APP_ID, 'authorization_method', $authenticationMethod);
+			$this->appConfig->setValueString(Application::APP_ID, 'authorization_method', $authenticationMethod);
 		}
 
 		$adminConfig = [
@@ -86,27 +86,27 @@ class Admin implements ISettings {
 			'nc_oauth_client' => $clientInfo,
 			// oidc form configs
 			'authorization_settings' => [
-				'oidc_provider' => $this->config->getAppValue(Application::APP_ID, 'oidc_provider', ''),
-				'targeted_audience_client_id' => $this->config->getAppValue(
+				'oidc_provider' => $this->appConfig->getValueString(Application::APP_ID, 'oidc_provider', ''),
+				'targeted_audience_client_id' => $this->appConfig->getValueString(
 					Application::APP_ID, 'targeted_audience_client_id', ''
 				),
-				'sso_provider_type' => $this->config->getAppValue(Application::APP_ID, 'sso_provider_type', ''),
-				'token_exchange' => \boolval($this->config->getAppValue(Application::APP_ID, 'token_exchange')),
+				'sso_provider_type' => $this->appConfig->getValueString(Application::APP_ID, 'sso_provider_type', ''),
+				'token_exchange' => \boolval($this->appConfig->getValueString(Application::APP_ID, 'token_exchange')),
 			],
 			// project folder form configs
-			'fresh_project_folder_setup' => $this->config->getAppValue(Application::APP_ID, 'fresh_project_folder_setup', '0') === '1',
+			'fresh_project_folder_setup' => $this->appConfig->getValueString(Application::APP_ID, 'fresh_project_folder_setup', '0') === '1',
 			'project_folder_info' => $projectFolderStatusInformation,
 			'app_password_set' => $this->openProjectAPIService->hasAppPassword(),
 			// general form configs
-			'default_enable_navigation' => $this->config->getAppValue(Application::APP_ID, 'default_enable_navigation', '0') === '1',
-			'default_enable_unified_search' => $this->config->getAppValue(Application::APP_ID, 'default_enable_unified_search', '0') === '1',
+			'default_enable_navigation' => $this->appConfig->getValueString(Application::APP_ID, 'default_enable_navigation', '0') === '1',
+			'default_enable_unified_search' => $this->appConfig->getValueString(Application::APP_ID, 'default_enable_unified_search', '0') === '1',
 			// other states
 			'all_terms_of_services_signed' => $isAllTermsOfServiceSignedForUserOpenProject,
 			'admin_audit_configuration_correct' => $isAdminAuditConfigurationSetUpCorrectly,
 			'admin_audit_app_name' => $this->openProjectAPIService->getAppsName('admin_audit'),
 			'encryption_info' => [
 				'server_side_encryption_enabled' => $this->openProjectAPIService->isServerSideEncryptionEnabled(),
-				'encryption_enabled_for_groupfolders' => $this->config->getAppValue('groupfolders', 'enable_encryption', '') === 'true'
+				'encryption_enabled_for_groupfolders' => $this->appConfig->getValueString('groupfolders', 'enable_encryption', '') === 'true'
 			],
 			'oidc_providers' => $this->openProjectAPIService->getRegisteredOidcProviders(),
 			'user_oidc_enabled' => $this->openProjectAPIService->isUserOIDCAppInstalledAndEnabled(),
@@ -136,7 +136,7 @@ class Admin implements ISettings {
 
 		$this->initialStateService->provideInitialState('admin-settings-config', $adminConfig);
 		$this->initialStateService->provideInitialState(
-			'admin-config-status', OpenProjectAPIService::isAdminConfigOk($this->config)
+			'admin-config-status', OpenProjectAPIService::isAdminConfigOk($this->appConfig)
 		);
 
 

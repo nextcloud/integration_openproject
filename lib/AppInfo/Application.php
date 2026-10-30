@@ -33,9 +33,11 @@ use OCP\AppFramework\Bootstrap\IBootstrap;
 use OCP\AppFramework\Bootstrap\IRegistrationContext;
 use OCP\AppFramework\OCS\OCSBadRequestException;
 use OCP\Collaboration\Reference\RenderReferenceEvent;
+use OCP\Config\IUserConfig;
 use OCP\Files\Events\Node\BeforeNodeDeletedEvent;
 use OCP\Files\Events\Node\BeforeNodeRenamedEvent;
 use OCP\Group\Events\BeforeGroupDeletedEvent;
+use OCP\IAppConfig;
 use OCP\IConfig;
 use OCP\IGroupManager;
 use OCP\IL10N;
@@ -86,6 +88,14 @@ class Application extends App implements IBootstrap {
 	 * @var mixed
 	 */
 	private $config;
+	/**
+	 * @var mixed
+	 */
+	private $appConfig;
+	/**
+	 * @var mixed
+	 */
+	private $userConfig;
 
 	/**
 	 * Constructor
@@ -97,6 +107,8 @@ class Application extends App implements IBootstrap {
 
 		$container = $this->getContainer();
 		$this->config = $container->get(IConfig::class);
+		$this->appConfig = $container->get(IAppConfig::class);
+		$this->userConfig = $container->get(IUserConfig::class);
 	}
 
 	/**
@@ -158,12 +170,12 @@ class Application extends App implements IBootstrap {
 			$userId = $user->getUID();
 			$container = $this->getContainer();
 
-			if ($this->config->getUserValue(
+			if ($this->userConfig->getValueString(
 				$userId,
 				self::APP_ID,
 				'navigation_enabled',
-				$this->config->getAppValue(self::APP_ID, 'default_enable_navigation', '0')) === '1') {
-				$openprojectUrl = $this->config->getAppValue(self::APP_ID, 'openproject_instance_url', '');
+				$this->appConfig->getValueString(self::APP_ID, 'default_enable_navigation', '0')) === '1') {
+				$openprojectUrl = $this->appConfig->getValueString(self::APP_ID, 'openproject_instance_url', '');
 				if ($openprojectUrl !== '') {
 					$container->get(INavigationManager::class)->add(function () use ($container, $openprojectUrl) {
 						$urlGenerator = $container->get(IURLGenerator::class);

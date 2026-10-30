@@ -11,24 +11,24 @@ use OCA\OpenProject\AppInfo\Application;
 use OCA\UserOIDC\Event\ExchangedTokenRequestedEvent as ExchangedTokenEvent;
 use OCA\UserOIDC\Event\ExternalTokenRequestedEvent as ExternalTokenEvent;
 use OCA\UserOIDC\Event\InternalTokenRequestedEvent as InternalTokenEvent;
-use OCP\IConfig;
+use OCP\IAppConfig;
 
 class TokenEventFactory {
-	private IConfig $config;
+	private IAppConfig $appConfig;
 
 	public function __construct(
-		IConfig $config
+		IAppConfig $appConfig
 	) {
-		$this->config = $config;
+		$this->appConfig = $appConfig;
 	}
 
 	/**
 	 * @return InternalTokenEvent|ExternalTokenEvent|ExchangedTokenEvent
 	 */
 	public function getEvent(): InternalTokenEvent|ExternalTokenEvent|ExchangedTokenEvent {
-		$SSOProviderType = $this->config->getAppValue(Application::APP_ID, 'sso_provider_type', '');
-		$tokenExchange = $this->config->getAppValue(Application::APP_ID, 'token_exchange', '');
-		$targetAudience = $this->config->getAppValue(Application::APP_ID, 'targeted_audience_client_id', '');
+		$SSOProviderType = $this->appConfig->getValueString(Application::APP_ID, 'sso_provider_type', '');
+		$tokenExchange = $this->appConfig->getValueString(Application::APP_ID, 'token_exchange', '');
+		$targetAudience = $this->appConfig->getValueString(Application::APP_ID, 'targeted_audience_client_id', '');
 
 		// If the SSO provider is Nextcloud Hub,
 		// get token from internal IDP (oidc)

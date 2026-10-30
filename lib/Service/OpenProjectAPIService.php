@@ -35,6 +35,7 @@ use OCA\UserOIDC\Db\ProviderMapper;
 use OCA\UserOIDC\User\Backend as OIDCBackend;
 use OCP\App\IAppManager;
 use OCP\AppFramework\Http;
+use OCP\Config\IUserConfig;
 use OCP\Encryption\IManager;
 use OCP\EventDispatcher\IEventDispatcher;
 use OCP\Files\InvalidPathException;
@@ -45,6 +46,7 @@ use OCP\Files\NotPermittedException;
 use OCP\Group\ISubAdmin;
 use OCP\Http\Client\IClientService;
 use OCP\Http\Client\IResponse;
+use OCP\IAppConfig;
 use OCP\IAvatarManager;
 use OCP\ICache;
 use OCP\ICacheFactory;
@@ -88,6 +90,14 @@ class OpenProjectAPIService {
 	 * @var IConfig
 	 */
 	private $config;
+	/**
+	 * @var IAppConfig
+	 */
+	private $appConfig;
+	/**
+	 * @var IUserConfig
+	 */
+	private $userConfig;
 	/**
 	 * @var \OCP\Http\Client\IClient
 	 */
@@ -150,6 +160,8 @@ class OpenProjectAPIService {
 		LoggerInterface $logger,
 		IL10N $l10n,
 		IConfig $config,
+		IAppConfig $appConfig,
+		IUserConfig $userConfig,
 		IClientService $clientService,
 		IRootFolder $storage,
 		IURLGenerator $urlGenerator,
@@ -172,6 +184,8 @@ class OpenProjectAPIService {
 		$this->logger = $logger;
 		$this->l10n = $l10n;
 		$this->config = $config;
+		$this->appConfig = $appConfig;
+		$this->userConfig = $userConfig;
 		$this->client = $clientService->newClient();
 		$this->storage = $storage;
 		$this->urlGenerator = $urlGenerator;
@@ -345,7 +359,7 @@ class OpenProjectAPIService {
 		string $nextcloudUserId
 	): array {
 		$accessToken = $this->getAccessToken($nextcloudUserId);
-		$openprojectUrl = $this->config->getAppValue(Application::APP_ID, 'openproject_instance_url');
+		$openprojectUrl = $this->appConfig->getValueString(Application::APP_ID, 'openproject_instance_url');
 		try {
 			$response = $this->rawRequest(
 				$accessToken, $openprojectUrl, 'users/'.$openprojectUserId.'/avatar'
@@ -487,7 +501,7 @@ class OpenProjectAPIService {
 		string $method = 'GET'
 	): array {
 		$accessToken = $this->getAccessToken($userId);
-		$openprojectUrl = $this->config->getAppValue(Application::APP_ID, 'openproject_instance_url');
+		$openprojectUrl = $this->appConfig->getValueString(Application::APP_ID, 'openproject_instance_url');
 		if (!$openprojectUrl || !OpenProjectAPIService::validateURL($openprojectUrl)) {
 			return ['error' => 'OpenProject URL is invalid', 'statusCode' => 500];
 		}
@@ -579,7 +593,7 @@ class OpenProjectAPIService {
 			$resJson = json_decode($body, true);
 
 			if (isset($resJson['access_token'])) {
-				$this->config->setUserValue($userId, Application::APP_ID, 'token', $resJson['access_token']);
+				$this->userConfig->setValueString($userId, Application::APP_ID, 'token', $resJson['access_token']);
 				if ($resJson['created_at'] && isset($resJson['expires_in'])) {
 					$expiresAt = $resJson['created_at'] + $resJson['expires_in'];
 				} else {
@@ -594,10 +608,10 @@ class OpenProjectAPIService {
 					$expiresAt = $resJson['created_at'] + $resJson['expires_in'];
 				}
 				$this->logger->debug('New token expires at ' . date('Y/m/d H:i:s', $expiresAt), ['app' => $this->appName]);
-				$this->config->setUserValue($userId, Application::APP_ID, 'token_expires_at', $expiresAt);
+				$this->userConfig->setValueString($userId, Application::APP_ID, 'token_expires_at', $expiresAt);
 			}
 			if (isset($resJson['refresh_token'])) {
-				$this->config->setUserValue($userId, Application::APP_ID, 'refresh_token', $resJson['refresh_token']);
+				$this->userConfig->setValueString($userId, Application::APP_ID, 'refresh_token', $resJson['refresh_token']);
 			}
 
 			return $resJson;
@@ -663,7 +677,7 @@ class OpenProjectAPIService {
 	}
 
 	/**
-	 * @param IConfig $config
+	 * @param IAppConfig $appConfig
 	 * @param IURLGenerator $urlGenerator
 	 * @return string
 	 * generates an oauth url to OpenProject containing openproject_client_id & redirect_uri as parameter
@@ -671,12 +685,12 @@ class OpenProjectAPIService {
 	 * and saved to the DB before calling the OAuth URI
 	 * @throws Exception
 	 */
-	public static function getOpenProjectOauthURL(IConfig $config, IURLGenerator $urlGenerator): string {
-		if (!self::isAdminConfigOk($config)) {
+	public static function getOpenProjectOauthURL(IAppConfig $appConfig, IURLGenerator $urlGenerator): string {
+		if (!self::isAdminConfigOk($appConfig)) {
 			throw new \Exception('OpenProject admin config is not valid!');
 		}
-		$clientID = $config->getAppValue(Application::APP_ID, 'openproject_client_id');
-		$oauthUrl = $config->getAppValue(Application::APP_ID, 'openproject_instance_url');
+		$clientID = $appConfig->getValueString(Application::APP_ID, 'openproject_client_id');
+		$oauthUrl = $appConfig->getValueString(Application::APP_ID, 'openproject_instance_url');
 
 		// remove trailing slash from the oauthUrl if present
 		if (substr($oauthUrl, -1) === '/') {
@@ -908,13 +922,13 @@ class OpenProjectAPIService {
 
 	/**
 	 * check common admin settings
-	 * @param IConfig $config
+	 * @param IAppConfig $appConfig
 	 *
 	 * @return bool
 	 */
-	public static function isCommonAdminConfigOk(IConfig $config): bool {
-		$oauthInstanceUrl = $config->getAppValue(Application::APP_ID, 'openproject_instance_url');
-		$freshProjectFolderSetUp = (bool)$config->getAppValue(Application::APP_ID, 'fresh_project_folder_setup');
+	public static function isCommonAdminConfigOk(IAppConfig $appConfig): bool {
+		$oauthInstanceUrl = $appConfig->getValueString(Application::APP_ID, 'openproject_instance_url');
+		$freshProjectFolderSetUp = (bool)$appConfig->getValueString(Application::APP_ID, 'fresh_project_folder_setup');
 
 		if ($freshProjectFolderSetUp === true || empty($oauthInstanceUrl) || !self::validateURL($oauthInstanceUrl)) {
 			return false;
@@ -926,47 +940,47 @@ class OpenProjectAPIService {
 	/**
 	 * checks if every admin config for oauth2 based authorization variables are set
 	 *
-	 * @param IConfig $config
+	 * @param IAppConfig $appConfig
 	 * @return bool
 	 */
-	public static function isAdminConfigOkForOauth2(IConfig $config):bool {
-		if (!self::isCommonAdminConfigOk($config)) {
+	public static function isAdminConfigOkForOauth2(IAppConfig $appConfig):bool {
+		if (!self::isCommonAdminConfigOk($appConfig)) {
 			return false;
 		}
 
-		$authMethod = $config->getAppValue(Application::APP_ID, 'authorization_method');
+		$authMethod = $appConfig->getValueString(Application::APP_ID, 'authorization_method');
 		// NOTE: For backwards compability, check the auth method only if provided
 		// version: 2.8 -> 2.9
 		if ($authMethod && $authMethod !== Application::AUTH_METHOD_OAUTH) {
 			return false;
 		}
 
-		$opClientId = $config->getAppValue(Application::APP_ID, 'openproject_client_id');
-		$opClientSecret = $config->getAppValue(Application::APP_ID, 'openproject_client_secret');
-		$ncClientId = $config->getAppValue(Application::APP_ID, 'nc_oauth_client_id');
+		$opClientId = $appConfig->getValueString(Application::APP_ID, 'openproject_client_id');
+		$opClientSecret = $appConfig->getValueString(Application::APP_ID, 'openproject_client_secret');
+		$ncClientId = $appConfig->getValueString(Application::APP_ID, 'nc_oauth_client_id');
 		return !(empty($opClientId) || empty($opClientSecret) || empty($ncClientId));
 	}
 
 	/**
 	 * checks if every admin config for oidc based authorization variables are set
 	 *
-	 * @param IConfig $config
+	 * @param IAppConfig $appConfig
 	 * @return bool
 	 */
-	public static function isAdminConfigOkForOIDCAuth(IConfig $config):bool {
-		if (!self::isCommonAdminConfigOk($config)) {
+	public static function isAdminConfigOkForOIDCAuth(IAppConfig $appConfig):bool {
+		if (!self::isCommonAdminConfigOk($appConfig)) {
 			return false;
 		}
 
-		$authMethod = $config->getAppValue(Application::APP_ID, 'authorization_method');
+		$authMethod = $appConfig->getValueString(Application::APP_ID, 'authorization_method');
 		if ($authMethod !== Application::AUTH_METHOD_OIDC) {
 			return false;
 		}
 
-		$oidcProvider = $config->getAppValue(Application::APP_ID, 'oidc_provider');
-		$ssoProviderType = $config->getAppValue(Application::APP_ID, 'sso_provider_type');
-		$targetAudienceClientId = $config->getAppValue(Application::APP_ID, 'targeted_audience_client_id');
-		$tokenExchange = (bool)$config->getAppValue(Application::APP_ID, 'token_exchange');
+		$oidcProvider = $appConfig->getValueString(Application::APP_ID, 'oidc_provider');
+		$ssoProviderType = $appConfig->getValueString(Application::APP_ID, 'sso_provider_type');
+		$targetAudienceClientId = $appConfig->getValueString(Application::APP_ID, 'targeted_audience_client_id');
+		$tokenExchange = (bool)$appConfig->getValueString(Application::APP_ID, 'token_exchange');
 
 		if (empty($ssoProviderType) || empty($oidcProvider)) {
 			return false;
@@ -995,15 +1009,15 @@ class OpenProjectAPIService {
 	 *
 	 * @return bool
 	 */
-	public static function isAdminConfigOk(IConfig $config): bool {
-		$authMethod = $config->getAppValue(Application::APP_ID, 'authorization_method');
+	public static function isAdminConfigOk(IAppConfig $appConfig): bool {
+		$authMethod = $appConfig->getValueString(Application::APP_ID, 'authorization_method');
 
 		if (!$authMethod || $authMethod === Application::AUTH_METHOD_OAUTH) {
-			return self::isAdminConfigOkForOauth2($config);
+			return self::isAdminConfigOkForOauth2($appConfig);
 		}
 
 		if ($authMethod === Application::AUTH_METHOD_OIDC) {
-			return self::isAdminConfigOkForOIDCAuth($config);
+			return self::isAdminConfigOkForOIDCAuth($appConfig);
 		}
 
 		return false;
@@ -1212,7 +1226,7 @@ class OpenProjectAPIService {
 		if ($this->appManager->isInstalled('encryption')) {
 			// home storage encryption is enabled by default
 			// when the default encryption module is enabled
-			$homeStorageEncrypted = $this->config->getAppValue('encryption', 'encryptHomeStorage', '1') === '1';
+			$homeStorageEncrypted = $this->appConfig->getValueString('encryption', 'encryptHomeStorage', '1') === '1';
 		}
 		return $this->encryptionManager->isEnabled() && $homeStorageEncrypted;
 	}
@@ -1347,7 +1361,7 @@ class OpenProjectAPIService {
 	 * @return int
 	 */
 	public function getPasswordLength(): int {
-		$passLengthSet = (int) $this->config->getAppValue('password_policy', 'minLength', '0');
+		$passLengthSet = (int) $this->appConfig->getValueString('password_policy', 'minLength', '0');
 		return $passLengthSet === 0 ? 72 : max(72, $passLengthSet);
 	}
 
@@ -1647,7 +1661,7 @@ class OpenProjectAPIService {
 	 * @return string
 	 */
 	public function getOIDCToken(string $userId): string {
-		$authorizationMethod = $this->config->getAppValue(Application::APP_ID, 'authorization_method');
+		$authorizationMethod = $this->appConfig->getValueString(Application::APP_ID, 'authorization_method');
 		if ($authorizationMethod !== Application::AUTH_METHOD_OIDC) {
 			return '';
 		}
@@ -1672,9 +1686,9 @@ class OpenProjectAPIService {
 			return '';
 		}
 
-		$SSOProviderType = $this->config->getAppValue(Application::APP_ID, 'sso_provider_type');
+		$SSOProviderType = $this->appConfig->getValueString(Application::APP_ID, 'sso_provider_type');
 		if ($SSOProviderType === Application::NEXTCLOUD_HUB_OIDC_PROVIDER_TYPE) {
-			$oidcClientId = $this->config->getAppValue(Application::APP_ID, 'targeted_audience_client_id');
+			$oidcClientId = $this->appConfig->getValueString(Application::APP_ID, 'targeted_audience_client_id');
 			$clientTokenType = '';
 			try {
 				$oidcClient = $this->oidcClientMapper->getClient($oidcClientId);
@@ -1697,8 +1711,8 @@ class OpenProjectAPIService {
 		$tokenExpiresAt = $token->getCreatedAt() + $token->getExpiresIn();
 		$this->logger->debug('New token expires at ' . date('Y/m/d H:i:s', $tokenExpiresAt));
 
-		$this->config->setUserValue($userId, Application::APP_ID, 'token', $token->getAccessToken());
-		$this->config->setUserValue($userId, Application::APP_ID, 'token_expires_at', $tokenExpiresAt);
+		$this->userConfig->setValueString($userId, Application::APP_ID, 'token', $token->getAccessToken());
+		$this->userConfig->setValueString($userId, Application::APP_ID, 'token_expires_at', $tokenExpiresAt);
 
 		return $token->getAccessToken();
 	}
@@ -1709,7 +1723,7 @@ class OpenProjectAPIService {
 	 * @return bool
 	 */
 	public function isAccessTokenExpired(string $userId): bool {
-		$expiresAt = $this->config->getUserValue($userId, Application::APP_ID, 'token_expires_at', 0);
+		$expiresAt = (int)$this->userConfig->getValueString($userId, Application::APP_ID, 'token_expires_at', '0');
 		// Consider token expired 60 seconds early
 		// to avoid race conditions caused by various factors
 		$tokenExpirySafetyMargin = 60;
@@ -1727,8 +1741,8 @@ class OpenProjectAPIService {
 			$this->logger->debug('User ID is not provided, probably the user is a guest user.', ['app' => $this->appName]);
 			return '';
 		}
-		$token = $this->config->getUserValue($userId, Application::APP_ID, 'token', '');
-		$authMethod = $this->config->getAppValue(Application::APP_ID, 'authorization_method');
+		$token = $this->userConfig->getValueString($userId, Application::APP_ID, 'token', '');
+		$authMethod = $this->appConfig->getValueString(Application::APP_ID, 'authorization_method');
 
 		if ($token && !$this->isAccessTokenExpired($userId)) {
 			if ($authMethod === Application::AUTH_METHOD_OIDC) {
@@ -1741,18 +1755,18 @@ class OpenProjectAPIService {
 			$this->logger->debug('Token has expired.', ['app' => $this->appName]);
 			$this->logger->debug('Refreshing access token.', ['app' => $this->appName]);
 			if ($authMethod === Application::AUTH_METHOD_OIDC) {
-				$this->config->deleteUserValue($userId, Application::APP_ID, 'user_name');
-				$this->config->deleteUserValue($userId, Application::APP_ID, 'user_id');
+				$this->userConfig->deleteUserConfig($userId, Application::APP_ID, 'user_name');
+				$this->userConfig->deleteUserConfig($userId, Application::APP_ID, 'user_id');
 			}
 		}
 
 		// For OAuth2 setup, only try to refresh the expired token.
 		// Token exchange needs to be initiated from the UI.
 		if ($authMethod === Application::AUTH_METHOD_OAUTH && $token) {
-			$refreshToken = $this->config->getUserValue($userId, Application::APP_ID, 'refresh_token');
-			$clientID = $this->config->getAppValue(Application::APP_ID, 'openproject_client_id');
-			$clientSecret = $this->config->getAppValue(Application::APP_ID, 'openproject_client_secret');
-			$openprojectUrl = $this->config->getAppValue(Application::APP_ID, 'openproject_instance_url');
+			$refreshToken = $this->userConfig->getValueString($userId, Application::APP_ID, 'refresh_token');
+			$clientID = $this->appConfig->getValueString(Application::APP_ID, 'openproject_client_id');
+			$clientSecret = $this->appConfig->getValueString(Application::APP_ID, 'openproject_client_secret');
+			$openprojectUrl = $this->appConfig->getValueString(Application::APP_ID, 'openproject_instance_url');
 			$result = $this->requestOAuthAccessToken(
 				$userId,
 				$openprojectUrl,
@@ -1786,13 +1800,13 @@ class OpenProjectAPIService {
 	 * @return array<mixed>
 	 */
 	public function initUserInfo(string $userId, string $accessToken): array {
-		$savedUserId = $this->config->getUserValue($userId, Application::APP_ID, 'user_id');
-		$savedUsername = $this->config->getUserValue($userId, Application::APP_ID, 'user_name');
+		$savedUserId = $this->userConfig->getValueString($userId, Application::APP_ID, 'user_id');
+		$savedUsername = $this->userConfig->getValueString($userId, Application::APP_ID, 'user_name');
 		if ($savedUserId && $savedUsername) {
 			return ['user_name' => $savedUsername];
 		}
 		try {
-			$openprojectUrl = $this->config->getAppValue(Application::APP_ID, 'openproject_instance_url');
+			$openprojectUrl = $this->appConfig->getValueString(Application::APP_ID, 'openproject_instance_url');
 			if (!$openprojectUrl || !OpenProjectAPIService::validateURL($openprojectUrl)) {
 				return ['error' => 'OpenProject URL is invalid', 'statusCode' => 500];
 			}
@@ -1804,8 +1818,8 @@ class OpenProjectAPIService {
 		}
 		if (isset($info['lastName'], $info['firstName'], $info['id'])) {
 			$fullName = $info['firstName'] . ' ' . $info['lastName'];
-			$this->config->setUserValue($userId, Application::APP_ID, 'user_id', $info['id']);
-			$this->config->setUserValue($userId, Application::APP_ID, 'user_name', $fullName);
+			$this->userConfig->setValueString($userId, Application::APP_ID, 'user_id', $info['id']);
+			$this->userConfig->setValueString($userId, Application::APP_ID, 'user_name', $fullName);
 			return ['user_name' => $fullName];
 		}
 		if (!isset($info['error'])) {
@@ -1859,7 +1873,7 @@ class OpenProjectAPIService {
 	 * @return bool
 	 */
 	public function isOIDCUser(): bool {
-		$SSOProviderType = $this->config->getAppValue(Application::APP_ID, 'sso_provider_type');
+		$SSOProviderType = $this->appConfig->getValueString(Application::APP_ID, 'sso_provider_type');
 		if ($SSOProviderType === Application::NEXTCLOUD_HUB_OIDC_PROVIDER_TYPE) {
 			return true;
 		}
