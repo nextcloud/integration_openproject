@@ -46,6 +46,7 @@ use OCP\IRequest;
 use OCP\IURLGenerator;
 use OCP\IUserManager;
 use OCP\IUserSession;
+use OCP\Server;
 use OCP\User\Events\BeforeUserDeletedEvent;
 use OCP\User\Events\UserChangedEvent;
 use OCP\User\Events\UserLoggedInEvent;
@@ -105,10 +106,9 @@ class Application extends App implements IBootstrap {
 	public function __construct(array $urlParams = []) {
 		parent::__construct(self::APP_ID, $urlParams);
 
-		$container = $this->getContainer();
-		$this->config = $container->get(IConfig::class);
-		$this->appConfig = $container->get(IAppConfig::class);
-		$this->userConfig = $container->get(IUserConfig::class);
+		$this->config = Server::get(IConfig::class);
+		$this->appConfig = Server::get(IAppConfig::class);
+		$this->userConfig = Server::get(IUserConfig::class);
 	}
 
 	/**
@@ -168,7 +168,6 @@ class Application extends App implements IBootstrap {
 		$user = $userSession->getUser();
 		if ($user !== null) {
 			$userId = $user->getUID();
-			$container = $this->getContainer();
 
 			if ($this->userConfig->getValueString(
 				$userId,
@@ -177,9 +176,9 @@ class Application extends App implements IBootstrap {
 				$this->appConfig->getValueString(self::APP_ID, 'default_enable_navigation', '0')) === '1') {
 				$openprojectUrl = $this->appConfig->getValueString(self::APP_ID, 'openproject_instance_url', '');
 				if ($openprojectUrl !== '') {
-					$container->get(INavigationManager::class)->add(function () use ($container, $openprojectUrl) {
-						$urlGenerator = $container->get(IURLGenerator::class);
-						$l10n = $container->get(IL10N::class);
+					Server::get(INavigationManager::class)->add(function () use ($openprojectUrl) {
+						$urlGenerator = Server::get(IURLGenerator::class);
+						$l10n = Server::get(IL10N::class);
 						return [
 							'id' => self::APP_ID,
 

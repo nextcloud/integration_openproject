@@ -16,6 +16,7 @@ use OCP\EventDispatcher\Event;
 use OCP\EventDispatcher\IEventListener;
 use OCP\Files\Events\Node\BeforeNodeDeletedEvent;
 use OCP\Files\Events\Node\BeforeNodeRenamedEvent;
+use OCP\HintException;
 use OCP\IGroupManager;
 use OCP\IUserSession;
 
@@ -69,12 +70,7 @@ class BeforeNodeInsideOpenProjectGroupfilderChangedListener implements IEventLis
 			$currentUserId !== Application::OPEN_PROJECT_ENTITIES_NAME &&
 			$this->groupManager->isInGroup($currentUserId, Application::OPEN_PROJECT_ENTITIES_NAME)
 		) {
-			if (!class_exists("\OCP\HintException")) {
-				throw new \OCP\HintException(
-					'This is configured as a project folder on OpenProject and cannot be deleted or renamed.'
-				);
-			}
-			throw new \OC\HintException(
+			throw new HintException(
 				'This is configured as a project folder on OpenProject and cannot be deleted or renamed.'
 			);
 		}

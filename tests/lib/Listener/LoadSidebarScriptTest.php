@@ -15,6 +15,7 @@ use OCP\AppFramework\Services\IInitialState;
 use OCP\Config\IUserConfig;
 use OCP\IAppConfig;
 use OCP\IUserSession;
+use OCP\ServerVersion;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 
@@ -25,6 +26,7 @@ class LoadSidebarScriptTest extends TestCase {
 	private MockObject|IInitialState $initialState;
 	private MockObject|IAppManager $appManager;
 	private MockObject|OpenProjectAPIService $openProjectService;
+	private ServerVersion $serverVersion;
 
 	protected function setUp(): void {
 		parent::setUp();
@@ -34,6 +36,7 @@ class LoadSidebarScriptTest extends TestCase {
 		$userSession = $this->createMock(IUserSession::class);
 		$this->appManager = $this->createMock(IAppManager::class);
 		$this->openProjectService = $this->createMock(OpenProjectAPIService::class);
+		$this->serverVersion = new ServerVersion();
 		$this->listener = new LoadSidebarScript(
 			$this->initialState,
 			$this->appConfig,
@@ -41,7 +44,8 @@ class LoadSidebarScriptTest extends TestCase {
 			$userSession,
 			$this->appManager,
 			$this->openProjectService,
-			'testUser'
+			'testUser',
+			$this->serverVersion
 		);
 	}
 

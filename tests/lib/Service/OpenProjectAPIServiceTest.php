@@ -13,7 +13,6 @@ use GuzzleHttp\Exception\ConnectException;
 use GuzzleHttp\Exception\ServerException;
 use OC\Authentication\Events\AppPasswordCreatedEvent;
 use OC\Authentication\Token\IProvider;
-use OC\Authentication\Token\IToken;
 use OC\Avatar\GuestAvatar;
 use OC\Http\Client\Client;
 use OC\Http\Client\Response;
@@ -34,6 +33,7 @@ use OCA\UserOIDC\Model\Token;
 use OCA\UserOIDC\User\Backend as OIDCBackend;
 use OCP\App\IAppManager;
 use OCP\AppFramework\Http;
+use OCP\Authentication\Token\IToken;
 use OCP\Config\IUserConfig;
 use OCP\Encryption\IManager;
 use OCP\EventDispatcher\Event;
@@ -817,7 +817,7 @@ class OpenProjectAPIServiceTest extends TestCase {
 			$exchangeTokenMock->method('getEvent')->willReturn($exchangedTokenRequestedEventMock);
 			$exchangedTokenRequestedEventMock->method('getToken')->willReturn($tokenMock);
 			$tokenMock->method('getAccessToken')->willReturn($oAuth2OrOidcToken);
-			$appManagerMock->method('isInstalled')->willReturn(true);
+			$appManagerMock->method('isEnabledForUser')->willReturn(true);
 		}
 
 		$this->defaultConfigMock
@@ -4635,7 +4635,7 @@ class OpenProjectAPIServiceTest extends TestCase {
 	 */
 	public function testIsAdminAuditConfigSetCorrectly(bool $isAdminAuditAppInstalled): void {
 		$iAppManagerMock = $this->getMockBuilder(IAppManager::class)->getMock();
-		$iAppManagerMock->method('isInstalled')->with('admin_audit')
+		$iAppManagerMock->method('isEnabledForUser')->with('admin_audit')
 			->willReturn($isAdminAuditAppInstalled);
 		$service = $this->getOpenProjectAPIServiceMock(
 			[],
@@ -4716,7 +4716,7 @@ class OpenProjectAPIServiceTest extends TestCase {
 			);
 		$userManagerMock = $this->getMockBuilder(IUserManager::class)
 			->getMock();
-		$iAppManagerMock->method('isInstalled')->with('encryption')
+		$iAppManagerMock->method('isEnabledForUser')->with('encryption')
 			->willReturn($isEncryptionAppInstalled);
 		$iManagerMock->method('isEnabled')->willReturn($isEncryptionAppEnabled);
 		$service = $this->getOpenProjectAPIServiceMock(
@@ -4755,7 +4755,7 @@ class OpenProjectAPIServiceTest extends TestCase {
 			});
 		$iManagerMock = $this->getMockBuilder(IManager::class)->getMock();
 		$iAppManagerMock = $this->getMockBuilder(IAppManager::class)->getMock();
-		$iAppManagerMock->method('isInstalled')->willReturn(true);
+		$iAppManagerMock->method('isEnabledForUser')->willReturn(true);
 		$exchangeTokenEvent = $this->getMockBuilder(TokenEventFactory::class)->disableOriginalConstructor()->getMock();
 		$eventMock = $this->getMockBuilder(ExchangedTokenRequestedEvent::class)->disableOriginalConstructor()->getMock();
 		$tokenMock = $this->getMockBuilder(Token::class)->disableOriginalConstructor()->getMock();
@@ -4806,7 +4806,7 @@ class OpenProjectAPIServiceTest extends TestCase {
 		$configMock = $this->getMockBuilder(IConfig::class)->getMock();
 		$iManagerMock = $this->getMockBuilder(IManager::class)->getMock();
 		$iAppManagerMock = $this->getMockBuilder(IAppManager::class)->getMock();
-		$iAppManagerMock->method('isInstalled')->willReturn(false);
+		$iAppManagerMock->method('isEnabledForUser')->willReturn(false);
 		$service = $this->getOpenProjectAPIServiceMock(
 			[],
 			[
@@ -4827,7 +4827,7 @@ class OpenProjectAPIServiceTest extends TestCase {
 		$configMock = $this->getMockBuilder(IConfig::class)->getMock();
 		$iManagerMock = $this->getMockBuilder(IManager::class)->getMock();
 		$iAppManagerMock = $this->getMockBuilder(IAppManager::class)->getMock();
-		$iAppManagerMock->method('isInstalled')->willReturn(true);
+		$iAppManagerMock->method('isEnabledForUser')->willReturn(true);
 		$exchangeTokenEvent = $this->getMockBuilder(TokenEventFactory::class)->disableOriginalConstructor()->getMock();
 		/** @psalm-suppress InvalidArgument for getEvent
 		 * get event can throw TokenExchangeFailedException in case there is failure in token exchange from the user_oidc app
@@ -4854,7 +4854,7 @@ class OpenProjectAPIServiceTest extends TestCase {
 		$configMock = $this->getMockBuilder(IConfig::class)->getMock();
 		$iManagerMock = $this->getMockBuilder(IManager::class)->getMock();
 		$iAppManagerMock = $this->getMockBuilder(IAppManager::class)->getMock();
-		$iAppManagerMock->method('isInstalled')->willReturn(true);
+		$iAppManagerMock->method('isEnabledForUser')->willReturn(true);
 		$exchangeTokenEvent = $this->getMockBuilder(TokenEventFactory::class)->disableOriginalConstructor()->getMock();
 		$eventMock = $this->getMockBuilder(ExchangedTokenRequestedEvent::class)->disableOriginalConstructor()->getMock();
 		$exchangeTokenEvent->method('getEvent')->willReturn($eventMock);
@@ -4884,7 +4884,7 @@ class OpenProjectAPIServiceTest extends TestCase {
 			]));
 		$iManagerMock = $this->getMockBuilder(IManager::class)->getMock();
 		$iAppManagerMock = $this->getMockBuilder(IAppManager::class)->getMock();
-		$iAppManagerMock->method('isInstalled')->willReturn(true);
+		$iAppManagerMock->method('isEnabledForUser')->willReturn(true);
 		$tokenEventMock = $this->getMockBuilder(TokenEventFactory::class)->disableOriginalConstructor()->getMock();
 		$eventMock = $this->getMockBuilder(InternalTokenRequestedEvent::class)->disableOriginalConstructor()->getMock();
 		$tokenMock = $this->getMockBuilder(Token::class)->disableOriginalConstructor()->getMock();

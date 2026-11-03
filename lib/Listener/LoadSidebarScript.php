@@ -20,6 +20,7 @@ use OCP\EventDispatcher\IEventListener;
 use OCP\IAppConfig;
 use OCP\IRequest;
 use OCP\IUserSession;
+use OCP\ServerVersion;
 use OCP\Util;
 
 /**
@@ -63,6 +64,11 @@ class LoadSidebarScript implements IEventListener {
 	 */
 	private $userId;
 
+	/**
+	 * @var ServerVersion
+	 */
+	private $serverVersion;
+
 	public function __construct(
 		IInitialState $initialStateService,
 		IAppConfig $appConfig,
@@ -70,13 +76,15 @@ class LoadSidebarScript implements IEventListener {
 		IUserSession $userSession,
 		IAppManager $appManager,
 		OpenProjectAPIService $openProjectAPIService,
-		?string $userId
+		?string $userId,
+		ServerVersion $serverVersion,
 	) {
 		$this->initialStateService = $initialStateService;
 		$this->appConfig = $appConfig;
 		$this->userConfig = $userConfig;
 		$this->appManager = $appManager;
 		$this->userId = $userId;
+		$this->serverVersion = $serverVersion;
 		$user = $userSession->getUser();
 		$this->openProjectAPIService = $openProjectAPIService;
 		if (strpos(\OC::$server->get(IRequest::class)->getRequestUri(), 'files') !== false) {
@@ -103,7 +111,7 @@ class LoadSidebarScript implements IEventListener {
 		if (!$this->appManager->isEnabledForUser(Application::APP_ID)) {
 			return;
 		}
-		$currentVersion = implode('.', Util::getVersion());
+		$currentVersion = implode('.', $this->serverVersion->getVersion());
 		//changed from nextcloud 24
 		if (version_compare($currentVersion, '24') >= 0) {
 			Util::addScript(Application::APP_ID, 'integration_openproject-projectTab', 'files');

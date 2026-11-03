@@ -1207,7 +1207,7 @@ class OpenProjectAPIService {
 	}
 
 	public function isAdminAuditConfigSetCorrectly(): bool {
-		return $this->appManager->isInstalled('admin_audit');
+		return $this->appManager->isEnabledForUser('admin_audit');
 	}
 
 	public function isTermsOfServiceAppEnabled(): bool {
@@ -1215,7 +1215,7 @@ class OpenProjectAPIService {
 			class_exists('\OCA\TermsOfService\Db\Entities\Signatory') &&
 			class_exists('\OCA\TermsOfService\Db\Mapper\SignatoryMapper') &&
 			class_exists('\OCA\TermsOfService\Db\Mapper\TermsMapper') &&
-			$this->appManager->isInstalled(
+			$this->appManager->isEnabledForUser(
 				'terms_of_service',
 			)
 		);
@@ -1223,7 +1223,7 @@ class OpenProjectAPIService {
 
 	public function isServerSideEncryptionEnabled(): bool {
 		$homeStorageEncrypted = false;
-		if ($this->appManager->isInstalled('encryption')) {
+		if ($this->appManager->isEnabledForUser('encryption')) {
 			// home storage encryption is enabled by default
 			// when the default encryption module is enabled
 			$homeStorageEncrypted = $this->appConfig->getValueString('encryption', 'encryptHomeStorage', '1') === '1';
@@ -1841,7 +1841,7 @@ class OpenProjectAPIService {
 	}
 
 	public function isUserOIDCAppInstalledAndEnabled(): bool {
-		return $this->appManager->isInstalled('user_oidc');
+		return $this->appManager->isEnabledForUser('user_oidc');
 	}
 
 	public function isUserOIDCAppSupported(): bool {
@@ -1858,7 +1858,7 @@ class OpenProjectAPIService {
 	}
 
 	public function isOIDCAppEnabled(): bool {
-		return $this->appManager->isInstalled('oidc');
+		return $this->appManager->isEnabledForUser('oidc');
 	}
 
 	public function isOIDCAppSupported(): bool {
