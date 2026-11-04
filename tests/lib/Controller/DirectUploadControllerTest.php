@@ -7,6 +7,7 @@
 
 namespace OCA\OpenProject\Controller;
 
+use OC\Files\FilenameValidator;
 use OCP\Files\Folder;
 use OCP\Files\ForbiddenException as FileAccessForbiddenException;
 use OCP\Files\InvalidContentException;
@@ -300,6 +301,8 @@ class DirectUploadControllerTest extends TestCase {
 			'size' => $uploadedFileSize,
 			'error' => $uploadedFileError
 		]);
+		$filenameValidatorMock = $this->createMock(FilenameValidator::class);
+
 		return new DirectUploadController(
 			'integration_openproject',
 			$requestMock,
@@ -310,6 +313,7 @@ class DirectUploadControllerTest extends TestCase {
 			$this->getMockBuilder('OCA\OpenProject\Service\DatabaseService')->disableOriginalConstructor()->getMock(),
 			$this->l,
 			'testUser',
+			$filenameValidatorMock
 		);
 	}
 

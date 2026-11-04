@@ -14,7 +14,7 @@ use OCA\OpenProject\AppInfo\Application;
 use OCA\OpenProject\Service\OpenProjectAPIService;
 use OCP\DB\ISchemaWrapper;
 use OCP\Group\ISubAdmin;
-use OCP\IConfig;
+use OCP\IAppConfig;
 use OCP\IGroupManager;
 use OCP\IUserManager;
 use OCP\Migration\IOutput;
@@ -22,14 +22,14 @@ use OCP\Migration\SimpleMigrationStep;
 
 class Version20100Date20250820101358 extends SimpleMigrationStep {
 	/**
-	 * @param IConfig $config
+	 * @param IAppConfig $appConfig
 	 * @param OpenProjectAPIService $openProjectAPIService
 	 * @param IGroupManager $groupManager
 	 * @param IUserManager $userManager
 	 * @param ISubAdmin $subAdmin
 	 */
 	public function __construct(
-		private IConfig $config,
+		private IAppConfig $appConfig,
 		private OpenProjectAPIService $openProjectAPIService,
 		private IGroupManager $groupManager,
 		private IUserManager $userManager,
@@ -44,7 +44,7 @@ class Version20100Date20250820101358 extends SimpleMigrationStep {
 	 * @return null|ISchemaWrapper
 	 */
 	public function changeSchema(IOutput $output, Closure $schemaClosure, array $options): ?ISchemaWrapper {
-		if (OpenProjectAPIService::isCommonAdminConfigOk($this->config) && $this->openProjectAPIService->isProjectFoldersSetupComplete()) {
+		if (OpenProjectAPIService::isCommonAdminConfigOk($this->appConfig) && $this->openProjectAPIService->isProjectFoldersSetupComplete()) {
 			$opAllGroup = $this->groupManager->get(Application::OPENPROJECT_ALL_GROUP_NAME);
 			if ($opAllGroup === null) {
 				$opUser = $this->userManager->get(Application::OPEN_PROJECT_ENTITIES_NAME);

@@ -23,8 +23,9 @@ use OCP\AppFramework\Controller;
 use OCP\AppFramework\Http;
 use OCP\AppFramework\Http\DataResponse;
 use OCP\AppFramework\Http\RedirectResponse;
+use OCP\Config\IUserConfig;
 use OCP\DB\Exception as DBException;
-use OCP\IConfig;
+use OCP\IAppConfig;
 use OCP\IL10N;
 use OCP\IRequest;
 use OCP\IURLGenerator;
@@ -36,9 +37,13 @@ use Psr\Log\LoggerInterface;
 class ConfigController extends Controller {
 
 	/**
-	 * @var IConfig
+	 * @var IAppConfig
 	 */
-	private $config;
+	private $appConfig;
+	/**
+	 * @var IUserConfig
+	 */
+	private $userConfig;
 	/**
 	 * @var IURLGenerator
 	 */
@@ -75,7 +80,8 @@ class ConfigController extends Controller {
 	public function __construct(
 		string $appName,
 		IRequest $request,
-		IConfig $config,
+		IAppConfig $appConfig,
+		IUserConfig $userConfig,
 		IURLGenerator $urlGenerator,
 		IUserManager $userManager,
 		IL10N $l,
@@ -87,7 +93,8 @@ class ConfigController extends Controller {
 		?string $userId
 	) {
 		parent::__construct($appName, $request);
-		$this->config = $config;
+		$this->appConfig = $appConfig;
+		$this->userConfig = $userConfig;
 		$this->urlGenerator = $urlGenerator;
 		$this->userManager = $userManager;
 		$this->l = $l;
@@ -106,12 +113,12 @@ class ConfigController extends Controller {
 		if ($userId === null) {
 			$userId = $this->userId;
 		}
-		$this->config->deleteUserValue($userId, Application::APP_ID, 'token');
-		$this->config->deleteUserValue($userId, Application::APP_ID, 'login');
-		$this->config->deleteUserValue($userId, Application::APP_ID, 'user_id');
-		$this->config->deleteUserValue($userId, Application::APP_ID, 'user_name');
-		$this->config->deleteUserValue($userId, Application::APP_ID, 'refresh_token');
-		$this->config->deleteUserValue($userId, Application::APP_ID, 'token_expires_at');
+		$this->userConfig->deleteUserConfig($userId, Application::APP_ID, 'token');
+		$this->userConfig->deleteUserConfig($userId, Application::APP_ID, 'login');
+		$this->userConfig->deleteUserConfig($userId, Application::APP_ID, 'user_id');
+		$this->userConfig->deleteUserConfig($userId, Application::APP_ID, 'user_name');
+		$this->userConfig->deleteUserConfig($userId, Application::APP_ID, 'refresh_token');
+		$this->userConfig->deleteUserConfig($userId, Application::APP_ID, 'token_expires_at');
 	}
 
 	/**
@@ -123,7 +130,7 @@ class ConfigController extends Controller {
 			'User %s has connected the OpenProject account %s in application ' . Application::APP_ID,
 			[
 				'userId' => $this->userId,
-				'openprojectUserId' => (string)$this->config->getUserValue($this->userId, Application::APP_ID, 'user_id'),
+				'openprojectUserId' => (string)$this->userConfig->getValueString($this->userId, Application::APP_ID, 'user_id'),
 			],
 		);
 	}
@@ -133,8 +140,8 @@ class ConfigController extends Controller {
 	 */
 	public function resetOauth2Configs(): void {
 		// for oauth2 reset we reset openproject client credential as well as nextcloud client credential
-		$this->config->setAppValue(Application::APP_ID, 'openproject_client_id', "");
-		$this->config->setAppValue(Application::APP_ID, 'openproject_client_secret', "");
+		$this->appConfig->setValueString(Application::APP_ID, 'openproject_client_id', "");
+		$this->appConfig->setValueString(Application::APP_ID, 'openproject_client_secret', "");
 		$this->deleteOauthClient();
 	}
 
@@ -142,8 +149,8 @@ class ConfigController extends Controller {
 	 * @return void
 	 */
 	public function resetOIDCConfigs(): void {
-		$this->config->setAppValue(Application::APP_ID, 'oidc_provider', "");
-		$this->config->setAppValue(Application::APP_ID, 'targeted_audience_client_id', "");
+		$this->appConfig->setValueString(Application::APP_ID, 'oidc_provider', "");
+		$this->appConfig->setValueString(Application::APP_ID, 'targeted_audience_client_id', "");
 	}
 
 
@@ -156,7 +163,7 @@ class ConfigController extends Controller {
 	 */
 	public function setConfig(array $values): DataResponse {
 		foreach ($values as $key => $value) {
-			$this->config->setUserValue($this->userId, Application::APP_ID, $key, trim($value));
+			$this->userConfig->setValueString($this->userId, Application::APP_ID, $key, trim($value));
 		}
 		$result = [];
 
@@ -211,10 +218,10 @@ class ConfigController extends Controller {
 			$appPassword = $this->openprojectAPIService->generateAppPasswordTokenForUser($isAppPasswordBeingReplaced);
 		}
 		$oldClientId = $oldClientSecret = '';
-		$oldOpenProjectOauthUrl = $this->config->getAppValue(
+		$oldOpenProjectOauthUrl = $this->appConfig->getValueString(
 			Application::APP_ID, 'openproject_instance_url', ''
 		);
-		$oldAuthMethod = $this->config->getAppValue(
+		$oldAuthMethod = $this->appConfig->getValueString(
 			Application::APP_ID, 'authorization_method', ''
 		);
 		// when 'openproject_instance_url' && 'authorization_method' does not have a value at the same time,
@@ -238,10 +245,10 @@ class ConfigController extends Controller {
 		if (
 			(key_exists('openproject_client_id', $values) && key_exists('openproject_client_secret', $values))
 		) {
-			$oldClientId = $this->config->getAppValue(
+			$oldClientId = $this->appConfig->getValueString(
 				Application::APP_ID, 'openproject_client_id', ''
 			);
-			$oldClientSecret = $this->config->getAppValue(
+			$oldClientSecret = $this->appConfig->getValueString(
 				Application::APP_ID, 'openproject_client_secret', ''
 			);
 		}
@@ -262,10 +269,10 @@ class ConfigController extends Controller {
 			key_exists('oidc_provider', $values) &&
 			key_exists('targeted_audience_client_id', $values)
 		) {
-			$oldOidcProvider = $this->config->getAppValue(
+			$oldOidcProvider = $this->appConfig->getValueString(
 				Application::APP_ID, 'oidc_provider', ''
 			);
-			$oldTargetedAudienceClient = $this->config->getAppValue(
+			$oldTargetedAudienceClient = $this->appConfig->getValueString(
 				Application::APP_ID, 'targeted_audience_client_id', ''
 			);
 			$runningOIDCReset = (
@@ -279,7 +286,7 @@ class ConfigController extends Controller {
 			if ($key === 'setup_project_folder' || $key === 'setup_app_password') {
 				continue;
 			}
-			$this->config->setAppValue(Application::APP_ID, $key, trim((string)$value));
+			$this->appConfig->setValueString(Application::APP_ID, $key, trim((string)$value));
 		}
 
 		// if the OpenProject OAuth URL has changed
@@ -294,7 +301,7 @@ class ConfigController extends Controller {
 				$this->deleteOauthClient();
 			} else {
 				// otherwise just change the redirect URI for the existing OAuth client
-				$oauthClientInternalId = $this->config->getAppValue(
+				$oauthClientInternalId = $this->appConfig->getValueString(
 					Application::APP_ID, 'nc_oauth_client_id', ''
 				);
 				$this->oauthService->setClientRedirectUri(
@@ -338,7 +345,7 @@ class ConfigController extends Controller {
 		// whenever doing full reset we want the project folder switch state to be "on" in the UI
 		// so setting `fresh_project_folder_setup` as true
 		if ($runningFullReset) {
-			$this->config->setAppValue(Application::APP_ID, 'fresh_project_folder_setup', "1");
+			$this->appConfig->setValueString(Application::APP_ID, 'fresh_project_folder_setup', "1");
 			$this->openprojectAPIService->logToAuditLog(
 				Operation::IntegrationReset,
 				'OpenProject Integration admin configuration has been reset in application ' . Application::APP_ID,
@@ -347,7 +354,7 @@ class ConfigController extends Controller {
 		} elseif (key_exists('setup_app_password', $values) && key_exists('setup_project_folder', $values)) {
 			// for other cases when api has key 'setup_app_password' and 'setup_project_folder' we set it to false
 			// assuming user has either fully set the integration or partially without project folder/app password
-			$this->config->setAppValue(Application::APP_ID, 'fresh_project_folder_setup', "0");
+			$this->appConfig->setValueString(Application::APP_ID, 'fresh_project_folder_setup', "0");
 		}
 
 		$savedSettings = array_values(array_diff(array_keys($values), ['setup_project_folder', 'setup_app_password']));
@@ -366,7 +373,7 @@ class ConfigController extends Controller {
 		}
 
 		return [
-			"status" => OpenProjectAPIService::isAdminConfigOk($this->config),
+			"status" => OpenProjectAPIService::isAdminConfigOk($this->appConfig),
 			"oPUserAppPassword" => $appPassword,
 		];
 	}
@@ -422,13 +429,13 @@ class ConfigController extends Controller {
 	 * @throws PreConditionNotMetException
 	 */
 	public function oauthRedirect(string $code = '', string $state = ''): RedirectResponse {
-		$configState = $this->config->getUserValue($this->userId, Application::APP_ID, 'oauth_state');
-		$clientID = $this->config->getAppValue(Application::APP_ID, 'openproject_client_id');
-		$clientSecret = $this->config->getAppValue(Application::APP_ID, 'openproject_client_secret');
-		$codeVerifier = $this->config->getUserValue(
-			$this->userId, Application::APP_ID, 'code_verifier', false
+		$configState = $this->userConfig->getValueString($this->userId, Application::APP_ID, 'oauth_state');
+		$clientID = $this->appConfig->getValueString(Application::APP_ID, 'openproject_client_id');
+		$clientSecret = $this->appConfig->getValueString(Application::APP_ID, 'openproject_client_secret');
+		$codeVerifier = $this->userConfig->getValueString(
+			$this->userId, Application::APP_ID, 'code_verifier', ''
 		);
-		$oauthJourneyStartingPage = $this->config->getUserValue(
+		$oauthJourneyStartingPage = $this->userConfig->getValueString(
 			$this->userId, Application::APP_ID, 'oauth_journey_starting_page'
 		);
 
@@ -460,7 +467,7 @@ class ConfigController extends Controller {
 		}
 
 		// anyway, reset state
-		$this->config->deleteUserValue($this->userId, Application::APP_ID, 'oauth_state');
+		$this->userConfig->deleteUserConfig($this->userId, Application::APP_ID, 'oauth_state');
 
 		$validCodeVerifier = false;
 		if (is_string($codeVerifier)) {
@@ -474,7 +481,7 @@ class ConfigController extends Controller {
 
 		$errorMessage = '';
 		if ($clientID && $validClientSecret && $validCodeVerifier && $configState !== '' && $configState === $state) {
-			$openprojectUrl = $this->config->getAppValue(Application::APP_ID, 'openproject_instance_url');
+			$openprojectUrl = $this->appConfig->getValueString(Application::APP_ID, 'openproject_instance_url');
 			$result = $this->openprojectAPIService->requestOAuthAccessToken(
 				$this->userId,
 				$openprojectUrl,
@@ -491,7 +498,7 @@ class ConfigController extends Controller {
 				// set user info
 				$userInfo = $this->openprojectAPIService->initUserInfo($this->userId, $result['access_token']);
 				if (isset($userInfo['user_name'])) {
-					$this->config->setUserValue(
+					$this->userConfig->setValueString(
 						$this->userId, Application::APP_ID, 'oauth_connection_result', 'success'
 					);
 					$this->logAccountConnected();
@@ -515,10 +522,10 @@ class ConfigController extends Controller {
 			}
 			$errorMessage = $this->l->t('Error during OAuth exchanges');
 		}
-		$this->config->setUserValue(
+		$this->userConfig->setValueString(
 			$this->userId, Application::APP_ID, 'oauth_connection_result', 'error'
 		);
-		$this->config->setUserValue(
+		$this->userConfig->setValueString(
 			$this->userId, Application::APP_ID, 'oauth_connection_error_message', $errorMessage
 		);
 		return new RedirectResponse($newUrl);
@@ -536,7 +543,7 @@ class ConfigController extends Controller {
 	 * @return bool whether an OAuth client was configured
 	 */
 	private function deleteOauthClient(): bool {
-		$oauthClientInternalId = $this->config->getAppValue(
+		$oauthClientInternalId = $this->appConfig->getValueString(
 			Application::APP_ID, 'nc_oauth_client_id', ''
 		);
 		if ($oauthClientInternalId !== '') {
@@ -545,7 +552,7 @@ class ConfigController extends Controller {
 				$this->clientService->deleteClient($id);
 			} catch (ClientNotFoundException $e) {
 			}
-			$this->config->deleteAppValue(Application::APP_ID, 'nc_oauth_client_id');
+			$this->appConfig->deleteKey(Application::APP_ID, 'nc_oauth_client_id');
 			return true;
 		}
 		return false;
@@ -575,7 +582,7 @@ class ConfigController extends Controller {
 		// 1. config without project folder set up (which is compulsory for integration)
 		// 2. config with project folder set up (which is optional for admin)
 		return new DataResponse([
-			'config_status_without_project_folder' => OpenProjectAPIService::isAdminConfigOk($this->config),
+			'config_status_without_project_folder' => OpenProjectAPIService::isAdminConfigOk($this->appConfig),
 			'project_folder_setup_status' => $appPasswordSetStatus
 		]);
 	}
@@ -612,7 +619,7 @@ class ConfigController extends Controller {
 
 			if ($values['authorization_method'] === Application::AUTH_METHOD_OAUTH) {
 				$response = \array_merge($response, $this->recreateOauthClientInformation());
-				$response['status'] = OpenProjectAPIService::isAdminConfigOk($this->config);
+				$response['status'] = OpenProjectAPIService::isAdminConfigOk($this->appConfig);
 			}
 
 			if ($setup['oPUserAppPassword']) {
@@ -660,18 +667,18 @@ class ConfigController extends Controller {
 			$this->settingsService->validateAdminSettingsForm($values);
 			$setup = $this->setIntegrationConfig($values);
 			$response = ['status' => $setup['status']];
-			$authMethod = $this->config->getAppValue(Application::APP_ID, 'authorization_method', '');
+			$authMethod = $this->appConfig->getValueString(Application::APP_ID, 'authorization_method', '');
 
 			if ($authMethod === Application::AUTH_METHOD_OIDC) {
 				return new DataResponse($response);
 			}
 
-			$oauthDbId = (int)$this->config->getAppValue(Application::APP_ID, 'nc_oauth_client_id', '');
+			$oauthDbId = (int)$this->appConfig->getValueString(Application::APP_ID, 'nc_oauth_client_id', '');
 			if ($oauthDbId) {
 				$response = \array_merge($response, $this->oauthService->getClientInfo($oauthDbId));
 			} else {
 				$response = \array_merge($response, $this->recreateOauthClientInformation());
-				$response['status'] = OpenProjectAPIService::isAdminConfigOk($this->config);
+				$response['status'] = OpenProjectAPIService::isAdminConfigOk($this->appConfig);
 			}
 
 			if ($setup['oPUserAppPassword']) {
@@ -723,9 +730,9 @@ class ConfigController extends Controller {
 	 */
 	private function recreateOauthClientInformation(): array {
 		$replaced = $this->deleteOauthClient();
-		$opUrl = $this->config->getAppValue(Application::APP_ID, 'openproject_instance_url', '');
+		$opUrl = $this->appConfig->getValueString(Application::APP_ID, 'openproject_instance_url', '');
 		$clientInfo = $this->oauthService->createNcOauthClient('OpenProject client', rtrim($opUrl, '/') .'/oauth_clients/%s/callback');
-		$this->config->setAppValue(Application::APP_ID, 'nc_oauth_client_id', $clientInfo['id']);
+		$this->appConfig->setValueString(Application::APP_ID, 'nc_oauth_client_id', $clientInfo['id']);
 		$this->openprojectAPIService->logToAuditLog(
 			Operation::OauthClientCreated,
 			$replaced

@@ -14,11 +14,13 @@ use OCA\OpenProject\AppInfo\Application;
 use OCA\OpenProject\Service\OpenProjectAPIService;
 use OCP\App\IAppManager;
 use OCP\AppFramework\Services\IInitialState;
+use OCP\Config\IUserConfig;
 use OCP\EventDispatcher\Event;
 use OCP\EventDispatcher\IEventListener;
-use OCP\IConfig;
+use OCP\IAppConfig;
 use OCP\IRequest;
 use OCP\IUserSession;
+use OCP\ServerVersion;
 use OCP\Util;
 
 /**
@@ -31,10 +33,13 @@ class LoadSidebarScript implements IEventListener {
 	 */
 	private $initialStateService;
 	/**
-	 * @var IConfig
+	 * @var IAppConfig
 	 */
-	private $config;
-
+	private $appConfig;
+	/**
+	 * @var IUserConfig
+	 */
+	private $userConfig;
 	/**
 	 * @var string "error"|"success"|""
 	 */
@@ -59,45 +64,54 @@ class LoadSidebarScript implements IEventListener {
 	 */
 	private $userId;
 
+	/**
+	 * @var ServerVersion
+	 */
+	private $serverVersion;
+
 	public function __construct(
 		IInitialState $initialStateService,
-		IConfig $config,
+		IAppConfig $appConfig,
+		IUserConfig $userConfig,
 		IUserSession $userSession,
 		IAppManager $appManager,
 		OpenProjectAPIService $openProjectAPIService,
-		?string $userId
+		?string $userId,
+		ServerVersion $serverVersion,
 	) {
 		$this->initialStateService = $initialStateService;
-		$this->config = $config;
+		$this->appConfig = $appConfig;
+		$this->userConfig = $userConfig;
 		$this->appManager = $appManager;
 		$this->userId = $userId;
+		$this->serverVersion = $serverVersion;
 		$user = $userSession->getUser();
 		$this->openProjectAPIService = $openProjectAPIService;
 		if (strpos(\OC::$server->get(IRequest::class)->getRequestUri(), 'files') !== false) {
-			$this->oauthConnectionResult = $this->config->getUserValue(
+			$this->oauthConnectionResult = $this->userConfig->getValueString(
 				$user->getUID(), Application::APP_ID, 'oauth_connection_result', ''
 			);
-			$this->config->deleteUserValue(
+			$this->userConfig->deleteUserConfig(
 				$user->getUID(), Application::APP_ID, 'oauth_connection_result'
 			);
-			$this->oauthConnectionErrorMessage = $this->config->getUserValue(
+			$this->oauthConnectionErrorMessage = $this->userConfig->getValueString(
 				$user->getUID(), Application::APP_ID, 'oauth_connection_error_message', ''
 			);
-			$this->config->deleteUserValue(
+			$this->userConfig->deleteUserConfig(
 				$user->getUID(), Application::APP_ID, 'oauth_connection_error_message'
 			);
 		}
 	}
 
 	public function handle(Event $event): void {
-		$authorizationMethod = $this->config->getAppValue(Application::APP_ID, 'authorization_method', '');
+		$authorizationMethod = $this->appConfig->getValueString(Application::APP_ID, 'authorization_method', '');
 		if (!($event instanceof LoadSidebar)) {
 			return;
 		}
 		if (!$this->appManager->isEnabledForUser(Application::APP_ID)) {
 			return;
 		}
-		$currentVersion = implode('.', Util::getVersion());
+		$currentVersion = implode('.', $this->serverVersion->getVersion());
 		//changed from nextcloud 24
 		if (version_compare($currentVersion, '24') >= 0) {
 			Util::addScript(Application::APP_ID, 'integration_openproject-projectTab', 'files');
@@ -108,10 +122,10 @@ class LoadSidebarScript implements IEventListener {
 
 		$this->initialStateService->provideInitialState('authorization_method', $authorizationMethod);
 		$this->initialStateService->provideInitialState(
-			'openproject-url', $this->config->getAppValue(Application::APP_ID, 'openproject_instance_url')
+			'openproject-url', $this->appConfig->getValueString(Application::APP_ID, 'openproject_instance_url')
 		);
 		$this->initialStateService->provideInitialState(
-			'admin_config_ok', OpenProjectAPIService::isAdminConfigOk($this->config)
+			'admin_config_ok', OpenProjectAPIService::isAdminConfigOk($this->appConfig)
 		);
 		// for 'oauth2' state to be loaded
 		$this->initialStateService->provideInitialState(

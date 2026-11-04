@@ -10,7 +10,7 @@ namespace OCA\OpenProject\Controller;
 use \OCP\AppFramework\ApiController;
 use DateTime;
 use InvalidArgumentException;
-use OC\Files\Filesystem;
+use OC\Files\FilenameValidator;
 use OC\Files\Node\Folder;
 use OC\ForbiddenException;
 use OC\User\NoUserException;
@@ -75,8 +75,12 @@ class DirectUploadController extends ApiController {
 	/**
 	 * @var IL10N
 	 */
-
 	private $l;
+
+	/**
+	 * @var FilenameValidator
+	 */
+	private FilenameValidator $filenameValidator;
 
 	public function __construct(
 		string $appName,
@@ -87,7 +91,8 @@ class DirectUploadController extends ApiController {
 		DirectUploadService $directUploadService,
 		DatabaseService $databaseService,
 		IL10N  $l,
-		?string $userId
+		?string $userId,
+		FilenameValidator $filenameValidator,
 	) {
 		parent::__construct($appName, $request, 'POST');
 		$this->userId = $userId;
@@ -98,6 +103,7 @@ class DirectUploadController extends ApiController {
 		$this->databaseService = $databaseService;
 		$this->userSession = $userSession;
 		$this->l = $l;
+		$this->filenameValidator = $filenameValidator;
 	}
 
 	/**
@@ -171,7 +177,7 @@ class DirectUploadController extends ApiController {
 				);
 			}
 			$tmpPath = $directUploadFile['tmp_name'];
-			if (Filesystem::isFileBlacklisted($fileName)) {
+			if ($this->filenameValidator->isForbidden($fileName)) {
 				throw new ForbiddenException('invalid file name');
 			}
 			$overwrite = $this->request->getParam('overwrite');

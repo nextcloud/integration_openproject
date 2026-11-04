@@ -12,15 +12,20 @@ use OCA\OpenProject\AppInfo\Application;
 use OCA\OpenProject\Service\OpenProjectAPIService;
 use OCP\AppFramework\Http\TemplateResponse;
 use OCP\AppFramework\Services\IInitialState;
-use OCP\IConfig;
+use OCP\Config\IUserConfig;
+use OCP\IAppConfig;
 use OCP\Settings\ISettings;
 
 class Personal implements ISettings {
 
 	/**
-	 * @var IConfig
+	 * @var IAppConfig
 	 */
-	private $config;
+	private $appConfig;
+	/**
+	 * @var IUserConfig
+	 */
+	private $userConfig;
 	/**
 	 * @var IInitialState
 	 */
@@ -37,12 +42,14 @@ class Personal implements ISettings {
 
 
 	public function __construct(
-		IConfig $config,
+		IAppConfig $appConfig,
+		IUserConfig $userConfig,
 		IInitialState $initialStateService,
 		OpenProjectAPIService $openProjectAPIService,
 		?string $userId,
 	) {
-		$this->config = $config;
+		$this->appConfig = $appConfig;
+		$this->userConfig = $userConfig;
 		$this->initialStateService = $initialStateService;
 		$this->userId = $userId;
 		$this->openProjectAPIService = $openProjectAPIService;
@@ -52,21 +59,21 @@ class Personal implements ISettings {
 	 * @return TemplateResponse
 	 */
 	public function getForm(): TemplateResponse {
-		$authorizationMethod = $this->config->getAppValue(Application::APP_ID, 'authorization_method', '');
+		$authorizationMethod = $this->appConfig->getValueString(Application::APP_ID, 'authorization_method', '');
 		$token = $this->openProjectAPIService->getAccessToken($this->userId);
-		$userName = $this->config->getUserValue($this->userId, Application::APP_ID, 'user_name');
+		$userName = $this->userConfig->getValueString($this->userId, Application::APP_ID, 'user_name');
 		// take the fallback value from the defaults
-		$searchEnabled = $this->config->getUserValue(
+		$searchEnabled = $this->userConfig->getValueString(
 			$this->userId,
 			Application::APP_ID,
 			'search_enabled',
-			$this->config->getAppValue(Application::APP_ID, 'default_enable_unified_search', '0')
+			$this->appConfig->getValueString(Application::APP_ID, 'default_enable_unified_search', '0')
 		);
-		$navigationEnabled = $this->config->getUserValue(
+		$navigationEnabled = $this->userConfig->getValueString(
 			$this->userId,
 			Application::APP_ID,
 			'navigation_enabled',
-			$this->config->getAppValue(Application::APP_ID, 'default_enable_navigation', '0')
+			$this->appConfig->getValueString(Application::APP_ID, 'default_enable_navigation', '0')
 		);
 
 		$userConfig = [
@@ -74,25 +81,25 @@ class Personal implements ISettings {
 			'search_enabled' => ($searchEnabled === '1'),
 			'navigation_enabled' => ($navigationEnabled === '1'),
 			'user_name' => $userName,
-			'admin_config_ok' => OpenProjectAPIService::isAdminConfigOk($this->config),
+			'admin_config_ok' => OpenProjectAPIService::isAdminConfigOk($this->appConfig),
 			'authorization_method' => $authorizationMethod,
 			'oidc_user' => $this->openProjectAPIService->isOIDCUser(),
 		];
 		$this->initialStateService->provideInitialState('user-config', $userConfig);
 
-		$oauthConnectionResult = $this->config->getUserValue(
+		$oauthConnectionResult = $this->userConfig->getValueString(
 			$this->userId, Application::APP_ID, 'oauth_connection_result'
 		);
-		$this->config->deleteUserValue(
+		$this->userConfig->deleteUserConfig(
 			$this->userId, Application::APP_ID, 'oauth_connection_result'
 		);
 		$this->initialStateService->provideInitialState(
 			'oauth-connection-result', $oauthConnectionResult
 		);
-		$oauthConnectionErrorMessage = $this->config->getUserValue(
+		$oauthConnectionErrorMessage = $this->userConfig->getValueString(
 			$this->userId, Application::APP_ID, 'oauth_connection_error_message', ''
 		);
-		$this->config->deleteUserValue(
+		$this->userConfig->deleteUserConfig(
 			$this->userId, Application::APP_ID, 'oauth_connection_error_message'
 		);
 		$this->initialStateService->provideInitialState(

@@ -12,32 +12,40 @@ use OCA\OpenProject\AppInfo\Application;
 use OCA\OpenProject\Service\OpenProjectAPIService;
 use OCP\App\IAppManager;
 use OCP\AppFramework\Services\IInitialState;
-use OCP\IConfig;
+use OCP\Config\IUserConfig;
+use OCP\IAppConfig;
 use OCP\IUserSession;
+use OCP\ServerVersion;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 
 class LoadSidebarScriptTest extends TestCase {
 	private LoadSidebarScript $listener;
-	private MockObject|IConfig $config;
+	private MockObject|IAppConfig $appConfig;
+	private MockObject|IUserConfig $userConfig;
 	private MockObject|IInitialState $initialState;
 	private MockObject|IAppManager $appManager;
 	private MockObject|OpenProjectAPIService $openProjectService;
+	private ServerVersion $serverVersion;
 
 	protected function setUp(): void {
 		parent::setUp();
-		$this->config = $this->createMock(IConfig::class);
+		$this->appConfig = $this->createMock(IAppConfig::class);
+		$this->userConfig = $this->createMock(IUserConfig::class);
 		$this->initialState = $this->createMock(IInitialState::class);
 		$userSession = $this->createMock(IUserSession::class);
 		$this->appManager = $this->createMock(IAppManager::class);
 		$this->openProjectService = $this->createMock(OpenProjectAPIService::class);
+		$this->serverVersion = new ServerVersion();
 		$this->listener = new LoadSidebarScript(
 			$this->initialState,
-			$this->config,
+			$this->appConfig,
+			$this->userConfig,
 			$userSession,
 			$this->appManager,
 			$this->openProjectService,
-			'testUser'
+			'testUser',
+			$this->serverVersion
 		);
 	}
 
@@ -70,12 +78,15 @@ class LoadSidebarScriptTest extends TestCase {
 	 * @return void
 	 */
 	public function testHandle(string $authMethod, string $openprojectUrl) {
-		$this->config
-			->method('getAppValue')
-			->willReturnMap([
-				[Application::APP_ID, 'authorization_method', '', $authMethod],
-				[Application::APP_ID, 'openproject_instance_url', '', $openprojectUrl],
-			]);
+		$values = [
+			'authorization_method' => $authMethod,
+			'openproject_instance_url' => $openprojectUrl,
+		];
+		$this->appConfig
+			->method('getValueString')
+			->willReturnCallback(
+				fn (string $app, string $key, string $default): string => $values[$key] ?? $default
+			);
 		$this->appManager
 			->method('isEnabledForUser')
 			->willReturn(true);

@@ -10,7 +10,8 @@ namespace OCA\OpenProject\Settings;
 use OCA\OpenProject\AppInfo\Application;
 use OCA\OpenProject\Service\OpenProjectAPIService;
 use OCP\AppFramework\Services\IInitialState;
-use OCP\IConfig;
+use OCP\Config\IUserConfig;
+use OCP\IAppConfig;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 
@@ -21,9 +22,14 @@ class PersonalTest extends TestCase {
 	private $setting;
 
 	/**
-	 * @var MockObject | IConfig
+	 * @var MockObject | IAppConfig
 	 */
-	private $config;
+	private $appConfig;
+
+	/**
+	 * @var MockObject | IUserConfig
+	 */
+	private $userConfig;
 
 	/**
 	 * @var MockObject | IInitialState
@@ -37,10 +43,11 @@ class PersonalTest extends TestCase {
 
 	protected function setUp(): void {
 		parent::setUp();
-		$this->config = $this->getMockBuilder(IConfig::class)->getMock();
+		$this->appConfig = $this->createMock(IAppConfig::class);
+		$this->userConfig = $this->createMock(IUserConfig::class);
 		$this->initialState = $this->getMockBuilder(IInitialState::class)->getMock();
 		$this->openProjectService = $this->getMockBuilder(OpenProjectAPIService::class)->disableOriginalConstructor()->getMock();
-		$this->setting = new Personal($this->config, $this->initialState, $this->openProjectService, "testUser");
+		$this->setting = new Personal($this->appConfig, $this->userConfig, $this->initialState, $this->openProjectService, "testUser");
 	}
 
 	/**
@@ -142,28 +149,36 @@ class PersonalTest extends TestCase {
 		$this->openProjectService
 			->method('isOIDCUser')
 			->willReturn($oidcUser);
-		$this->config
-			->method('getUserValue')
-			->willReturnMap([
-				['testUser', Application::APP_ID, 'user_name', '', $username],
-				['testUser', Application::APP_ID, 'search_enabled', $config['default_enable_unified_search'], $searchEnabled],
-				['testUser', Application::APP_ID, 'navigation_enabled', $config['default_enable_navigation'], $navigationEnabled],
-			]);
-		$this->config
-			->method('getAppValue')
-			->willReturnMap([
-				[Application::APP_ID, 'openproject_instance_url', '', $config['openproject_instance_url']],
-				[Application::APP_ID, 'authorization_method', '', $config['authentication_method']],
-				[Application::APP_ID, 'openproject_client_id', '', $config['openproject_client_id']],
-				[Application::APP_ID, 'openproject_client_secret', '', $config['openproject_client_secret']],
-				[Application::APP_ID, 'nc_oauth_client_id', '', $config['nc_oauth_client_id']],
-				[Application::APP_ID, 'sso_provider_type', '', $config['sso_provider_type']],
-				[Application::APP_ID, 'oidc_provider', '', $config['oidc_provider']],
-				[Application::APP_ID, 'token_exchange', '', $config['token_exchange']],
-				[Application::APP_ID, 'fresh_project_folder_setup', '', $config['fresh_project_folder_setup']],
-				[Application::APP_ID, 'default_enable_unified_search', '0', $config['default_enable_unified_search']],
-				[Application::APP_ID, 'default_enable_navigation', '0', $config['default_enable_navigation']],
-			]);
+
+		$userConfigValues = [
+			'user_name' => $username,
+			'search_enabled' => $searchEnabled,
+			'navigation_enabled' => $navigationEnabled,
+		];
+		$this->userConfig
+			->method('getValueString')
+			->willReturnCallback(
+				fn (string $userId, string $app, string $key, string $default = ''): string => $userConfigValues[$key] ?? $default
+			);
+
+		$appConfigValues = [
+			'openproject_instance_url' => $config['openproject_instance_url'],
+			'authorization_method' => $config['authentication_method'],
+			'openproject_client_id' => $config['openproject_client_id'],
+			'openproject_client_secret' => $config['openproject_client_secret'],
+			'nc_oauth_client_id' => $config['nc_oauth_client_id'],
+			'sso_provider_type' => $config['sso_provider_type'],
+			'oidc_provider' => $config['oidc_provider'],
+			'token_exchange' => $config['token_exchange'],
+			'fresh_project_folder_setup' => $config['fresh_project_folder_setup'],
+			'default_enable_unified_search' => $config['default_enable_unified_search'],
+			'default_enable_navigation' => $config['default_enable_navigation'],
+		];
+		$this->appConfig
+			->method('getValueString')
+			->willReturnCallback(
+				fn (string $app, string $key, string $default = ''): string => $appConfigValues[$key] ?? $default
+			);
 
 		$initStateCalls = [];
 		$this->initialState

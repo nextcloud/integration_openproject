@@ -11,21 +11,21 @@ use OCA\OpenProject\AppInfo\Application;
 use OCA\OpenProject\Service\OauthService;
 use OCA\OpenProject\Service\OpenProjectAPIService;
 use OCP\AppFramework\Services\IInitialState;
-use OCP\IConfig;
+use OCP\IAppConfig;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 
 class AdminTest extends TestCase {
 	private Admin $setting;
-	private MockObject|IConfig $config;
+	private MockObject|IAppConfig $appConfig;
 
 	protected function setUp(): void {
 		parent::setUp();
-		$this->config = $this->createMock(IConfig::class);
+		$this->appConfig = $this->createMock(IAppConfig::class);
 		$initialState = $this->createMock(IInitialState::class);
 		$oauthService = $this->createMock(OauthService::class);
 		$openProjectService = $this->createMock(OpenProjectAPIService::class);
-		$this->setting = new Admin($this->config, $oauthService, $openProjectService, $initialState);
+		$this->setting = new Admin($this->appConfig, $oauthService, $openProjectService, $initialState);
 	}
 
 	/**
@@ -91,18 +91,20 @@ class AdminTest extends TestCase {
 	public function testGetForm(array $config, bool $setupWithOauth): void {
 		$appValues = [];
 		foreach ($config as $key => $value) {
-			$appValues[] = [Application::APP_ID, $key, '', $value];
+			$appValues[$key] = $value;
 		}
-		$this->config
-			->method('getAppValue')
-			->willReturnMap($appValues);
+		$this->appConfig
+			->method('getValueString')
+			->willReturnCallback(
+				fn (string $app, string $key, string $default = ''): string => $appValues[$key] ?? $default
+			);
 
 		if (!$config['authorization_method'] && $setupWithOauth) {
-			$this->config->expects($this->once())
-				->method('setAppValue')
+			$this->appConfig->expects($this->once())
+				->method('setValueString')
 				->with(Application::APP_ID, 'authorization_method', Application::AUTH_METHOD_OAUTH);
 		} else {
-			$this->config->expects($this->never())->method('setAppValue');
+			$this->appConfig->expects($this->never())->method('setValueString');
 		}
 		$this->setting->getForm();
 	}

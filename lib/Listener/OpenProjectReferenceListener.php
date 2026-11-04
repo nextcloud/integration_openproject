@@ -14,7 +14,7 @@ use OCP\AppFramework\Services\IInitialState;
 use OCP\Collaboration\Reference\RenderReferenceEvent;
 use OCP\EventDispatcher\Event;
 use OCP\EventDispatcher\IEventListener;
-use OCP\IConfig;
+use OCP\IAppConfig;
 use OCP\Util;
 
 /**
@@ -28,9 +28,9 @@ class OpenProjectReferenceListener implements IEventListener {
 	private $initialStateService;
 
 	/**
-	 * @var IConfig
+	 * @var IAppConfig
 	 */
-	private $config;
+	private $appConfig;
 	/**
 	 * @var OpenProjectAPIService
 	 */
@@ -38,12 +38,12 @@ class OpenProjectReferenceListener implements IEventListener {
 
 	public function __construct(
 		IInitialState $initialStateService,
-		IConfig $config,
+		IAppConfig $appConfig,
 		OpenProjectAPIService $openProjectAPIService,
 		private ?string $userId,
 	) {
 		$this->initialStateService = $initialStateService;
-		$this->config = $config;
+		$this->appConfig = $appConfig;
 		$this->openProjectAPIService = $openProjectAPIService;
 	}
 	public function handle(Event $event): void {
@@ -51,7 +51,7 @@ class OpenProjectReferenceListener implements IEventListener {
 		// then we need to hide the oidc based connection for the user
 		// so this check is required
 		if (
-			$this->config->getAppValue(Application::APP_ID, 'authorization_method', '') === Application::AUTH_METHOD_OIDC &&
+			$this->appConfig->getValueString(Application::APP_ID, 'authorization_method', '') === Application::AUTH_METHOD_OIDC &&
 			!$this->openProjectAPIService->getAccessToken($this->userId)
 		) {
 			return;
@@ -61,16 +61,16 @@ class OpenProjectReferenceListener implements IEventListener {
 		}
 		Util::addScript(Application::APP_ID, Application::APP_ID . '-reference');
 		$adminConfig = [
-			'isAdminConfigOk' => OpenProjectAPIService::isAdminConfigOk($this->config),
-			'authMethod' => $this->config->getAppValue(Application::APP_ID, 'authorization_method', '')
+			'isAdminConfigOk' => OpenProjectAPIService::isAdminConfigOk($this->appConfig),
+			'authMethod' => $this->appConfig->getValueString(Application::APP_ID, 'authorization_method', '')
 		];
 		$this->initialStateService->provideInitialState(
-			'admin-config',
+			'admin-appConfig',
 			$adminConfig
 		);
 		$this->initialStateService->provideInitialState(
 			'openproject-url',
-			$this->config->getAppValue(Application::APP_ID, 'openproject_instance_url')
+			$this->appConfig->getValueString(Application::APP_ID, 'openproject_instance_url')
 		);
 	}
 }
