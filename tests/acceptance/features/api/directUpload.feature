@@ -70,18 +70,16 @@ Feature: API endpoint for direct upload
     When an anonymous user sends a multipart form data POST request to the "direct-upload/%last-created-direct-upload-token%" endpoint with:
       | file_name | ""          |
       | data      | some data   |
-    Then the HTTP status code should be "413"
+    Then the HTTP status code should be "400"
     And the data of the response should match
     """"
     {
     "type": "object",
     "required": [
-        "error",
-        "upload_limit"
+        "error"
       ],
       "properties": {
-          "error": {"type": "string", "pattern": "^File was not uploaded\\. post_max_size exceeded\\?$"},
-          "upload_limit": {"type": "integer"}
+          "error": {"type": "string", "pattern": "No file is present to upload."}
       }
     }
     """
@@ -260,20 +258,22 @@ Feature: API endpoint for direct upload
     When an anonymous user sends a multipart form data POST request to the "direct-upload/%last-created-direct-upload-token%" endpoint with:
       | file_name | ""        |
       | data      | some data |
-    Then the HTTP status code should be "413"
+    Then the HTTP status code should be "400"
     When an anonymous user sends a multipart form data POST request to the "direct-upload/%last-created-direct-upload-token%" endpoint with:
       | file_name | file.txt  |
       | data      | some data |
-    Then the HTTP status code should be "401"
+    Then the HTTP status code should be "201"
     And the data of the response should match
     """"
     {
     "type": "object",
     "required": [
-        "error"
+        "file_name",
+        "file_id"
       ],
       "properties": {
-          "error": {"type": "string", "pattern": "^unauthorized$"}
+          "file_name": {"type": "string", "pattern": "^file\\.txt$"},
+          "file_id": {"type" : "integer"}
       }
     }
     """

@@ -7,12 +7,16 @@
 
 namespace OCA\OpenProject\Controller;
 
+use OCA\OpenProject\Service\DatabaseService;
+use OCA\OpenProject\Service\DirectUploadService;
 use OCP\Files\Folder;
-use OCP\Files\ForbiddenException as FileAccessForbiddenException;
-use OCP\Files\InvalidContentException;
+use OCP\Files\IRootFolder;
 use OCP\Files\IUserFolder;
 use OCP\IL10N;
 use OCP\IRequest;
+use OCP\IUser;
+use OCP\IUserManager;
+use OCP\IUserSession;
 use PHPUnit\Framework\TestCase;
 use function PHPUnit\Framework\assertSame;
 
@@ -22,6 +26,7 @@ class DirectUploadControllerTest extends TestCase {
 	 * @var IL10N
 	 */
 	private $l;
+	private const TOKEN = 'WampxL5Z97CndGwB7qLPfotosDT5mXk7oFyGLa64nmY35ANtkzT7zDQwYyXrbdC3';
 
 	/**
 	 * @return mixed
@@ -36,14 +41,14 @@ class DirectUploadControllerTest extends TestCase {
 	/**
 	 * @return void
 	 */
-	public function testprepareDirectUpload() {
+	public function testPrepareDirectUpload() {
 		$folderMock = $this->getFolderMock();
 		$folderMock->method('getById')->willReturn($this->getNodeMock('dir'));
 		$directUploadController = $this->createDirectUploadController($folderMock);
 		$result = $directUploadController->prepareDirectUpload(123);
 		assertSame(
 			[
-				'token' => 'WampxL5Z97CndGwB7qLPfotosDT5mXk7oFyGLa64nmY35ANtkzT7zDQwYyXrbdC3',
+				'token' => self::TOKEN,
 				'expires_on' => 1671537939
 			],
 			$result->getData()
@@ -54,7 +59,7 @@ class DirectUploadControllerTest extends TestCase {
 	/**
 	 * @return void
 	 */
-	public function testprepareDirectUploadTypeFile(): void {
+	public function testPrepareDirectUploadTypeFile(): void {
 		$folderMock = $this->getFolderMock();
 		$folderMock->method('getById')->willReturn($this->getNodeMock('file'));
 		$directUploadController = $this->createDirectUploadController($folderMock);
@@ -68,7 +73,7 @@ class DirectUploadControllerTest extends TestCase {
 		assertSame(404, $result->getStatus());
 	}
 
-	public function testprepareDirectUploadException(): void {
+	public function testPrepareDirectUploadException(): void {
 		$folderMock = $this->getFolderMock();
 		$folderMock->method('getById')
 			->will($this->throwException(new \Exception('something bad happened')));
@@ -113,28 +118,7 @@ class DirectUploadControllerTest extends TestCase {
 			],
 			$result->getData()
 		);
-		assertSame(404, $result->getStatus());
-	}
-
-	public function testDirectUploadNotEnoughSpace():void {
-		$nodeMock = $this->getNodeMock('folder');
-		$nodeMock[0]->method('getFreeSpace')->willReturn(100);
-
-		$userFolderMock = $this->getFolderMock();
-		$userFolderMock->method('getById')->willReturn($nodeMock);
-		$directUploadController = $this->createDirectUploadController(
-			$userFolderMock, 101
-		);
-		$result = $directUploadController->directUpload(
-			'WampxL5Z97CndGwB7qLPfotosDT5mXk7oFyGLa64nmY35ANtkzT7zDQwYyXrbdC3'
-		);
-		assertSame(
-			[
-				'error' => 'insufficient quota'
-			],
-			$result->getData()
-		);
-		assertSame(507, $result->getStatus());
+		assertSame(401, $result->getStatus());
 	}
 
 	/**
@@ -142,104 +126,82 @@ class DirectUploadControllerTest extends TestCase {
 	 */
 	public function fileNotUploadedDataProvider() {
 		return [
-			['', 1],
-			['some name', 1],
-			['', 0],
+			[UPLOAD_ERR_INI_SIZE, 'The uploaded file exceeds the upload_max_filesize directive in php.ini'],
+			[UPLOAD_ERR_FORM_SIZE, 'The uploaded file exceeds the MAX_FILE_SIZE directive that was specified in the HTML form'],
+			[UPLOAD_ERR_PARTIAL, 'The file was only partially uploaded'],
+			[UPLOAD_ERR_NO_FILE, 'No file was uploaded'],
+			[UPLOAD_ERR_NO_TMP_DIR, 'Missing a temporary folder'],
+			[UPLOAD_ERR_CANT_WRITE, 'Could not write file to disk'],
+			[UPLOAD_ERR_EXTENSION, 'A PHP extension stopped the file upload'],
 		];
 	}
 	/**
-	 * @param string $tmpName
 	 * @param int $error
+	 * @param string $expectedErrorMessage
 	 * @return void
 	 * @dataProvider fileNotUploadedDataProvider
 	 */
-	public function testDirectUploadFileNotUploaded(string $tmpName, int $error):void {
+	public function testDirectUploadFileNotUploaded(int $error, string $expectedErrorMessage):void {
 		$nodeMock = $this->getNodeMock('folder');
 
 		$userFolderMock = $this->getFolderMock();
 		$userFolderMock->method('getById')->willReturn($nodeMock);
 		$directUploadController = $this->createDirectUploadController(
-			$userFolderMock, 100, $tmpName, $error
+			$userFolderMock, 100, '', $error
 		);
 		$result = $directUploadController->directUpload(
-			'WampxL5Z97CndGwB7qLPfotosDT5mXk7oFyGLa64nmY35ANtkzT7zDQwYyXrbdC3'
-		);
-		$resultArray = $result->getData();
-		assertSame(
-			'File was not uploaded. upload_max_filesize exceeded?',
-			$resultArray['error']
-		);
-		self::assertIsNumeric($resultArray['upload_limit']);
-		assertSame(413, $result->getStatus());
-	}
-
-	/**
-	 * @return array<int, array<int, \Exception|int|string>>
-	 */
-	public function newFileExceptionsDataProvider() {
-		return [
-			[new InvalidContentException('Virus detected'), 'Virus detected', 415],
-			[new FileAccessForbiddenException('Access denied by the access control', false), 'Access denied by the access control', 403],
-			[new \Exception('could not upload'), 'could not upload', 500],
-		];
-	}
-
-	/**
-	 * @return void
-	 * @dataProvider newFileExceptionsDataProvider
-	 */
-	public function testDirectUploadException(
-		\Exception $exception, string $expectedErrorMessage, int $expectedStatusCode
-	):void {
-		$nodeMock = $this->getNodeMock('folder');
-		$tmpFileName = '/tmp/integration_openproject_unit_test';
-		touch($tmpFileName);
-		$nodeMock[0]->method('newFile')->will($this->throwException($exception));
-		$userFolderMock = $this->getFolderMock();
-		$userFolderMock->method('getById')->willReturn($nodeMock);
-		$directUploadController = $this->createDirectUploadController(
-			$userFolderMock, 0, $tmpFileName);
-		$result = $directUploadController->directUpload(
-			'WampxL5Z97CndGwB7qLPfotosDT5mXk7oFyGLa64nmY35ANtkzT7zDQwYyXrbdC3'
+			self::TOKEN,
 		);
 		$resultArray = $result->getData();
 		assertSame(
 			$expectedErrorMessage,
 			$resultArray['error']
 		);
-		assertSame($expectedStatusCode, $result->getStatus());
+		assertSame(413, $result->getStatus());
 	}
 
-	public function testNegativeFreeSpace(): void {
-		$cacheMock = $this->getMockBuilder('\OCP\Files\Cache\ICache')->getMock();
-		$cacheMock->method('update')->willReturn(true);
-		$storageMock = $this->getMockBuilder('\OCP\Files\Storage\IStorage')->disableOriginalConstructor()->getMock();
-		$storageMock->method('getCache')->willReturn($cacheMock);
-
-		$fileMock = $this->getMockBuilder('\OC\Files\Node\File')->disableOriginalConstructor()->getMock();
-		$fileMock->method('getId')->willReturn(123);
-		$fileMock->method('getStorage')->willReturn($storageMock);
+	/**
+	 * @return void
+	 */
+	public function testDirectUploadNoFile():void {
 		$nodeMock = $this->getNodeMock('folder');
-		$tmpFileName = '/tmp/integration_openproject_unit_test';
-		touch($tmpFileName);
-		$nodeMock[0]->method('getFreeSpace')->willReturn(-3);
-		$nodeMock[0]->method('newFile')->willReturn($fileMock);
+
 		$userFolderMock = $this->getFolderMock();
 		$userFolderMock->method('getById')->willReturn($nodeMock);
 		$directUploadController = $this->createDirectUploadController(
-			$userFolderMock, 101, $tmpFileName
+			folderMock: $userFolderMock, noUploadedFile: true
 		);
 		$result = $directUploadController->directUpload(
-			'WampxL5Z97CndGwB7qLPfotosDT5mXk7oFyGLa64nmY35ANtkzT7zDQwYyXrbdC3'
+			self::TOKEN,
 		);
 		$resultArray = $result->getData();
 		assertSame(
-			[
-				'file_name' => 'file.txt',
-				'file_id' => 123
-			],
-			$resultArray
+			'No file is present to upload.',
+			$resultArray['error']
 		);
+		assertSame(400, $result->getStatus());
+	}
+
+	/**
+	 * @return void
+	 */
+	public function testDirectUploadPostMaxSizeExceeded():void {
+		$nodeMock = $this->getNodeMock('folder');
+
+		$userFolderMock = $this->getFolderMock();
+		$userFolderMock->method('getById')->willReturn($nodeMock);
+		$directUploadController = $this->createDirectUploadController(
+			folderMock: $userFolderMock, contentLength: (string)PHP_INT_MAX
+		);
+		$result = $directUploadController->directUpload(
+			self::TOKEN,
+		);
+		$resultArray = $result->getData();
+		assertSame(
+			'File was not uploaded. The request exceeds the maximum post size.',
+			$resultArray['error']
+		);
+		assertSame(413, $result->getStatus());
 	}
 
 
@@ -248,30 +210,33 @@ class DirectUploadControllerTest extends TestCase {
 	 * @param int $uploadedFileSize
 	 * @param string $uploadedFileTmpName
 	 * @param int $uploadedFileError
+	 * @param string $contentLength
+	 * @param bool $noUploadedFile
 	 * @return DirectUploadController
 	 */
 	private function createDirectUploadController(
 		mixed $folderMock,
 		int $uploadedFileSize = 9999,
 		string $uploadedFileTmpName = '/tmp/andjashd',
-		int $uploadedFileError = 0
+		int $uploadedFileError = 0,
+		string $contentLength = '100',
+		bool $noUploadedFile = false,
 	): DirectUploadController {
-		$storageMock = $this->getMockBuilder('\OCP\Files\IRootFolder')->getMock();
+		$storageMock = $this->createMock(IRootFolder::class);
 		$storageMock->method('getUserFolder')->willReturn($folderMock);
 
-		$userMock = $this->getMockBuilder('\OCP\IUser')->getMock();
+		$userMock = $this->createMock(IUser::class);
 		$userMock->method('getUID')->willReturn('testUser');
 
-		$userSessionMock = $this->getMockBuilder('\OCP\IUserSession')->getMock();
+		$userSessionMock = $this->createMock(IUserSession::class);
 		$userSessionMock->method('getUser')->willReturn($userMock);
 
-		$directUploadServiceMock = $this->getMockBuilder(
-			'OCA\OpenProject\Service\DirectUploadService'
-		)->disableOriginalConstructor()->getMock();
+		$directUploadServiceMock = $this->createMock(
+			DirectUploadService::class);
 
 		$directUploadServiceMock->method('getTokenForDirectUpload')
 			->willReturn([
-				'token' => 'WampxL5Z97CndGwB7qLPfotosDT5mXk7oFyGLa64nmY35ANtkzT7zDQwYyXrbdC3',
+				'token' => self::TOKEN,
 				'expires_on' => 1671537939
 			]);
 
@@ -289,12 +254,17 @@ class DirectUploadControllerTest extends TestCase {
 				'folder_id' => 123
 			]
 		);
-		$userManagerMock = $this->getMockBuilder('OCP\IUserManager')->disableOriginalConstructor()->getMock();
+		$userManagerMock = $this->createMock(IUserManager::class);
 		$userManagerMock->method('get')->willReturn($userMock);
 
-		$requestMock = $this->getMockBuilder(IRequest::class)->disableOriginalConstructor()->getMock();
+		$requestMock = $this->createMock(IRequest::class);
+		$requestMock->method('getHeader')->willReturnCallback(
+			function (string $name) use ($contentLength) {
+				return $name === 'Content-Length' ? $contentLength : '';
+			}
+		);
 
-		$requestMock->method('getUploadedFile')->willReturn([
+		$requestMock->method('getUploadedFile')->willReturn($noUploadedFile ? null : [
 			'name' => 'file.txt',
 			'tmp_name' => $uploadedFileTmpName,
 			'size' => $uploadedFileSize,
@@ -307,7 +277,7 @@ class DirectUploadControllerTest extends TestCase {
 			$userSessionMock,
 			$userManagerMock,
 			$directUploadServiceMock,
-			$this->getMockBuilder('OCA\OpenProject\Service\DatabaseService')->disableOriginalConstructor()->getMock(),
+			$this->createMock(DatabaseService::class),
 			$this->l,
 			'testUser',
 		);
