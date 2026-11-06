@@ -19,6 +19,7 @@ use OCA\OpenProject\Service\OpenProjectAPIService;
 use OCA\OpenProject\Service\SettingsService;
 use OCP\AppFramework\Http;
 use OCP\DB\Exception;
+use OCP\EventDispatcher\IEventDispatcher;
 use OCP\Group\ISubAdmin;
 use OCP\IConfig;
 use OCP\IGroup;
@@ -142,10 +143,14 @@ class ConfigControllerTest extends TestCase {
 		AccessTokenMapper $accessTokenMapper = null,
 	): ClientService {
 		if ($clientMapper === null) {
+			$client = new Client();
+			$property = new \ReflectionProperty(Client::class, 'name');
+			$property->setValue($client, 'OpenProject client');
 			$clientMapper = $this->createMock(ClientMapper::class);
-			$clientMapper->method('getByUid')->willReturn(new Client());
+			$clientMapper->method('getByUid')->willReturn($client);
 		}
-		return new ClientService(
+
+		$args = [
 			$this->createMock(ISecureRandom::class),
 			$this->createMock(ICrypto::class),
 			$clientMapper,
@@ -153,7 +158,13 @@ class ConfigControllerTest extends TestCase {
 			$this->createMock(IProvider::class),
 			$this->createMock(LoggerInterface::class),
 			$accessTokenMapper ?? $this->createMock(AccessTokenMapper::class),
-		);
+			$this->createMock(IEventDispatcher::class),
+		];
+
+		$reflectionClass = new \ReflectionClass(ClientService::class);
+		$numberOfParams = $reflectionClass->getConstructor()->getNumberOfParameters();
+		/** @var ClientService */
+		return $reflectionClass->newInstanceArgs(array_slice($args, 0, $numberOfParams));
 	}
 
 	/**
@@ -842,8 +853,11 @@ class ConfigControllerTest extends TestCase {
 					->expects($this->never())
 					->method('setClientRedirectUri');
 
+				$client = new Client();
+				$property = new \ReflectionProperty(Client::class, 'name');
+				$property->setValue($client, 'OpenProject client');
 				$clientMapperMock = $this->createMock(ClientMapper::class);
-				$clientMapperMock->expects($this->once())->method('getByUid')->willReturn(new Client());
+				$clientMapperMock->expects($this->once())->method('getByUid')->willReturn($client);
 				$clientMapperMock->expects($this->once())->method('delete');
 				$accessTokenMapperMock = $this->createMock(AccessTokenMapper::class);
 				$accessTokenMapperMock->expects($this->once())->method('deleteByClientId');
@@ -1268,8 +1282,11 @@ class ConfigControllerTest extends TestCase {
 				[$this->user1->getUID(), 'integration_openproject', 'token_expires_at', null],
 			]);
 
+		$client = new Client();
+		$property = new \ReflectionProperty(Client::class, 'name');
+		$property->setValue($client, 'OpenProject client');
 		$clientMapperMock = $this->createMock(ClientMapper::class);
-		$clientMapperMock->expects($this->once())->method('getByUid')->willReturn(new Client());
+		$clientMapperMock->expects($this->once())->method('getByUid')->willReturn($client);
 		$clientMapperMock->expects($this->once())->method('delete');
 		$accessTokenMapperMock = $this->createMock(AccessTokenMapper::class);
 		$accessTokenMapperMock->expects($this->once())->method('deleteByClientId');
