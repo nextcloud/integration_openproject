@@ -19,6 +19,7 @@ use OCA\OpenProject\Service\OpenProjectAPIService;
 use OCA\OpenProject\Service\SettingsService;
 use OCP\AppFramework\Http;
 use OCP\DB\Exception;
+use OCP\EventDispatcher\IEventDispatcher;
 use OCP\Group\ISubAdmin;
 use OCP\IConfig;
 use OCP\IGroup;
@@ -131,6 +132,43 @@ class ConfigControllerTest extends TestCase {
 	}
 
 	/**
+	 * @param int $clientDbId
+	 *
+	 * @return Client
+	 */
+	protected function getClient(int $clientDbId): Client {
+		$client = new Client();
+		$name = 'Test Client';
+		$redirectUri = 'https://example.com/callback';
+		$clientId = 'randomString';
+		$clientSecret = 'randomString';
+
+		$this->setClientProperty($client, 'id', $clientDbId);
+		$this->setClientProperty($client, 'name', $name);
+		$this->setClientProperty($client, 'redirectUri', $redirectUri);
+		$this->setClientProperty($client, 'clientIdentifier', $clientId);
+		$this->setClientProperty($client, 'secret', $clientSecret);
+		return $client;
+	}
+
+	/**
+	 * @param Client $client
+	 * @param string $property
+	 * @param string|int $value
+	 *
+	 * @return Client
+	 */
+	protected function setClientProperty(Client $client, string $property, string|int $value): Client {
+		$fn = 'set' . ucfirst($property);
+		if (\method_exists(Client::class, 'addType')) {
+			$client->$fn($value);
+		} else {
+			$client->{$property} = $value;
+		}
+		return $client;
+	}
+
+	/**
 	 * @param ClientMapper|null $clientMapper
 	 * @param IUserManager|null $userManager
 	 * @param AccessTokenMapper|null $accessTokenMapper
@@ -143,9 +181,10 @@ class ConfigControllerTest extends TestCase {
 	): ClientService {
 		if ($clientMapper === null) {
 			$clientMapper = $this->createMock(ClientMapper::class);
-			$clientMapper->method('getByUid')->willReturn(new Client());
+			$clientMapper->method('getByUid')->willReturn($this->getClient(1));
 		}
-		return new ClientService(
+
+		$args = [
 			$this->createMock(ISecureRandom::class),
 			$this->createMock(ICrypto::class),
 			$clientMapper,
@@ -153,7 +192,13 @@ class ConfigControllerTest extends TestCase {
 			$this->createMock(IProvider::class),
 			$this->createMock(LoggerInterface::class),
 			$accessTokenMapper ?? $this->createMock(AccessTokenMapper::class),
-		);
+			$this->createMock(IEventDispatcher::class),
+		];
+
+		$reflectionClass = new \ReflectionClass(ClientService::class);
+		$numberOfParams = $reflectionClass->getConstructor()->getNumberOfParameters();
+		// use constructor arguments based on the number of parameters accepted by the constructor
+		return $reflectionClass->newInstanceArgs(array_slice($args, 0, $numberOfParams));
 	}
 
 	/**
@@ -843,7 +888,7 @@ class ConfigControllerTest extends TestCase {
 					->method('setClientRedirectUri');
 
 				$clientMapperMock = $this->createMock(ClientMapper::class);
-				$clientMapperMock->expects($this->once())->method('getByUid')->willReturn(new Client());
+				$clientMapperMock->expects($this->once())->method('getByUid')->willReturn($this->getClient(1));
 				$clientMapperMock->expects($this->once())->method('delete');
 				$accessTokenMapperMock = $this->createMock(AccessTokenMapper::class);
 				$accessTokenMapperMock->expects($this->once())->method('deleteByClientId');
@@ -1269,7 +1314,7 @@ class ConfigControllerTest extends TestCase {
 			]);
 
 		$clientMapperMock = $this->createMock(ClientMapper::class);
-		$clientMapperMock->expects($this->once())->method('getByUid')->willReturn(new Client());
+		$clientMapperMock->expects($this->once())->method('getByUid')->willReturn($this->getClient(1));
 		$clientMapperMock->expects($this->once())->method('delete');
 		$accessTokenMapperMock = $this->createMock(AccessTokenMapper::class);
 		$accessTokenMapperMock->expects($this->once())->method('deleteByClientId');
