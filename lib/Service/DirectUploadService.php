@@ -8,12 +8,26 @@
 namespace OCA\OpenProject\Service;
 
 use DateTime;
+use OC\Files\Node\Folder;
+use OC\ForbiddenException;
 use OCA\OpenProject\Exception\OpenprojectUnauthorizedUserException;
 use OCP\DB\Exception;
+use OCP\Files\File;
+use OCP\Files\FileInfo;
+use OCP\Files\IRootFolder;
+use OCP\Files\NotEnoughSpaceException;
 use OCP\Files\NotFoundException;
 use OCP\IL10N;
 use OCP\IUserManager;
+use OCP\IUserSession;
 use OCP\Security\ISecureRandom;
+use Sabre\DAV\Exception\Conflict;
+
+enum FileUploadAction: string {
+	case Replace = 'replace';
+	case KeepBoth = 'keep_both';
+	case Upload = 'upload';
+}
 
 class DirectUploadService {
 
@@ -41,10 +55,12 @@ class DirectUploadService {
 	private string $expiryTime = '+1 hour';
 
 	public function __construct(
-		IUserManager $userManager,
-		IL10N $l,
-		ISecureRandom $secureRandom,
-		DatabaseService $databaseService
+		IUserManager    $userManager,
+		IL10N           $l,
+		ISecureRandom   $secureRandom,
+		DatabaseService $databaseService,
+		private readonly IUserSession $userSession,
+		private readonly IRootFolder $rootFolder,
 	) {
 		$this->l = $l;
 		$this->userManager = $userManager;
@@ -99,5 +115,105 @@ class DirectUploadService {
 			throw new NotFoundException('invalid token');
 		}
 		return $tokenInfo;
+	}
+
+	/**
+	 *
+	 * uploads a file
+	 *
+	 * @param mixed $folderNode
+	 * @param string $fileName
+	 * @param string $tmpPath
+	 *
+	 * @return array{file_id: int, file_name: string, overwrite: bool}
+	 */
+	private function uploadFile(mixed $folderNode, string $fileName, string $tmpPath) : array {
+		$fileInfo = $folderNode->newFile($fileName, fopen($tmpPath, 'r'));
+		$fileId = $fileInfo->getId();
+		// setting the creation time for the uploaded file
+		$creationTime = (new DateTime())->getTimestamp();
+		$fileInfo->getStorage()->getCache()->update($fileId, [
+			'creation_time' => $creationTime
+		]);
+		return [
+			'file_id' => $fileId,
+			'file_name' => $fileName,
+			'overwrite' => false,
+		];
+	}
+
+	/**
+	 *
+	 * handles uploading a file
+	 *
+	 * @param string $token
+	 * @param mixed $directUploadFile
+	 * @param FileUploadAction $fileUploadAction
+	 *
+	 * @return array{file_id: int, file_name: string, overwrite: bool}
+	 *
+	 * @throws NotFoundException
+	 * @throws ForbiddenException
+	 * @throws NotEnoughSpaceException
+	 * @throws Conflict
+	 */
+	public function handleFileUpload(string $token, mixed $directUploadFile, FileUploadAction $fileUploadAction) : array {
+		$tokenInfo = $this->getTokenInfo($token);
+		$user = $this->userManager->get($tokenInfo['user_id']);
+		$this->userSession->setUser($user);
+		$userFolder = $this->rootFolder->getUserFolder($user->getUID());
+		$nodes = $userFolder->getById($tokenInfo['folder_id']);
+		if (empty($nodes)) {
+			throw new NotFoundException('folder not found or not enough permissions');
+		}
+		/**
+		 * @var Folder $folderNode
+		 */
+		$folderNode = array_shift($nodes);
+		if (!$folderNode->isCreatable() && $fileUploadAction != FileUploadAction::Replace) {
+			throw new ForbiddenException('not enough permissions');
+		}
+		$freeSpace = $folderNode->getFreeSpace();
+
+		// this is also true if we try to overwrite
+		// to overwrite a file we need enough free quota for the new data
+		// otherwise `putContent()` fails,
+		// if freeSpace is smaller than 0 then treat it as a unlimited space
+		// and don't throw an error
+		if ($directUploadFile['size'] > $freeSpace && $freeSpace >= 0) {
+			throw new NotEnoughSpaceException('insufficient quota');
+		}
+		$fileName = trim($directUploadFile['name']);
+		$tmpPath = $directUploadFile['tmp_name'];
+
+		if ($folderNode->nodeExists($fileName) && $fileUploadAction === FileUploadAction::Upload) {
+			throw new Conflict('conflict, file name already exists');
+		}
+
+		if ($folderNode->nodeExists($fileName)) {
+			if ($fileUploadAction === FileUploadAction::Replace) {
+				/**
+				 * @var File $file
+				 */
+				$file = $folderNode->get($fileName);
+				if ($file->getType() === FileInfo::TYPE_FOLDER) {
+					throw new Conflict('overwrite is not allowed on non-files');
+				}
+				if (!$file->isUpdateable()) {
+					throw new ForbiddenException('not enough permissions');
+				}
+				// overwrite the file
+				$file->putContent(fopen($tmpPath, 'r'));
+				return [
+					'file_id' => $file->getId(),
+					'file_name' => $fileName,
+					'overwrite' => true,
+				];
+			} elseif ($fileUploadAction === FileUploadAction::KeepBoth) {
+				$fileName = $folderNode->getNonExistingName($fileName);
+			}
+		}
+
+		return $this->uploadFile($folderNode, $fileName, $tmpPath);
 	}
 }
