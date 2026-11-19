@@ -146,7 +146,7 @@ jobs:
         uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8
         with:
           repository: nextcloud/activity
-          ref: ${{ matrix.nextcloudVersion }}
+          ref: ${{ matrix.nextcloudVersion == 'master' && 'main' || matrix.nextcloudVersion }}
           path: activity
 
       - name: Checkout (groupfolders)
