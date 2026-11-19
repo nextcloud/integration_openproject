@@ -130,7 +130,7 @@ realm_status=$(
 if [[ "$realm_status" -ne 201 && "$realm_status" -ne 409 ]]; then
     echo "[ERROR] Failed to create realm '$KC_REALM_NAME', status code: $realm_status"
     exit 1
-elif [[ "$realm_status" -ne 409 ]]; then
+elif [[ "$realm_status" -eq 409 ]]; then
     echo "[INFO] Realm '$KC_REALM_NAME' exists, skipping creation..."
 else
     echo "[INFO] Realm '$KC_REALM_NAME' created successfully"
@@ -169,7 +169,7 @@ function add_client_scope() {
     if [[ "$response_status" -ne 201 && "$response_status" -ne 409 ]]; then
         echo "[ERROR] Failed to create client scope '$scope_name', status code: $response_status"
         exit 1
-    elif [[ "$response_status" -ne 409 ]]; then
+    elif [[ "$response_status" -eq 409 ]]; then
         echo "[INFO] Client scope '$scope_name' exists, skipping creation..."
     else
         echo "[INFO] Client scope '$scope_name' created successfully"
