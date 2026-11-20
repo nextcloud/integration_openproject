@@ -112,9 +112,6 @@ class DirectDownloadServiceTest extends TestCase {
 			->expects($this->once())
 			->method('executeQuery')
 			->willReturn($resultMock);
-		$queryBuilderMock
-			->expects($this->once())
-			->method('resetQueryParts');
 
 		$dbMock = $this->createMock(IDBConnection::class);
 		$dbMock->method('getQueryBuilder')
