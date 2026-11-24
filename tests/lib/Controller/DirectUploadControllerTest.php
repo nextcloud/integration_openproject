@@ -7,6 +7,7 @@
 
 namespace OCA\OpenProject\Controller;
 
+use OC\Files\FilenameValidator;
 use OCA\OpenProject\Service\DatabaseService;
 use OCA\OpenProject\Service\DirectUploadService;
 use OCP\Files\Folder;
@@ -270,6 +271,8 @@ class DirectUploadControllerTest extends TestCase {
 			'size' => $uploadedFileSize,
 			'error' => $uploadedFileError
 		]);
+		$filenameValidatorMock = $this->createMock(FilenameValidator::class);
+
 		return new DirectUploadController(
 			'integration_openproject',
 			$requestMock,
@@ -280,6 +283,7 @@ class DirectUploadControllerTest extends TestCase {
 			$this->createMock(DatabaseService::class),
 			$this->l,
 			'testUser',
+			$filenameValidatorMock
 		);
 	}
 

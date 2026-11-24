@@ -9,13 +9,13 @@ declare(strict_types=1);
 
 namespace OCA\OpenProject\Listener;
 
-use OC_User;
 use OCA\OpenProject\AppInfo\Application;
 use OCA\OpenProject\Service\OpenProjectAPIService;
 use OCP\EventDispatcher\Event;
 use OCP\EventDispatcher\IEventListener;
 use OCP\Files\Events\Node\BeforeNodeDeletedEvent;
 use OCP\Files\Events\Node\BeforeNodeRenamedEvent;
+use OCP\HintException;
 use OCP\IGroupManager;
 use OCP\IUserSession;
 
@@ -59,7 +59,14 @@ class BeforeNodeInsideOpenProjectGroupfilderChangedListener implements IEventLis
 		$currentUser = $this->userSession->getUser();
 		// we do not listen event where user is not logged or there is no user session (e.g. public link )
 		// or if it's some background job in which case user will be null
-		if (OC_User::isIncognitoMode() || $currentUser === null) {
+		if (method_exists(IUserSession::class, 'isIncognitoMode')) {
+			$isIncognitoMode = $this->userSession->isIncognitoMode();
+		} else {
+			// deprecated since 36.0.0
+			/** @psalm-suppress DeprecatedClass, DeprecatedMethod */
+			$isIncognitoMode = \OC_User::isIncognitoMode();
+		}
+		if ($isIncognitoMode || $currentUser === null) {
 			return;
 		}
 		$currentUserId = $currentUser->getUID();
@@ -69,12 +76,7 @@ class BeforeNodeInsideOpenProjectGroupfilderChangedListener implements IEventLis
 			$currentUserId !== Application::OPEN_PROJECT_ENTITIES_NAME &&
 			$this->groupManager->isInGroup($currentUserId, Application::OPEN_PROJECT_ENTITIES_NAME)
 		) {
-			if (!class_exists("\OCP\HintException")) {
-				throw new \OCP\HintException(
-					'This is configured as a project folder on OpenProject and cannot be deleted or renamed.'
-				);
-			}
-			throw new \OC\HintException(
+			throw new HintException(
 				'This is configured as a project folder on OpenProject and cannot be deleted or renamed.'
 			);
 		}

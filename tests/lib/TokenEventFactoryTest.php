@@ -11,7 +11,7 @@ use OCA\OpenProject\AppInfo\Application;
 use OCA\UserOIDC\Event\ExchangedTokenRequestedEvent;
 use OCA\UserOIDC\Event\ExternalTokenRequestedEvent;
 use OCA\UserOIDC\Event\InternalTokenRequestedEvent;
-use OCP\IConfig;
+use OCP\IAppConfig;
 use PHPUnit\Framework\TestCase;
 
 class TokenEventFactoryTest extends TestCase {
@@ -48,14 +48,14 @@ class TokenEventFactoryTest extends TestCase {
 	 * @return void
 	 */
 	public function testGetEvent($providerType, $tokenExchange, $class): void {
-		$configMock = $this->createMock(IConfig::class);
-		$configMock->method("getAppValue")->willReturnMap([
-			[Application::APP_ID, "sso_provider_type", "", $providerType],
-			[Application::APP_ID, "token_exchange", "", $tokenExchange],
-			[Application::APP_ID, "targeted_audience_client_id", "", "test-client"],
+		$appConfigMock = $this->createMock(IAppConfig::class);
+		$appConfigMock->method("getValueString")->willReturnMap([
+			[Application::APP_ID, "sso_provider_type", "", false, $providerType],
+			[Application::APP_ID, "token_exchange", "", false, (string)$tokenExchange],
+			[Application::APP_ID, "targeted_audience_client_id", "", false, "test-client"],
 		]);
 
-		$factory = new TokenEventFactory($configMock);
+		$factory = new TokenEventFactory($appConfigMock);
 		$event = $factory->getEvent();
 		$this->assertInstanceOf($class, $event);
 	}

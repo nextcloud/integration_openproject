@@ -62,7 +62,7 @@ class DirectUploadContext implements Context {
 		$responseAsJson = json_decode(
 			$this->featureContext->getResponse()->getBody()->getContents()
 		);
-		Assert::assertObjectHasAttribute(
+		Assert::assertObjectHasProperty(
 			'token', $responseAsJson,
 			'cannot find token in response'
 		);

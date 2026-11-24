@@ -12,7 +12,7 @@ namespace OCA\OpenProject\Migration;
 use Closure;
 use OCA\OpenProject\AppInfo\Application;
 use OCP\DB\ISchemaWrapper;
-use OCP\IConfig;
+use OCP\IAppConfig;
 use OCP\Migration\IOutput;
 use OCP\Migration\SimpleMigrationStep;
 
@@ -22,12 +22,12 @@ use OCP\Migration\SimpleMigrationStep;
 class Version2400Date20230504144300 extends SimpleMigrationStep {
 
 	/**
-	 * @var IConfig
+	 * @var IAppConfig
 	 */
-	private $config;
+	private $appConfig;
 
-	public function __construct(IConfig $config) {
-		$this->config = $config;
+	public function __construct(IAppConfig $appConfig) {
+		$this->appConfig = $appConfig;
 	}
 
 	/**
@@ -38,8 +38,8 @@ class Version2400Date20230504144300 extends SimpleMigrationStep {
 	 */
 	public function changeSchema(IOutput $output, Closure $schemaClosure, array $options): ?ISchemaWrapper {
 		// set only once, as changeSchema() is also replayed by the schema check
-		if (!in_array('fresh_project_folder_setup', $this->config->getAppKeys(Application::APP_ID), true)) {
-			$this->config->setAppValue(
+		if (!in_array('fresh_project_folder_setup', $this->appConfig->getKeys(Application::APP_ID), true)) {
+			$this->appConfig->setValueString(
 				Application::APP_ID, 'fresh_project_folder_setup', "1"
 			);
 		}

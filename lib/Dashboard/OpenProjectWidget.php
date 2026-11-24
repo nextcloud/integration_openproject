@@ -11,8 +11,9 @@ namespace OCA\OpenProject\Dashboard;
 use OCA\OpenProject\AppInfo\Application;
 use OCA\OpenProject\Service\OpenProjectAPIService;
 use OCP\AppFramework\Services\IInitialState;
+use OCP\Config\IUserConfig;
 use OCP\Dashboard\IWidget;
-use OCP\IConfig;
+use OCP\IAppConfig;
 use OCP\IL10N;
 use OCP\IURLGenerator;
 use OCP\IUser;
@@ -35,9 +36,13 @@ class OpenProjectWidget implements IWidget {
 	 */
 	private $initialStateService;
 	/**
-	 * @var IConfig
+	 * @var IAppConfig
 	 */
-	private $config;
+	private $appConfig;
+	/**
+	 * @var IUserConfig
+	 */
+	private $userConfig;
 
 	/**
 	 * @var IUser
@@ -54,14 +59,16 @@ class OpenProjectWidget implements IWidget {
 		IL10N $l10n,
 		IInitialState $initialStateService,
 		IURLGenerator $url,
-		IConfig $config,
+		IAppConfig $appConfig,
+		IUserConfig $userConfig,
 		IUserSession $userSession,
 		OpenProjectAPIService $openProjectAPIService
 	) {
 		$this->initialStateService = $initialStateService;
 		$this->l10n = $l10n;
 		$this->url = $url;
-		$this->config = $config;
+		$this->appConfig = $appConfig;
+		$this->userConfig = $userConfig;
 		$this->user = $userSession->getUser();
 		$this->openProjectAPIService = $openProjectAPIService;
 	}
@@ -108,17 +115,17 @@ class OpenProjectWidget implements IWidget {
 		Util::addScript(Application::APP_ID, Application::APP_ID . '-dashboard');
 		Util::addStyle(Application::APP_ID, 'dashboard');
 
-		$oauthConnectionResult = $this->config->getUserValue(
+		$oauthConnectionResult = $this->userConfig->getValueString(
 			$this->user->getUID(), Application::APP_ID, 'oauth_connection_result', ''
 		);
-		$this->config->deleteUserValue(
+		$this->userConfig->deleteUserConfig(
 			$this->user->getUID(), Application::APP_ID, 'oauth_connection_result'
 		);
 
-		$authorizationMethod = $this->config->getAppValue(Application::APP_ID, 'authorization_method', '');
+		$authorizationMethod = $this->appConfig->getValueString(Application::APP_ID, 'authorization_method', '');
 		$this->initialStateService->provideInitialState('authorization_method', $authorizationMethod);
 		$this->initialStateService->provideInitialState(
-			'admin_config_ok', OpenProjectAPIService::isAdminConfigOk($this->config)
+			'admin_config_ok', OpenProjectAPIService::isAdminConfigOk($this->appConfig)
 		);
 
 		$token = $this->openProjectAPIService->getAccessToken($this->user->getUID());
@@ -129,10 +136,10 @@ class OpenProjectWidget implements IWidget {
 		$this->initialStateService->provideInitialState(
 			'oauth-connection-result', $oauthConnectionResult
 		);
-		$oauthConnectionErrorMessage = $this->config->getUserValue(
+		$oauthConnectionErrorMessage = $this->userConfig->getValueString(
 			$this->user->getUID(), Application::APP_ID, 'oauth_connection_error_message', ''
 		);
-		$this->config->deleteUserValue(
+		$this->userConfig->deleteUserConfig(
 			$this->user->getUID(), Application::APP_ID, 'oauth_connection_error_message'
 		);
 		$this->initialStateService->provideInitialState(
