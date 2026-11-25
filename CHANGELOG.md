@@ -15,10 +15,20 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ### Added
 
-- Log integration settings saved through the setup API and every new Nextcloud OAuth client for OpenProject to the audit log
-- Log the project folder setup and terms of service signed for the OpenProject user to the audit log
-- Log users connecting and disconnecting their OpenProject account to the audit log
-- Log files linked to and unlinked from OpenProject work packages to the audit log
+### Fixed
+
+### Changed
+
+### Removed
+
+## 3.4.0-20261125-nightly
+
+### Added
+
+- Log integration settings saved through the setup API and every new Nextcloud OAuth client for OpenProject to the audit log [#1195](https://github.com/nextcloud/integration_openproject/pull/1195)
+- Log the project folder setup and terms of service signed for the OpenProject user to the audit log [#1195](https://github.com/nextcloud/integration_openproject/pull/1195)
+- Log users connecting and disconnecting their OpenProject account to the audit log [#1195](https://github.com/nextcloud/integration_openproject/pull/1195)
+- Log files linked to and unlinked from OpenProject work packages to the audit log [#1195](https://github.com/nextcloud/integration_openproject/pull/1195)
 - Handle exceeding post_max_size and upload_max_filesize [#1190](https://github.com/nextcloud/integration_openproject/pull/1190)
 
 ### Fixed
@@ -29,7 +39,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ### Changed
 
 - Add owner_file_name property in filesInfo endpoint response [#1189](https://github.com/nextcloud/integration_openproject/pull/1189)
-- Write the audit log entries through the admin_audit app, with an operation and named parameters, whenever the app is enabled
+- Write the audit log entries through the admin_audit app, with an operation and named parameters, whenever the app is enabled [#1195](https://github.com/nextcloud/integration_openproject/pull/1195)
+- Replace deprecated Nextcloud PHP codes [#1201](https://github.com/nextcloud/integration_openproject/pull/1201)
 
 ### Removed
 
