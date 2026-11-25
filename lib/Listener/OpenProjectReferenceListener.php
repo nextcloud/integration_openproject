@@ -65,7 +65,7 @@ class OpenProjectReferenceListener implements IEventListener {
 			'authMethod' => $this->appConfig->getValueString(Application::APP_ID, 'authorization_method', '')
 		];
 		$this->initialStateService->provideInitialState(
-			'admin-appConfig',
+			'admin-config',
 			$adminConfig
 		);
 		$this->initialStateService->provideInitialState(

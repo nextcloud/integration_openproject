@@ -24,6 +24,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ### Fixed
 
 - Selecting an OpenProject work package does not insert the reference in the Smart Picker [#1200](https://github.com/nextcloud/integration_openproject/pull/1200)
+- Smart picker does not list OpenProject work packages [#1206](https://github.com/nextcloud/integration_openproject/pull/1206)
 
 ### Changed
 
