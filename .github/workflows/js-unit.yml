@@ -14,20 +14,20 @@ on:
     branches:
       - 'master'
       - 'release/**'
-  pull_request:
-    paths-ignore:
-      - 'tests/acceptance/**'
-      - 'tests/lib/**'
-      - 'tests/stub/**'
-      - 'dev/**'
-      - 'l10n/**'
-      - 'lib/**'
-      - '**.md'
-      - '**.txt'
-      - '**.sh'
-      - '**.php'
-      - 'composer.*'
-      - '**.xml'
+  # pull_request:
+  #   paths-ignore:
+  #     - 'tests/acceptance/**'
+  #     - 'tests/lib/**'
+  #     - 'tests/stub/**'
+  #     - 'dev/**'
+  #     - 'l10n/**'
+  #     - 'lib/**'
+  #     - '**.md'
+  #     - '**.txt'
+  #     - '**.sh'
+  #     - '**.php'
+  #     - 'composer.*'
+  #     - '**.xml'
 
 concurrency:
   group: js-${{ github.workflow }}-${{ github.ref }}
