@@ -54,7 +54,7 @@ jobs:
           SQL: ${{ matrix.database }}
           SERVER_BRANCH: ${{ matrix.nextcloudVersion }}
           NEXTCLOUD_AUTOINSTALL: 'Yes'
-          NEXTCLOUD_AUTOINSTALL_APPS: oidc groupfolders user_oidc integration_openproject
+          NEXTCLOUD_AUTOINSTALL_APPS: oidc groupfolders user_oidc
           NEXTCLOUD_AUTOINSTALL_APPS_WAIT_TIME: 60
           WITH_REDIS: 'YES'
         ports:
@@ -96,6 +96,25 @@ jobs:
           node-version-file: integration_openproject/package.json
           cache: 'npm'
           cache-dependency-path: 'integration_openproject/package-lock.json'
+
+      - name: Install stable integration_openproject app
+        env:
+          REPO: ${{ github.repository }}
+        run: |
+          BRANCH_VERSION=$(grep -oP '(?<=<version>)[^<]+' integration_openproject/appinfo/info.xml | cut -d. -f1,2)
+          STABLE_RELEASE_TAGS=$(gh release list --repo "${REPO}" --json tagName -q '.[].tagName' \
+            | grep -v nightly)
+
+          TAG=$(echo "${STABLE_RELEASE_TAGS}" | grep "^v${VERSION}\." | head -n1)
+          if [ -z "$TAG" ]; then
+            TAG=$(echo "${STABLE_RELEASE_TAGS}" | head -n1)
+          fi
+
+          gh release download "${TAG}" --repo "${REPO}" --pattern '*.tar.gz' --dir /tmp/app
+          docker cp /tmp/app nextcloud:/tmp/app
+          docker exec nextcloud bash -c '
+            tar -xzf /tmp/app/*.tar.gz -C /var/www/html/apps &&
+            occ app:enable integration_openproject'
 
       - name: Wait for Nextcloud server to be ready
         run: |
