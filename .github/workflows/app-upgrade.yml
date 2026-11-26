@@ -139,6 +139,9 @@ jobs:
           cd build-app/publish
           echo "NEXT_APP_VERSION=$(cat integration_openproject_new_version.txt)" >> $GITHUB_ENV
 
+      - name: show version
+        run: docker exec nextcloud php occ app:list | grep -E "integration_openproject|oidc|groupfolders|activity"
+
       - name: Update integration_openproject app
         run: |
           # Start local appstore server
@@ -185,3 +188,7 @@ jobs:
           BEHAT_FILTER_TAGS: '~@skip'
         run: |
           make api-test
+
+      - name: log
+        if: always()
+        run: docker exec nextcloud tail -n 200 /var/www/html/data/nextcloud.log

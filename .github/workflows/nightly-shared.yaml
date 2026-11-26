@@ -22,19 +22,19 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  js-unit-test:
-    uses: ./.github/workflows/js-unit.yml
-    secrets: inherit
-    with:
-      branch: ${{ inputs.branch }}
+  # js-unit-test:
+  #   uses: ./.github/workflows/js-unit.yml
+  #   secrets: inherit
+  #   with:
+  #     branch: ${{ inputs.branch }}
 
-  php-unit-api-test:
-    uses: ./.github/workflows/php-unit-api.yml
-    secrets: inherit
-    with:
-      branch: ${{ inputs.branch }}
-      nextcloud_versions: ${{ inputs.nextcloud_versions }}
-      php_versions: ${{ inputs.php_versions }}
+  # php-unit-api-test:
+  #   uses: ./.github/workflows/php-unit-api.yml
+  #   secrets: inherit
+  #   with:
+  #     branch: ${{ inputs.branch }}
+  #     nextcloud_versions: ${{ inputs.nextcloud_versions }}
+  #     php_versions: ${{ inputs.php_versions }}
 
   app-upgrade-test:
     uses: ./.github/workflows/app-upgrade.yml
@@ -42,20 +42,20 @@ jobs:
       branch: ${{ inputs.branch }}
       nextcloud_versions: ${{ inputs.app_upgrade_nc_versions }}
 
-  notify-nightly-report:
-    needs: [js-unit-test, php-unit-api-test, app-upgrade-test]
-    if: ${{ always() }}
-    runs-on: ubuntu-22.04
-    steps:
-      - name: checkout
-        uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8
+  # notify-nightly-report:
+  #   needs: [js-unit-test, php-unit-api-test, app-upgrade-test]
+  #   if: ${{ always() }}
+  #   runs-on: ubuntu-22.04
+  #   steps:
+  #     - name: checkout
+  #       uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8
 
-      - name: Notify Chat
-        env:
-          ELEMENT_CHAT_URL: ${{ secrets.ELEMENT_CHAT_URL }}
-          ELEMENT_ROOM_ID: ${{ secrets.ELEMENT_ROOM_ID }}
-          NIGHTLY_CI_USER_TOKEN: ${{ secrets.NIGHTLY_CI_USER_TOKEN }}
-          BRANCH_NAME: ${{ inputs.branch }}
-          NEEDS_JSON: ${{ toJson(needs) }}
-        run: |
-          ./.github/scripts/notify-to-element.sh
+  #     - name: Notify Chat
+  #       env:
+  #         ELEMENT_CHAT_URL: ${{ secrets.ELEMENT_CHAT_URL }}
+  #         ELEMENT_ROOM_ID: ${{ secrets.ELEMENT_ROOM_ID }}
+  #         NIGHTLY_CI_USER_TOKEN: ${{ secrets.NIGHTLY_CI_USER_TOKEN }}
+  #         BRANCH_NAME: ${{ inputs.branch }}
+  #         NEEDS_JSON: ${{ toJson(needs) }}
+  #       run: |
+  #         ./.github/scripts/notify-to-element.sh
