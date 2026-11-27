@@ -107,14 +107,14 @@ jobs:
           | grep "^v${VERSION}\." | grep -v nightly | head -n1)
           echo "${TAG}"
           if [ -z "$TAG" ]; then
-            docker exec nextcloud occ app:install integration_openproject
-          else
-            gh release download "${TAG}" --repo "${REPO}" --pattern '*.tar.gz' --dir /tmp/base
-            docker cp /tmp/base nextcloud:/tmp/base
-            docker exec nextcloud bash -c '
-              tar -xzf /tmp/base/*.tar.gz -C /var/www/html/apps &&
-              occ app:enable integration_openproject'
+            TAG=$(gh release list --repo "${REPO}" --json tagName -q '.[].tagName' \
+            | grep -v nightly | head -n1)
           fi
+          gh release download "${TAG}" --repo "${REPO}" --pattern '*.tar.gz' --dir /tmp/base
+          docker cp /tmp/base nextcloud:/tmp/base
+          docker exec nextcloud bash -c '
+            tar -xzf /tmp/base/*.tar.gz -C /var/www/html/apps &&
+            occ app:enable integration_openproject'
           docker exec nextcloud php occ app:list | grep integration_openproject
 
       - name: Wait for Nextcloud server to be ready
