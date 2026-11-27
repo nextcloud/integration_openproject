@@ -97,18 +97,18 @@ jobs:
           cache: 'npm'
           cache-dependency-path: 'integration_openproject/package-lock.json'
 
-      - name: install integration_openproject
+      - name: Install integration_openproject
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
           REPO=nextcloud/integration_openproject
           VERSION=$(grep -oP '(?<=<version>)[^<]+' integration_openproject/appinfo/info.xml | cut -d. -f1,2)
-          TAG=$(gh release list --repo "${REPO}" --json tagName -q '.[].tagName' \
-          | grep "^v${VERSION}\." | grep -v nightly | head -n1)
+          STABLE_RELEASE_TAGS=$(gh release list --repo "${REPO}" --json tagName -q '.[].tagName' \
+            | grep -v nightly)
+          TAG=$(echo "${STABLE_RELEASE_TAGS}" | grep "^v${VERSION}\." | head -n1)
           echo "${TAG}"
           if [ -z "$TAG" ]; then
-            TAG=$(gh release list --repo "${REPO}" --json tagName -q '.[].tagName' \
-            | grep -v nightly | head -n1)
+            TAG=$(echo "${STABLE_RELEASE_TAGS}" | head -n1)
           fi
           gh release download "${TAG}" --repo "${REPO}" --pattern '*.tar.gz' --dir /tmp/base
           docker cp /tmp/base nextcloud:/tmp/base
