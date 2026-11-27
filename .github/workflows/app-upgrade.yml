@@ -54,7 +54,7 @@ jobs:
           SQL: ${{ matrix.database }}
           SERVER_BRANCH: ${{ matrix.nextcloudVersion }}
           NEXTCLOUD_AUTOINSTALL: 'Yes'
-          NEXTCLOUD_AUTOINSTALL_APPS: oidc groupfolders user_oidc integration_openproject
+          NEXTCLOUD_AUTOINSTALL_APPS: oidc groupfolders user_oidc
           NEXTCLOUD_AUTOINSTALL_APPS_WAIT_TIME: 60
           WITH_REDIS: 'YES'
         ports:
@@ -97,6 +97,26 @@ jobs:
           cache: 'npm'
           cache-dependency-path: 'integration_openproject/package-lock.json'
 
+      - name: Install integration_openproject
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          REPO=nextcloud/integration_openproject
+          VERSION=$(grep -oP '(?<=<version>)[^<]+' integration_openproject/appinfo/info.xml | cut -d. -f1,2)
+          STABLE_RELEASE_TAGS=$(gh release list --repo "${REPO}" --json tagName -q '.[].tagName' \
+            | grep -v nightly)
+          TAG=$(echo "${STABLE_RELEASE_TAGS}" | grep "^v${VERSION}\." | head -n1)
+          echo "${TAG}"
+          if [ -z "$TAG" ]; then
+            TAG=$(echo "${STABLE_RELEASE_TAGS}" | head -n1)
+          fi
+          gh release download "${TAG}" --repo "${REPO}" --pattern '*.tar.gz' --dir /tmp/base
+          docker cp /tmp/base nextcloud:/tmp/base
+          docker exec nextcloud bash -c '
+            tar -xzf /tmp/base/*.tar.gz -C /var/www/html/apps &&
+            occ app:enable integration_openproject'
+          docker exec nextcloud php occ app:list | grep integration_openproject
+
       - name: Wait for Nextcloud server to be ready
         run: |
           if ! timeout 5m bash -c '
@@ -138,6 +158,9 @@ jobs:
             source integration_openproject/.github/scripts/build-upgradable-app.sh"
           cd build-app/publish
           echo "NEXT_APP_VERSION=$(cat integration_openproject_new_version.txt)" >> $GITHUB_ENV
+
+      - name: show version
+        run: docker exec nextcloud php occ app:list | grep -E "integration_openproject|oidc|groupfolders|activity"
 
       - name: Update integration_openproject app
         run: |
@@ -185,3 +208,7 @@ jobs:
           BEHAT_FILTER_TAGS: '~@skip'
         run: |
           make api-test
+
+      - name: log
+        if: always()
+        run: docker exec nextcloud tail -n 200 /var/www/html/data/nextcloud.log

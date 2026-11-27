@@ -20,18 +20,18 @@ on:
     branches:
       - 'master'
       - 'release/**'
-  pull_request:
-    paths-ignore:
-      - 'tests/js/**'
-      - '**.md'
-      - '**.txt'
-      - '**.sh'
-      - '**.js'
-      - 'dev/**'
-      - 'l10n/**'
-      - 'img/**'
-      - 'src/**'
-      - 'package*.json'
+  # pull_request:
+  #   paths-ignore:
+  #     - 'tests/js/**'
+  #     - '**.md'
+  #     - '**.txt'
+  #     - '**.sh'
+  #     - '**.js'
+  #     - 'dev/**'
+  #     - 'l10n/**'
+  #     - 'img/**'
+  #     - 'src/**'
+  #     - 'package*.json'
 
 concurrency:
   group: php-${{ github.workflow }}-${{ github.ref }}

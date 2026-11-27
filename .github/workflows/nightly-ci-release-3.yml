@@ -9,6 +9,7 @@ name: Nightly CI (Release 3.3)
 on:
   schedule:
     - cron: '0 23 * * *' # run at 11 PM UTC
+  pull_request:
 
 jobs:
   nightly-builds:
