@@ -9,6 +9,7 @@ name: Nightly CI (Master)
 on:
   schedule:
     - cron: '0 22 * * *' # run at 10 PM UTC
+  pull_request:
 
 jobs:
   nightly-builds:
